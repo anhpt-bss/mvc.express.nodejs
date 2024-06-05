@@ -1,5 +1,5 @@
 const express = require('express');
-const { checkAdmin } = require('../middleware/auth');
+const { checkAdmin } = require('@middleware/auth');
 
 const router = express.Router();
 

@@ -25,6 +25,7 @@ This is a Node.js project following the MVC (Model-View-Controller) architecture
 19. **Compression**: Middleware to compress response bodies.
 20. **Rate-limiter-flexible**: Flexible and robust rate-limiting library for Node.js.
 21. **Swagger**: Tools for documenting REST APIs.
+22. **module-alias**:  Absolute Paths '@/'
 
 ## Project Structure
 

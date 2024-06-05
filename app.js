@@ -1,3 +1,7 @@
+require('module-alias/register');
+require('express-async-errors');
+const path = require('path');
+const constants = require('@config/constants');
 const express = require('express');
 const app = express();
 const connectDB = require('./config/database');
@@ -13,8 +17,6 @@ const compression = require('compression');
 const { RateLimiterMemory } = require('rate-limiter-flexible');
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
-require('./config/dotenv');
-require('express-async-errors');
 
 // MongoDB
 connectDB();
@@ -50,6 +52,9 @@ app.use((req, res, next) => {
 // Static files
 app.use(express.static('public'));
 
+// Resource static files
+app.use(`/${constants.UPLOADS_BASE_PATH}`, express.static(path.join(__dirname, constants.UPLOADS_BASE_PATH)));
+
 // Routes
 app.use('/api', apiRouter);
 app.use('/admin', adminRouter);
@@ -64,7 +69,7 @@ const swaggerOptions = {
             version: '1.0.0',
         },
     },
-    apis: ['controllers/*.js'], // Đường dẫn tới các file route
+    apis: ['controllers/*.js'],
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
@@ -76,8 +81,6 @@ app.use((err, req, res, next) => {
     res.status(500).send('Something broke!');
 });
 
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+app.listen(constants.PORT, () => {
+    console.log(`Server is running on port ${constants.PORT}`);
 });

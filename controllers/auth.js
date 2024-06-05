@@ -3,7 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const jwt = require('jsonwebtoken');
-const User = require('./userModel');
+const User = require('@model/user');
 
 const app = express();
 

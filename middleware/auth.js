@@ -1,4 +1,4 @@
-const { verifyToken } = require('../config/jwt');
+const { verifyToken } = require('@config/jwt');
 
 exports.verifyToken = (req, res, next) => {
     const token = req.headers['x-access-token'].replace('Bearer ', '') || req.headers.authorization.replace('Bearer ', ''); // Check for token in header
