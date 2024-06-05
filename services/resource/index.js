@@ -74,6 +74,45 @@ class ResourceService {
         throw new Error('Resource not found');
     }    
     
+    static getStaticFiles() {
+        return new Promise((resolve, reject) => {
+            const uploadDir = path.join(__dirname, `../../${constants.UPLOADS_BASE_PATH}`);
+            fs.readdir(uploadDir, (err, files) => {
+                if (err) {
+                    return reject(err);
+                }
+                resolve(files);
+            });
+        });
+    }
+
+    static deleteStaticFiles(filePath) {
+        return new Promise((resolve, reject) => {
+            const uploadDir = path.join(__dirname, `../../${constants.UPLOADS_BASE_PATH}`);
+            
+            if (!filePath) {
+                // If no file path is provided, delete all files
+                fs.readdir(uploadDir, (err, files) => {
+                    if (err) {
+                        return reject(err);
+                    }
+                    for (const file of files) {
+                        fs.unlinkSync(path.join(uploadDir, file));
+                    }
+                    resolve('All files deleted successfully');
+                });
+            } else {
+                // Delete specific file
+                const fileToDelete = path.join(uploadDir, path.basename(filePath));
+                fs.unlink(fileToDelete, (err) => {
+                    if (err) {
+                        return reject(err);
+                    }
+                    resolve('File deleted successfully');
+                });
+            }
+        });
+    }
 }
 
 module.exports = ResourceService;

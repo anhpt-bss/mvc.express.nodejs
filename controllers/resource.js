@@ -125,3 +125,70 @@ exports.deleteFile = async (req, res) => {
         res.status(400).json({ message: err.message });
     }
 };
+
+/**
+ * @swagger
+ * /api/resource/get-files:
+ *   get:
+ *     summary: Get list of files in the uploads directory
+ *     tags: [Resource]
+ *     responses:
+ *       200:
+ *         description: A list of files
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: string
+ *       500:
+ *         description: Server error
+ */
+exports.getStaticFiles = async (req, res) => {
+    try {
+        const files = await ResourceService.getStaticFiles();
+        res.status(200).json(files);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+/**
+ * @swagger
+ * /api/resource/delete-files:
+ *   post:
+ *     summary: Delete a file or all files in the uploads directory
+ *     tags: [Resource]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               filePath:
+ *                 type: string
+ *                 description: The path or name of the file to delete
+ *                 example: "uploads/example.png"
+ *     responses:
+ *       200:
+ *         description: A list of files
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: string
+ *       500:
+ *         description: Server error
+ */
+
+exports.deleteStaticFiles = async (req, res) => {
+    try {
+        const { filePath } = req.body;
+        await ResourceService.deleteStaticFiles(filePath);
+        res.status(200).json({ message: 'Static files deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
