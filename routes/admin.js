@@ -1,17 +1,24 @@
 const express = require('express');
-const { checkAdmin } = require('@middleware/auth');
+const { checkAdminToken, checkTokenForLogin } = require('@middleware/auth');
+const authController = require('@controllers/auth');
 
 const router = express.Router();
 
-router.get('/signin', (req, res) => {
-    res.render('admin/signin', { page_title: 'Đăng nhập admin' });
+// Routes public
+router.post('/auth/login', authController.login);
+
+router.get('/auth/login', checkTokenForLogin, (req, res) => {
+    res.render('admin/signin', { message: null, errors: [] });
 });
 
-router.use(checkAdmin);
+// Verify token
+router.use(checkAdminToken);
 
+// Routes privated
 router.get('/', (req, res) => {
     res.render('admin', { page_title: 'Trang quản trị' });
 });
 
+router.get('/auth/logout', authController.logout);
 
 module.exports = router;

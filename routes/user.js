@@ -1,22 +1,21 @@
 const express = require('express');
 const { userValidationRules, validate } = require('@middleware/validator');
-const multer = require('multer');
-const upload = multer({ dest: 'uploads/' });
-const { verifyToken } = require('@middleware/auth');
+const { verifyAPIToken } = require('@middleware/auth');
 
 const router = express.Router();
 const userController = require('@controllers/user');
 
+// Routes public
 router.get('/get-list', userController.getAllUsers);
+router.get('/:id', userController.getUserById);
 
-router.use(verifyToken);
+// Verify token
+router.use(verifyAPIToken);
 
-router.route('/create')
-    .post(
-        userValidationRules(),
-        validate,
-        upload.single('avatar'),
-        userController.createUser,
-    );
+// Routes privated
+router.post('/create', userValidationRules(), validate, userController.createUser);
+router.put('/:id', userValidationRules(), validate, userController.updateUser);
+router.delete('/:id', userController.deleteUser);
+
 
 module.exports = router;

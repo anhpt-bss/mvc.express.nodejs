@@ -1,14 +1,18 @@
+// middleware/authMiddleware.js
+
 const { verifyToken } = require('@config/jwt');
+const User = require('@models/user');
 
-exports.verifyToken = (req, res, next) => {
-    const token = req.headers['x-access-token'].replace('Bearer ', '') || req.headers.authorization.replace('Bearer ', ''); // Check for token in header
+exports.verifyAPIToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const accessToken = authHeader && authHeader.split(' ')[1];
 
-    if (!token) {
+    if (!accessToken) {
         return res.status(401).json({ message: 'Unauthorized: No token provided' });
     }
 
     try {
-        const decoded = verifyToken(token);
+        const decoded = verifyToken(accessToken);
         req.user = decoded;
         next();
     } catch (error) {
@@ -16,24 +20,45 @@ exports.verifyToken = (req, res, next) => {
     }
 };
 
-exports.checkAdmin = async (req, res, next) => {
+exports.checkAdminToken = async (req, res, next) => {
+    const accessToken = req.cookies.access_token;
+
+    if (!accessToken) {
+        return res.redirect('/admin/auth/login');
+    }
+
     try {
-        const token = req.header('Authorization').replace('Bearer ', '');
-
-        if (!token) {
-            return res.redirect('/admin/signin');
-        }
-
-        const decoded = verifyToken(token);
+        const decoded = verifyToken(accessToken);
         const user = await User.findById(decoded.id);
 
         if (!user || !user.is_admin) {
-            return res.redirect('/admin/signin');
+            return res.redirect('/admin/auth/login');
         }
 
         req.user = user;
         next();
     } catch (err) {
-        res.redirect('/admin/signin');
+        res.redirect('/admin/auth/login');
+    }
+};
+
+exports.checkTokenForLogin = async (req, res, next) => {
+    const accessToken = req.cookies.access_token;
+
+    if (!accessToken) {
+        return next();
+    }
+
+    try {
+        const decoded = verifyToken(accessToken);
+        const user = await User.findById(decoded.id);
+
+        if (user && user.is_admin) {
+            return res.redirect('/admin');
+        } else {
+            return next();
+        }
+    } catch (err) {
+        return next();
     }
 };

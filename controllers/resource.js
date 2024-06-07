@@ -37,6 +37,8 @@ const ResourceService = require('@services/resource');
  *   post:
  *     summary: Upload multiple files
  *     tags: [Resource]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -76,6 +78,10 @@ const ResourceService = require('@services/resource');
 
 exports.uploadFiles = async (req, res) => {
     try {
+        if(req.files) {
+            res.status(400).json({ message: 'No files selected' });
+        }
+
         const uploadedFiles = await ResourceService.uploadFiles(req, res);
         res.status(201).json({ message: 'Files uploaded successfully', files: uploadedFiles });
     } catch (err) {
@@ -89,6 +95,8 @@ exports.uploadFiles = async (req, res) => {
  *   delete:
  *     summary: Delete a file
  *     tags: [Resource]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -132,6 +140,8 @@ exports.deleteFile = async (req, res) => {
  *   get:
  *     summary: Get list of files in the uploads directory
  *     tags: [Resource]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: A list of files
@@ -159,6 +169,8 @@ exports.getStaticFiles = async (req, res) => {
  *   post:
  *     summary: Delete a file or all files in the uploads directory
  *     tags: [Resource]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:

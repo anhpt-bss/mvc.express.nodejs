@@ -1,7 +1,4 @@
 const User = require('@models/user');
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
-const { generateToken } = require('@config/jwt');
 
 /**
  * @swagger
@@ -36,7 +33,7 @@ const { generateToken } = require('@config/jwt');
  *       example:
  *         name: John Doe
  *         email: john@example.com
- *         password: mypassword123
+ *         password: mypassword@123
  *         is_admin: false
  */
 
@@ -61,12 +58,10 @@ const { generateToken } = require('@config/jwt');
  *       500:
  *         description: Internal Server Error
  */
-
 exports.getAllUsers = async (req, res) => {
     try {
         const users = await User.find();
         res.status(200).json({ data: users });
-        
     } catch (err) {
         res.status(500).send(err.message);
     }
@@ -78,6 +73,8 @@ exports.getAllUsers = async (req, res) => {
  *   post:
  *     summary: Create a new user
  *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -94,15 +91,20 @@ exports.getAllUsers = async (req, res) => {
  *       500:
  *         description: Internal Server Error
  */
-
 exports.createUser = async (req, res) => {
     try {
-        const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
+        const existingUser = await User.findOne({ email: req.body.email });
+        if (existingUser) {
+            return res.status(400).send('Email already exists');
+        }
+
         const user = new User({
             name: req.body.name,
             email: req.body.email,
-            password: hashedPassword,
+            password: req.body.password,
+            is_admin: req.body.is_admin
         });
+
         await user.save();
         res.status(200).send(user);
     } catch (err) {
@@ -112,47 +114,126 @@ exports.createUser = async (req, res) => {
 
 /**
  * @swagger
- * /api/user/login:
- *   post:
- *     summary: Login user
+ * /api/user/{id}:
+ *   get:
+ *     summary: Get a user by ID
  *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The user ID
+ *     responses:
+ *       200:
+ *         description: User found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal Server Error
+ */
+exports.getUserById = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+        res.status(200).json(user);
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+};
+
+/**
+ * @swagger
+ * /api/user/{id}:
+ *   put:
+ *     summary: Update a user by ID
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The user ID
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *               password:
- *                 type: string
+ *             $ref: '#/components/schemas/User'
  *     responses:
  *       200:
- *         description: User logged in successfully
+ *         description: User updated successfully
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 user:
- *                   $ref: '#/components/schemas/User'
- *                 token:
- *                   type: string
- *       400:
- *         description: Invalid email or password
+ *               $ref: '#/components/schemas/User'
+ *       404:
+ *         description: User not found
  *       500:
  *         description: Internal Server Error
  */
-
-exports.loginUser = async (req, res) => {
+exports.updateUser = async (req, res) => {
     try {
-        const user = await User.findOne({ email: req.body.email });
-        if (!user || !await bcrypt.compare(req.body.password, user.password)) {
-            return res.status(400).send({ error: 'Invalid email or password' });
+        const { name, email, password, is_admin } = req.body;
+        const user = await User.findById(req.params.id);
+
+        if (!user) {
+            return res.status(404).send('User not found');
         }
-        const token = generateToken(user);
-        res.send({ user, token });
+
+        if (name) user.name = name;
+        if (email) user.email = email;
+        if (password) user.password = password;
+        if (typeof is_admin !== 'undefined') user.is_admin = is_admin;
+
+        await user.save();
+        res.status(200).send(user);
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+};
+
+/**
+ * @swagger
+ * /api/user/{id}:
+ *   delete:
+ *     summary: Delete a user by ID
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The user ID
+ *     responses:
+ *       200:
+ *         description: User deleted successfully
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal Server Error
+ */
+exports.deleteUser = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+        await user.remove();
+        res.status(200).send('User deleted successfully');
     } catch (err) {
         res.status(500).send(err.message);
     }

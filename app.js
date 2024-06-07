@@ -3,6 +3,7 @@ require('express-async-errors');
 const path = require('path');
 const constants = require('@config/constants');
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const app = express();
 const connectDB = require('./config/database');
 const apiRouter = require('./routes/api');
@@ -15,8 +16,7 @@ const helmet = require('helmet');
 const logger = require('./config/logger');
 const compression = require('compression');
 const { RateLimiterMemory } = require('rate-limiter-flexible');
-const swaggerJsDoc = require('swagger-jsdoc');
-const swaggerUi = require('swagger-ui-express');
+const swaggerSetup = require('@config/swagger');
 
 // MongoDB
 connectDB();
@@ -31,6 +31,7 @@ app.use(morgan('dev'));
 app.use(cors());
 app.use(helmet());
 app.use(compression());
+app.use(cookieParser());
 
 // Rate limiter
 const rateLimiter = new RateLimiterMemory({
@@ -50,7 +51,7 @@ app.use((req, res, next) => {
 });
 
 // Static files
-app.use(express.static('public'));
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
 // Resource static files
 app.use(`/${constants.UPLOADS_BASE_PATH}`, express.static(path.join(__dirname, constants.UPLOADS_BASE_PATH)));
@@ -61,19 +62,7 @@ app.use('/admin', adminRouter);
 app.use('/', clientRouter);
 
 // Swagger
-const swaggerOptions = {
-    swaggerDefinition: {
-        openapi: '3.0.0',
-        info: {
-            title: 'API Documentation',
-            version: '1.0.0',
-        },
-    },
-    apis: ['controllers/*.js'],
-};
-
-const swaggerDocs = swaggerJsDoc(swaggerOptions);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+swaggerSetup(app);
 
 // Middleware
 app.use((err, req, res, next) => {
