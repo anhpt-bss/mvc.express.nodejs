@@ -1,9 +1,8 @@
-// controllers/auth.js
-
 const bcrypt = require('bcrypt');
 const User = require('@models/user');
 const { validationResult } = require('express-validator');
 const { generateToken } = require('@config/jwt');
+const HttpResponse = require('@services/httpResponse');
 
 /**
  * @swagger
@@ -62,20 +61,23 @@ const { generateToken } = require('@config/jwt');
  *             schema:
  *               $ref: '#/components/schemas/LoginResponse'
  *       400:
- *         description: Invalid email or password
+ *         description: Bad request. Invalid email or password.
+ *       401:
+ *         description: Unauthorized access.
+ *       403:
+ *         description: Access forbidden.
+ *       404:
+ *         description: Resource not found.
  *       500:
- *         description: Server error
+ *         description: Internal server error.
  */
 exports.login = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         if (req.headers.accept && req.headers.accept.includes('application/json')) {
-            return res.status(400).json({ errors: errors.array() });
+            return HttpResponse.badRequest(res, errors.array(), 'Validation errors');
         } else {
-            return res.render('admin/signin', {
-                errors: errors.array(),
-                message: null
-            });
+            return res.render('admin/signin', HttpResponse.badRequestResponse(errors.array(), 'Validation errors'));
         }
     }
 
@@ -84,62 +86,48 @@ exports.login = async (req, res) => {
     try {
         const user = await User.findOne({ email });
         if (!user) {
-            const errorMessage = { message: 'Invalid email or password' };
+            const errorMessage = 'Invalid email or password';
             if (req.headers.accept && req.headers.accept.includes('application/json')) {
-                return res.status(400).json(errorMessage);
+                return HttpResponse.badRequest(res, [], errorMessage);
             } else {
-                return res.render('admin/signin', {
-                    ...errorMessage,
-                    errors: []
-                });
+                return res.render('admin/signin', HttpResponse.badRequestResponse([], errorMessage));
             }
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
-            const errorMessage = { message: 'Invalid email or password' };
+            const errorMessage = 'Invalid email or password';
             if (req.headers.accept && req.headers.accept.includes('application/json')) {
-                return res.status(400).json(errorMessage);
+                return HttpResponse.badRequest(res, [], errorMessage);
             } else {
-                return res.render('admin/signin', {
-                    ...errorMessage,
-                    errors: []
-                });
+                return res.render('admin/signin', HttpResponse.badRequestResponse([], errorMessage));
             }
         }
 
         if (!user.is_admin) {
-            const errorMessage = { message: 'Invalid admin user' };
+            const errorMessage = 'Invalid admin user';
             if (req.headers.accept && req.headers.accept.includes('application/json')) {
-                return res.status(400).json(errorMessage);
+                return HttpResponse.badRequest(res, [], errorMessage);
             } else {
-                return res.render('admin/signin', {
-                    ...errorMessage,
-                    errors: []
-                });
+                return res.render('admin/signin', HttpResponse.badRequestResponse([], errorMessage));
             }
         }
 
         const token = generateToken(user);
 
         if (req.headers.accept && req.headers.accept.includes('application/json')) {
-            return res.status(200).json({ token });
+            return HttpResponse.success(res, { token }, 'Login successful');
         } else {
-            // Set token in cookie for admin login
             res.cookie('access_token', token, { httpOnly: true, secure: false, sameSite: 'Strict' });
-            // Redirect to admin dashboard
             return res.redirect('/admin');
         }
     } catch (error) {
-        const errorMessage = { message: 'Server error' };
+        const errorMessage = error.message || 'Internal server error';
         if (req.headers.accept && req.headers.accept.includes('application/json')) {
-            return res.status(500).json(errorMessage);
+            return HttpResponse.internalServerError(res, [], errorMessage);
         } else {
-            return res.render('admin/signin', {
-                ...errorMessage,
-                errors: []
-            });
+            return res.render('admin/signin', HttpResponse.internalServerErrorResponse([], errorMessage));
         }
     }
 };
@@ -155,38 +143,31 @@ exports.login = async (req, res) => {
  *     responses:
  *       200:
  *         description: Successfully logged out
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   description: Success message
- *                   example: Successfully logged out
+ *       400:
+ *         description: Bad request. Invalid email or password.
+ *       401:
+ *         description: Unauthorized access.
+ *       403:
+ *         description: Access forbidden.
+ *       404:
+ *         description: Resource not found.
  *       500:
- *         description: Server error
+ *         description: Internal server error.
  */
-
 exports.logout = (req, res) => {
     try {
         if (req.headers.accept && req.headers.accept.includes('application/json')) {
-            console.log('success');
-            res.status(200).json({ message: 'Successfully logged out' });
+            return HttpResponse.success(res, null, 'Successfully logged out');
         } else {
             res.clearCookie('access_token');
-            res.redirect('/admin/auth/login');
+            return res.redirect('/admin/auth/login');
         }
     } catch (error) {
-        console.log(error);
-        const errorMessage = { message: 'Server error' };
+        const errorMessage = error.message || 'Internal server error';
         if (req.headers.accept && req.headers.accept.includes('application/json')) {
-            return res.status(500).json(errorMessage);
+            return HttpResponse.internalServerError(res, [], errorMessage);
         } else {
-            return res.render('admin/signin', {
-                ...errorMessage,
-                errors: []
-            });
+            return res.render('admin/', HttpResponse.internalServerErrorResponse([], errorMessage));
         }
     }
 };
