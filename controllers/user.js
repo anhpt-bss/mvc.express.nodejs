@@ -73,7 +73,7 @@ exports.getAllUsers = async (req, res) => {
 
         return HttpResponse.success(res, users);
     } catch (error) {
-        return HttpResponse.internalServerError(res, [], error.message);
+        return HttpResponse.internalServerError(res, [], req.t('auth.internal_server_error'));
     }
 };
 
@@ -113,7 +113,7 @@ exports.createUser = async (req, res) => {
     try {
         const existingUser = await User.findOne({ email: req.body.email });
         if (existingUser) {
-            return HttpResponse.badRequest(res, [], 'Email already exists');
+            return HttpResponse.badRequest(res, [], req.t('user.email_already_exists'));
         }
 
         const user = new User({
@@ -125,9 +125,9 @@ exports.createUser = async (req, res) => {
 
         await user.save();
 
-        return HttpResponse.success(res, user);
+        return HttpResponse.success(res, user, req.t('user.user_created_successfully'));
     } catch (error) {
-        return HttpResponse.internalServerError(res, [], error.message);
+        return HttpResponse.internalServerError(res, [], req.t('auth.internal_server_error'));
     }
 };
 
@@ -166,12 +166,12 @@ exports.getUserById = async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
         if (!user) {
-            return HttpResponse.badRequest(res, [], 'User not found');
+            return HttpResponse.badRequest(res, [], req.t('user.user_not_found'));
         }
 
         return HttpResponse.success(res, user);
     } catch (error) {
-        return HttpResponse.internalServerError(res, [], error.message);
+        return HttpResponse.internalServerError(res, [], req.t('auth.internal_server_error'));
     }
 };
 
@@ -220,7 +220,7 @@ exports.updateUser = async (req, res) => {
         const user = await User.findById(req.params.id);
 
         if (!user) {
-            return HttpResponse.badRequest(res, [], 'User not found');
+            return HttpResponse.badRequest(res, [], req.t('user.user_not_found'));
         }
 
         if (name) user.name = name;
@@ -230,9 +230,9 @@ exports.updateUser = async (req, res) => {
 
         await user.save();
 
-        return HttpResponse.success(res, user);
+        return HttpResponse.success(res, user, req.t('user.user_updated_successfully'));
     } catch (error) {
-        return HttpResponse.internalServerError(res, [], error.message);
+        return HttpResponse.internalServerError(res, [], req.t('auth.internal_server_error'));
     }
 };
 
@@ -269,12 +269,12 @@ exports.deleteUser = async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
         if (!user) {
-            return HttpResponse.badRequest(res, [], 'User not found');
+            return HttpResponse.badRequest(res, [], req.t('user.user_not_found'));
         }
         await user.remove();
 
-        return HttpResponse.success(res, { id: req.params.id } ,'User deleted successfully');
+        return HttpResponse.success(res, { id: req.params.id }, req.t('user.user_deleted_successfully'));
     } catch (error) {
-        return HttpResponse.internalServerError(res, [], error.message);
+        return HttpResponse.internalServerError(res, [], req.t('auth.internal_server_error'));
     }
 };

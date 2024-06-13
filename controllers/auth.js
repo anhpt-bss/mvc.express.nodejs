@@ -74,10 +74,15 @@ const HttpResponse = require('@services/httpResponse');
 exports.login = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+        const translatedErrors = errors.array().map(error => ({
+            ...error,
+            msg: req.t(error.msg)
+        }));
+
         if (req.headers.accept && req.headers.accept.includes('application/json')) {
-            return HttpResponse.badRequest(res, errors.array(), 'Validation errors');
+            return HttpResponse.badRequest(res, translatedErrors, req.t('validation.errors'));
         } else {
-            return res.render('admin/signin', HttpResponse.badRequestResponse(errors.array(), 'Validation errors'));
+            return res.render('admin/signin', HttpResponse.badRequestResponse(translatedErrors, req.t('validation.errors')));
         }
     }
 
@@ -86,7 +91,7 @@ exports.login = async (req, res) => {
     try {
         const user = await User.findOne({ email });
         if (!user) {
-            const errorMessage = 'Invalid email or password';
+            const errorMessage = req.t('auth.invalid_email_password');
             if (req.headers.accept && req.headers.accept.includes('application/json')) {
                 return HttpResponse.badRequest(res, [], errorMessage);
             } else {
@@ -97,7 +102,7 @@ exports.login = async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
-            const errorMessage = 'Invalid email or password';
+            const errorMessage = req.t('auth.invalid_email_password');
             if (req.headers.accept && req.headers.accept.includes('application/json')) {
                 return HttpResponse.badRequest(res, [], errorMessage);
             } else {
@@ -106,7 +111,7 @@ exports.login = async (req, res) => {
         }
 
         if (!user.is_admin) {
-            const errorMessage = 'Invalid admin user';
+            const errorMessage = req.t('auth.invalid_admin_user');
             if (req.headers.accept && req.headers.accept.includes('application/json')) {
                 return HttpResponse.badRequest(res, [], errorMessage);
             } else {
@@ -117,13 +122,13 @@ exports.login = async (req, res) => {
         const token = generateToken(user);
 
         if (req.headers.accept && req.headers.accept.includes('application/json')) {
-            return HttpResponse.success(res, { token }, 'Login successful');
+            return HttpResponse.success(res, { token }, req.t('auth.login_successful'));
         } else {
             res.cookie('access_token', token, { httpOnly: true, secure: false, sameSite: 'Strict' });
             return res.redirect('/admin');
         }
     } catch (error) {
-        const errorMessage = error.message || 'Internal server error';
+        const errorMessage = error.message || req.t('auth.internal_server_error');
         if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.internalServerError(res, [], errorMessage);
         } else {
@@ -157,13 +162,13 @@ exports.login = async (req, res) => {
 exports.logout = (req, res) => {
     try {
         if (req.headers.accept && req.headers.accept.includes('application/json')) {
-            return HttpResponse.success(res, null, 'Successfully logged out');
+            return HttpResponse.success(res, null, req.t('auth.logout_successful'));
         } else {
             res.clearCookie('access_token');
             return res.redirect('/admin/auth/login');
         }
     } catch (error) {
-        const errorMessage = error.message || 'Internal server error';
+        const errorMessage = error.message || req.t('auth.internal_server_error');
         if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.internalServerError(res, [], errorMessage);
         } else {

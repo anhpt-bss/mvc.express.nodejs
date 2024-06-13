@@ -1,0 +1,24 @@
+{
+    "validation": {
+        "name_required": "Tên là bắt buộc",
+        "valid_email": "Vui lòng nhập email hợp lệ",
+        "password_length": "Mật khẩu phải có ít nhất 8 ký tự",
+        "password_number": "Mật khẩu phải chứa một số",
+        "password_letter": "Mật khẩu phải chứa một chữ cái",
+        "password_special_character": "Mật khẩu phải chứa một ký tự đặc biệt",
+        "errors": "Lỗi xác thực"
+    },
+    "auth": {
+        "invalid_email_password": "Email hoặc mật khẩu không hợp lệ",
+        "invalid_admin_user": "Người dùng quản trị không hợp lệ",
+        "login_successful": "Đăng nhập thành công",
+        "internal_server_error": "Lỗi máy chủ nội bộ",
+        "logout_successful": "Đăng xuất thành công"
+    },
+    "resource": {
+        "no_files_selected": "Không có tệp nào được chọn",
+        "files_uploaded_successfully": "Tệp đã tải lên thành công",
+        "file_deleted_successfully": "Tệp đã được xóa thành công",
+        "static_files_deleted_successfully": "Các tệp tĩnh đã được xóa thành công"
+    }
+}

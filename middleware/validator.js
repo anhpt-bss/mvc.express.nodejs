@@ -5,19 +5,19 @@ exports.userValidationRules = () => {
     return [
         body('name')
             .notEmpty()
-            .withMessage('Name is required'),
+            .withMessage('validation.name_required'),
         body('email')
             .isEmail()
-            .withMessage('Please include a valid email'),
+            .withMessage('validation.valid_email'),
         body('password')
             .isLength({ min: 8 })
-            .withMessage('Password must be at least 8 characters long')
+            .withMessage('validation.password_length')
             .matches(/\d/)
-            .withMessage('Password must contain a number')
+            .withMessage('validation.password_number')
             .matches(/[a-zA-Z]/)
-            .withMessage('Password must contain a letter')
+            .withMessage('validation.password_letter')
             .matches(/[!@#$%^&*(),.?":{}|<>]/)
-            .withMessage('Password must contain a special character')
+            .withMessage('validation.password_special_characters')
     ];
 };
 
@@ -25,16 +25,16 @@ exports.loginValidationRules = () => {
     return [
         body('email')
             .isEmail()
-            .withMessage('Please include a valid email'),
+            .withMessage('validation.valid_email'),
         body('password')
             .isLength({ min: 8 })
-            .withMessage('Password must be at least 8 characters long')
+            .withMessage('validation.password_length')
             .matches(/\d/)
-            .withMessage('Password must contain a number')
+            .withMessage('validation.password_number')
             .matches(/[a-zA-Z]/)
-            .withMessage('Password must contain a letter')
+            .withMessage('validation.password_letter')
             .matches(/[!@#$%^&*(),.?":{}|<>]/)
-            .withMessage('Password must contain a special character')
+            .withMessage('validation.password_special_character')
     ];
 };
 
@@ -44,5 +44,10 @@ exports.validate = (req, res, next) => {
         return next();
     }
 
-    return HttpResponse.badRequest(res, errors.array(), 'Validation errors');
+    const translatedErrors = errors.array().map(error => ({
+        ...error,
+        msg: req.t(error.msg)
+    }));
+
+    return HttpResponse.badRequest(res, translatedErrors, req.t('validation.errors'));
 };

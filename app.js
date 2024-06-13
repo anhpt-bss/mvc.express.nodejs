@@ -17,9 +17,13 @@ const logger = require('./config/logger');
 const compression = require('compression');
 const { RateLimiterMemory } = require('rate-limiter-flexible');
 const swaggerSetup = require('@config/swagger');
+const configureI18n = require('./config/i18n');
 
 // MongoDB
 connectDB();
+
+// Configure i18n with the app instance
+configureI18n(app);
 
 // EJS
 app.set('view engine', 'ejs');
