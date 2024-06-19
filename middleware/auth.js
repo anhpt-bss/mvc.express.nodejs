@@ -1,5 +1,4 @@
-// middleware/authMiddleware.js
-
+const HttpResponse = require('@services/httpResponse');
 const { verifyToken } = require('@config/jwt');
 const User = require('@models/user');
 
@@ -8,7 +7,11 @@ exports.verifyAPIToken = (req, res, next) => {
     const accessToken = authHeader && authHeader.split(' ')[1];
 
     if (!accessToken) {
-        return res.status(401).json({ message: 'Unauthorized: No token provided' });
+        return HttpResponse.unauthorized(
+            res,
+            [],
+            'Unauthorized: No token provided',
+        );
     }
 
     try {
@@ -16,7 +19,11 @@ exports.verifyAPIToken = (req, res, next) => {
         req.user = decoded;
         next();
     } catch (error) {
-        return res.status(401).json({ message: 'Unauthorized: Invalid token' });
+        return HttpResponse.unauthorized(
+            res,
+            [],
+            'Unauthorized: Invalid token',
+        );
     }
 };
 

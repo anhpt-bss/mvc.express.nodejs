@@ -12,9 +12,14 @@ const logger = winston.createLogger({
     format: winston.format.json(),
     transports: [
         // Log errors to error.log file inside the logs directory
-        new winston.transports.File({ filename: path.join(logDirectory, 'error.log'), level: 'error' }),
+        new winston.transports.File({
+            filename: path.join(logDirectory, 'error.log'),
+            level: 'error',
+        }),
         // Log all messages to combined.log file inside the logs directory
-        new winston.transports.File({ filename: path.join(logDirectory, 'combined.log') }),
+        new winston.transports.File({
+            filename: path.join(logDirectory, 'combined.log'),
+        }),
     ],
 });
 

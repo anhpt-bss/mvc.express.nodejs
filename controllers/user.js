@@ -1,4 +1,5 @@
 const User = require('@models/user');
+const HttpResponse = require('@services/httpResponse');
 
 /**
  * @swagger
@@ -55,15 +56,28 @@ const User = require('@models/user');
  *                   type: array
  *                   items:
  *                     $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Bad request. Invalid email or password.
+ *       401:
+ *         description: Unauthorized access.
+ *       403:
+ *         description: Access forbidden.
+ *       404:
+ *         description: Resource not found.
  *       500:
- *         description: Internal Server Error
+ *         description: Internal server error.
  */
 exports.getAllUsers = async (req, res) => {
     try {
         const users = await User.find();
-        res.status(200).json({ data: users });
-    } catch (err) {
-        res.status(500).send(err.message);
+
+        return HttpResponse.success(res, users);
+    } catch (error) {
+        return HttpResponse.internalServerError(
+            res,
+            [],
+            req.t('auth.internal_server_error'),
+        );
     }
 };
 
@@ -88,27 +102,48 @@ exports.getAllUsers = async (req, res) => {
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Bad request. Invalid email or password.
+ *       401:
+ *         description: Unauthorized access.
+ *       403:
+ *         description: Access forbidden.
+ *       404:
+ *         description: Resource not found.
  *       500:
- *         description: Internal Server Error
+ *         description: Internal server error.
  */
 exports.createUser = async (req, res) => {
     try {
         const existingUser = await User.findOne({ email: req.body.email });
         if (existingUser) {
-            return res.status(400).send('Email already exists');
+            return HttpResponse.badRequest(
+                res,
+                [],
+                req.t('user.email_already_exists'),
+            );
         }
 
         const user = new User({
             name: req.body.name,
             email: req.body.email,
             password: req.body.password,
-            is_admin: req.body.is_admin
+            is_admin: req.body.is_admin,
         });
 
         await user.save();
-        res.status(200).send(user);
-    } catch (err) {
-        res.status(500).send(err.message);
+
+        return HttpResponse.success(
+            res,
+            user,
+            req.t('user.user_created_successfully'),
+        );
+    } catch (error) {
+        return HttpResponse.internalServerError(
+            res,
+            [],
+            req.t('auth.internal_server_error'),
+        );
     }
 };
 
@@ -132,20 +167,35 @@ exports.createUser = async (req, res) => {
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Bad request. Invalid email or password.
+ *       401:
+ *         description: Unauthorized access.
+ *       403:
+ *         description: Access forbidden.
  *       404:
- *         description: User not found
+ *         description: Resource not found.
  *       500:
- *         description: Internal Server Error
+ *         description: Internal server error.
  */
 exports.getUserById = async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
         if (!user) {
-            return res.status(404).send('User not found');
+            return HttpResponse.badRequest(
+                res,
+                [],
+                req.t('user.user_not_found'),
+            );
         }
-        res.status(200).json(user);
-    } catch (err) {
-        res.status(500).send(err.message);
+
+        return HttpResponse.success(res, user);
+    } catch (error) {
+        return HttpResponse.internalServerError(
+            res,
+            [],
+            req.t('auth.internal_server_error'),
+        );
     }
 };
 
@@ -177,10 +227,16 @@ exports.getUserById = async (req, res) => {
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Bad request. Invalid email or password.
+ *       401:
+ *         description: Unauthorized access.
+ *       403:
+ *         description: Access forbidden.
  *       404:
- *         description: User not found
+ *         description: Resource not found.
  *       500:
- *         description: Internal Server Error
+ *         description: Internal server error.
  */
 exports.updateUser = async (req, res) => {
     try {
@@ -188,7 +244,11 @@ exports.updateUser = async (req, res) => {
         const user = await User.findById(req.params.id);
 
         if (!user) {
-            return res.status(404).send('User not found');
+            return HttpResponse.badRequest(
+                res,
+                [],
+                req.t('user.user_not_found'),
+            );
         }
 
         if (name) user.name = name;
@@ -197,9 +257,18 @@ exports.updateUser = async (req, res) => {
         if (typeof is_admin !== 'undefined') user.is_admin = is_admin;
 
         await user.save();
-        res.status(200).send(user);
-    } catch (err) {
-        res.status(500).send(err.message);
+
+        return HttpResponse.success(
+            res,
+            user,
+            req.t('user.user_updated_successfully'),
+        );
+    } catch (error) {
+        return HttpResponse.internalServerError(
+            res,
+            [],
+            req.t('auth.internal_server_error'),
+        );
     }
 };
 
@@ -221,20 +290,39 @@ exports.updateUser = async (req, res) => {
  *     responses:
  *       200:
  *         description: User deleted successfully
+ *       400:
+ *         description: Bad request. Invalid email or password.
+ *       401:
+ *         description: Unauthorized access.
+ *       403:
+ *         description: Access forbidden.
  *       404:
- *         description: User not found
+ *         description: Resource not found.
  *       500:
- *         description: Internal Server Error
+ *         description: Internal server error.
  */
 exports.deleteUser = async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
         if (!user) {
-            return res.status(404).send('User not found');
+            return HttpResponse.badRequest(
+                res,
+                [],
+                req.t('user.user_not_found'),
+            );
         }
         await user.remove();
-        res.status(200).send('User deleted successfully');
-    } catch (err) {
-        res.status(500).send(err.message);
+
+        return HttpResponse.success(
+            res,
+            { id: req.params.id },
+            req.t('user.user_deleted_successfully'),
+        );
+    } catch (error) {
+        return HttpResponse.internalServerError(
+            res,
+            [],
+            req.t('auth.internal_server_error'),
+        );
     }
 };

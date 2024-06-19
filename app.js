@@ -17,9 +17,13 @@ const logger = require('./config/logger');
 const compression = require('compression');
 const { RateLimiterMemory } = require('rate-limiter-flexible');
 const swaggerSetup = require('@config/swagger');
+const configureI18n = require('./config/i18n');
 
 // MongoDB
 connectDB();
+
+// Configure i18n with the app instance
+configureI18n(app);
 
 // EJS
 app.set('view engine', 'ejs');
@@ -32,6 +36,15 @@ app.use(cors());
 app.use(helmet());
 app.use(compression());
 app.use(cookieParser());
+
+// Static files
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
+
+// Resource static files
+app.use(
+    `/${constants.UPLOADS_BASE_PATH}`,
+    express.static(path.join(__dirname, constants.UPLOADS_BASE_PATH)),
+);
 
 // Rate limiter
 const rateLimiter = new RateLimiterMemory({
@@ -49,12 +62,6 @@ app.use((req, res, next) => {
             res.status(429).send('Too Many Requests');
         });
 });
-
-// Static files
-app.use('/assets', express.static(path.join(__dirname, 'assets')));
-
-// Resource static files
-app.use(`/${constants.UPLOADS_BASE_PATH}`, express.static(path.join(__dirname, constants.UPLOADS_BASE_PATH)));
 
 // Routes
 app.use('/api', apiRouter);

@@ -1,0 +1,24 @@
+{
+    "validation": {
+        "name_required": "Name is required",
+        "valid_email": "Please include a valid email",
+        "password_length": "Password must be at least 8 characters long",
+        "password_number": "Password must contain a number",
+        "password_letter": "Password must contain a letter",
+        "password_special_character": "Password must contain a special character",
+        "errors": "Validation errors"
+    },
+    "auth": {
+        "invalid_email_password": "Invalid email or password",
+        "invalid_admin_user": "Invalid admin user",
+        "login_successful": "Login successful",
+        "internal_server_error": "Internal server error",
+        "logout_successful": "Successfully logged out"
+    },
+    "resource": {
+        "no_files_selected": "No files selected",
+        "files_uploaded_successfully": "Files uploaded successfully",
+        "file_deleted_successfully": "File deleted successfully",
+        "static_files_deleted_successfully": "Static files deleted successfully"
+    }
+}

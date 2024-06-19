@@ -1,0 +1,29 @@
+<% if (error || (message && message !== '')) { %>
+<div class="com-toast" id="com-toast">
+  <div class="toast-header">
+    <% if (error) { %>
+    <svg class="icon icon-warning icon-header" style="fill: rgba(255, 62, 29, 0.85);">
+      <use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-warning"></use>
+    </svg>
+    <% } else { %>
+    <svg class="icon icon-bell-o icon-header" style="fill: #fff">
+      <use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-bell-o"></use>
+    </svg>
+    <% }%>
+
+    <div class="toast-title" id="toast-title"></div>
+
+    <button type="button" class="btn-close" id="toast-btn-close">
+      <svg class="icon icon-clear" style="fill: #fff;"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-clear"></use></svg>
+    </button>
+  </div>
+  <div class="toast-body">
+    <div class="toast-content" id="toast-content"></div>
+  </div>
+
+  <div id="toast-data" data-error="<%= JSON.stringify(error || false) %>" data-message="<%= JSON.stringify(message || null) %>" data-errors="<%= JSON.stringify(errors || []) %>" style="display:none;">
+  </div>
+</div>
+
+<script src="/assets/js/toast.js"></script>
+<% } %>

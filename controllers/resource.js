@@ -1,4 +1,5 @@
 const ResourceService = require('@services/resource');
+const HttpResponse = require('@services/httpResponse');
 
 /**
  * @swagger
@@ -66,26 +67,40 @@ const ResourceService = require('@services/resource');
  *                   items:
  *                     $ref: '#/components/schemas/Resource'
  *       400:
- *         description: An error occurred
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
+ *         description: Bad request. Invalid email or password.
+ *       401:
+ *         description: Unauthorized access.
+ *       403:
+ *         description: Access forbidden.
+ *       404:
+ *         description: Resource not found.
+ *       500:
+ *         description: Internal server error.
  */
 
 exports.uploadFiles = async (req, res) => {
     try {
-        if(req.files) {
-            res.status(400).json({ message: 'No files selected' });
+        if (!req.files) {
+            return HttpResponse.badRequest(
+                res,
+                [],
+                req.t('resource.no_files_selected'),
+            );
         }
 
         const uploadedFiles = await ResourceService.uploadFiles(req, res);
-        res.status(201).json({ message: 'Files uploaded successfully', files: uploadedFiles });
-    } catch (err) {
-        res.status(400).json({ message: err.message });
+
+        return HttpResponse.success(
+            res,
+            { files: uploadedFiles },
+            req.t('resource.files_uploaded_successfully'),
+        );
+    } catch (error) {
+        return HttpResponse.internalServerError(
+            res,
+            [],
+            req.t('auth.internal_server_error'),
+        );
     }
 };
 
@@ -115,22 +130,32 @@ exports.uploadFiles = async (req, res) => {
  *                 message:
  *                   type: string
  *       400:
- *         description: An error occurred
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
+ *         description: Bad request. Invalid email or password.
+ *       401:
+ *         description: Unauthorized access.
+ *       403:
+ *         description: Access forbidden.
+ *       404:
+ *         description: Resource not found.
+ *       500:
+ *         description: Internal server error.
  */
 
 exports.deleteFile = async (req, res) => {
     try {
         await ResourceService.deleteFile(req.params.id);
-        res.status(200).json({ message: 'File deleted successfully' });
-    } catch (err) {
-        res.status(400).json({ message: err.message });
+
+        return HttpResponse.success(
+            res,
+            {},
+            req.t('resource.file_deleted_successfully'),
+        );
+    } catch (error) {
+        return HttpResponse.internalServerError(
+            res,
+            [],
+            req.t('auth.internal_server_error'),
+        );
     }
 };
 
@@ -151,15 +176,28 @@ exports.deleteFile = async (req, res) => {
  *               type: array
  *               items:
  *                 type: string
+ *       400:
+ *         description: Bad request. Invalid email or password.
+ *       401:
+ *         description: Unauthorized access.
+ *       403:
+ *         description: Access forbidden.
+ *       404:
+ *         description: Resource not found.
  *       500:
- *         description: Server error
+ *         description: Internal server error.
  */
 exports.getStaticFiles = async (req, res) => {
     try {
         const files = await ResourceService.getStaticFiles();
-        res.status(200).json(files);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+
+        return HttpResponse.success(res, files);
+    } catch (error) {
+        return HttpResponse.internalServerError(
+            res,
+            [],
+            req.t('auth.internal_server_error'),
+        );
     }
 };
 
@@ -191,16 +229,34 @@ exports.getStaticFiles = async (req, res) => {
  *               type: array
  *               items:
  *                 type: string
+ *       400:
+ *         description: Bad request. Invalid email or password.
+ *       401:
+ *         description: Unauthorized access.
+ *       403:
+ *         description: Access forbidden.
+ *       404:
+ *         description: Resource not found.
  *       500:
- *         description: Server error
+ *         description: Internal server error.
  */
 
 exports.deleteStaticFiles = async (req, res) => {
     try {
         const { filePath } = req.body;
+
         await ResourceService.deleteStaticFiles(filePath);
-        res.status(200).json({ message: 'Static files deleted successfully' });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+
+        return HttpResponse.success(
+            res,
+            {},
+            req.t('resource.static_files_deleted_successfully'),
+        );
+    } catch (error) {
+        return HttpResponse.internalServerError(
+            res,
+            [],
+            req.t('auth.internal_server_error'),
+        );
     }
 };

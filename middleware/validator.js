@@ -1,22 +1,34 @@
-const { check, body, validationResult } = require('express-validator');
+const { body, validationResult } = require('express-validator');
+const HttpResponse = require('@services/httpResponse');
 
 exports.userValidationRules = () => {
     return [
-        body('name')
-            .notEmpty()
-            .withMessage('Name is required'),
-        body('email')
-            .isEmail()
-            .withMessage('Please include a valid email'),
+        body('name').notEmpty().withMessage('validation.name_required'),
+        body('email').isEmail().withMessage('validation.valid_email'),
         body('password')
             .isLength({ min: 8 })
-            .withMessage('Password must be at least 8 characters long')
+            .withMessage('validation.password_length')
             .matches(/\d/)
-            .withMessage('Password must contain a number')
+            .withMessage('validation.password_number')
             .matches(/[a-zA-Z]/)
-            .withMessage('Password must contain a letter')
+            .withMessage('validation.password_letter')
             .matches(/[!@#$%^&*(),.?":{}|<>]/)
-            .withMessage('Password must contain a special character')
+            .withMessage('validation.password_special_characters'),
+    ];
+};
+
+exports.loginValidationRules = () => {
+    return [
+        body('email').isEmail().withMessage('validation.valid_email'),
+        body('password')
+            .isLength({ min: 8 })
+            .withMessage('validation.password_length')
+            .matches(/\d/)
+            .withMessage('validation.password_number')
+            .matches(/[a-zA-Z]/)
+            .withMessage('validation.password_letter')
+            .matches(/[!@#$%^&*(),.?":{}|<>]/)
+            .withMessage('validation.password_special_character'),
     ];
 };
 
@@ -25,22 +37,15 @@ exports.validate = (req, res, next) => {
     if (errors.isEmpty()) {
         return next();
     }
-    const extractedErrors = [];
-    errors.array().map(err => extractedErrors.push({ [err.param]: err.msg }));
 
-    return res.status(422).json({
-        errors: extractedErrors,
-    });
+    const translatedErrors = errors.array().map((error) => ({
+        ...error,
+        msg: req.t(error.msg),
+    }));
+
+    return HttpResponse.badRequest(
+        res,
+        translatedErrors,
+        req.t('validation.errors'),
+    );
 };
-
-exports.validateLogin = [
-    check('email', 'Please include a valid email').isEmail(),
-    check('password', 'Password is required').exists(),
-    (req, res, next) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-        next();
-    }
-];

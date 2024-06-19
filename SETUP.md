@@ -142,31 +142,31 @@ res.status(500).send('Something broke!');
 });
 
 11. Prettier và ESLint
-Mô tả: Để đảm bảo mã nguồn nhất quán và tuân thủ các quy tắc coding.
+    Mô tả: Để đảm bảo mã nguồn nhất quán và tuân thủ các quy tắc coding.
 
 Cài đặt:
 npm install --save-dev prettier eslint eslint-plugin-prettier eslint-config-prettier
 
 12. nodemon
-Mô tả: Để tự động khởi động lại server khi có thay đổi trong mã nguồn.
+    Mô tả: Để tự động khởi động lại server khi có thay đổi trong mã nguồn.
 
 Cài đặt:
 npm install --save-dev nodemon
 
 13. Compression
-Mô tả: Để nén HTTP response.
+    Mô tả: Để nén HTTP response.
 
 Cài đặt:
 npm install compression
 
 14. Rate-limiter-flexible
-Mô tả: Để hạn chế số lượng request nhằm bảo vệ khỏi các cuộc tấn công DDoS.
+    Mô tả: Để hạn chế số lượng request nhằm bảo vệ khỏi các cuộc tấn công DDoS.
 
 Cài đặt:
 npm install rate-limiter-flexible
 
 15. Swagger
-Mô tả: Để tạo API documentation.
+    Mô tả: Để tạo API documentation.
 
 Cài đặt:
 npm install swagger-jsdoc swagger-ui-express
