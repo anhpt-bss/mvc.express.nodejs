@@ -6,7 +6,10 @@ const constants = require('@config/constants');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const uploadDir = path.join(__dirname, `../../${constants.UPLOADS_BASE_PATH}`);
+        const uploadDir = path.join(
+            __dirname,
+            `../../${constants.UPLOADS_BASE_PATH}`,
+        );
         if (!fs.existsSync(uploadDir)) {
             fs.mkdirSync(uploadDir, { recursive: true });
         }
@@ -40,7 +43,11 @@ class ResourceService {
 
                 const uploadedFiles = [];
                 for (const file of req.files) {
-                    const existingFile = await Resource.findOne({ filename: file.originalname, size: file.size, mimetype: file.mimetype });
+                    const existingFile = await Resource.findOne({
+                        filename: file.originalname,
+                        size: file.size,
+                        mimetype: file.mimetype,
+                    });
                     if (existingFile) {
                         uploadedFiles.push(existingFile);
                     } else {
@@ -72,11 +79,14 @@ class ResourceService {
             throw new Error('File not found');
         }
         throw new Error('Resource not found');
-    }    
-    
+    }
+
     static getStaticFiles() {
         return new Promise((resolve, reject) => {
-            const uploadDir = path.join(__dirname, `../../${constants.UPLOADS_BASE_PATH}`);
+            const uploadDir = path.join(
+                __dirname,
+                `../../${constants.UPLOADS_BASE_PATH}`,
+            );
             fs.readdir(uploadDir, (err, files) => {
                 if (err) {
                     return reject(err);
@@ -88,8 +98,11 @@ class ResourceService {
 
     static deleteStaticFiles(filePath) {
         return new Promise((resolve, reject) => {
-            const uploadDir = path.join(__dirname, `../../${constants.UPLOADS_BASE_PATH}`);
-            
+            const uploadDir = path.join(
+                __dirname,
+                `../../${constants.UPLOADS_BASE_PATH}`,
+            );
+
             if (!filePath) {
                 // If no file path is provided, delete all files
                 fs.readdir(uploadDir, (err, files) => {
@@ -103,7 +116,10 @@ class ResourceService {
                 });
             } else {
                 // Delete specific file
-                const fileToDelete = path.join(uploadDir, path.basename(filePath));
+                const fileToDelete = path.join(
+                    uploadDir,
+                    path.basename(filePath),
+                );
                 fs.unlink(fileToDelete, (err) => {
                     if (err) {
                         return reject(err);

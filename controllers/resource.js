@@ -81,14 +81,26 @@ const HttpResponse = require('@services/httpResponse');
 exports.uploadFiles = async (req, res) => {
     try {
         if (!req.files) {
-            return HttpResponse.badRequest(res, [], req.t('resource.no_files_selected'));
+            return HttpResponse.badRequest(
+                res,
+                [],
+                req.t('resource.no_files_selected'),
+            );
         }
 
         const uploadedFiles = await ResourceService.uploadFiles(req, res);
 
-        return HttpResponse.success(res, { files: uploadedFiles }, req.t('resource.files_uploaded_successfully'));
+        return HttpResponse.success(
+            res,
+            { files: uploadedFiles },
+            req.t('resource.files_uploaded_successfully'),
+        );
     } catch (error) {
-        return HttpResponse.internalServerError(res, [], req.t('auth.internal_server_error'));
+        return HttpResponse.internalServerError(
+            res,
+            [],
+            req.t('auth.internal_server_error'),
+        );
     }
 };
 
@@ -133,9 +145,17 @@ exports.deleteFile = async (req, res) => {
     try {
         await ResourceService.deleteFile(req.params.id);
 
-        return HttpResponse.success(res, {}, req.t('resource.file_deleted_successfully'));
+        return HttpResponse.success(
+            res,
+            {},
+            req.t('resource.file_deleted_successfully'),
+        );
     } catch (error) {
-        return HttpResponse.internalServerError(res, [], req.t('auth.internal_server_error'));
+        return HttpResponse.internalServerError(
+            res,
+            [],
+            req.t('auth.internal_server_error'),
+        );
     }
 };
 
@@ -170,10 +190,14 @@ exports.deleteFile = async (req, res) => {
 exports.getStaticFiles = async (req, res) => {
     try {
         const files = await ResourceService.getStaticFiles();
-        
+
         return HttpResponse.success(res, files);
     } catch (error) {
-        return HttpResponse.internalServerError(res, [], req.t('auth.internal_server_error'));
+        return HttpResponse.internalServerError(
+            res,
+            [],
+            req.t('auth.internal_server_error'),
+        );
     }
 };
 
@@ -223,8 +247,16 @@ exports.deleteStaticFiles = async (req, res) => {
 
         await ResourceService.deleteStaticFiles(filePath);
 
-        return HttpResponse.success(res, {}, req.t('resource.static_files_deleted_successfully'));
+        return HttpResponse.success(
+            res,
+            {},
+            req.t('resource.static_files_deleted_successfully'),
+        );
     } catch (error) {
-        return HttpResponse.internalServerError(res, [], req.t('auth.internal_server_error'));
+        return HttpResponse.internalServerError(
+            res,
+            [],
+            req.t('auth.internal_server_error'),
+        );
     }
 };

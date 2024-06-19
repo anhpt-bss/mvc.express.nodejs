@@ -4,7 +4,7 @@ const {
     UNAUTHORIZED_ERROR,
     FORBIDDEN_ERROR,
     NOT_FOUND_ERROR,
-    INTERNAL_SERVER_ERROR
+    INTERNAL_SERVER_ERROR,
 } = require('./constants');
 
 class HttpResponse {
@@ -14,7 +14,7 @@ class HttpResponse {
             data,
             errors: null,
             status_code: SUCCESS_REQUEST,
-            message
+            message,
         };
     }
 
@@ -24,7 +24,7 @@ class HttpResponse {
             data: null,
             errors,
             status_code: BAD_REQUEST_ERROR,
-            message
+            message,
         };
     }
 
@@ -34,7 +34,7 @@ class HttpResponse {
             data: null,
             errors,
             status_code: UNAUTHORIZED_ERROR,
-            message
+            message,
         };
     }
 
@@ -44,7 +44,7 @@ class HttpResponse {
             data: null,
             errors,
             status_code: FORBIDDEN_ERROR,
-            message
+            message,
         };
     }
 
@@ -54,17 +54,20 @@ class HttpResponse {
             data: null,
             errors,
             status_code: NOT_FOUND_ERROR,
-            message
+            message,
         };
     }
 
-    static internalServerErrorResponse(errors = [], message = 'Internal server error') {
+    static internalServerErrorResponse(
+        errors = [],
+        message = 'Internal server error',
+    ) {
         return {
             error: true,
             data: null,
             errors,
             status_code: INTERNAL_SERVER_ERROR,
-            message
+            message,
         };
     }
 
@@ -73,23 +76,33 @@ class HttpResponse {
     }
 
     static badRequest(res, errors, message) {
-        res.status(BAD_REQUEST_ERROR).json(this.badRequestResponse(errors, message));
+        res.status(BAD_REQUEST_ERROR).json(
+            this.badRequestResponse(errors, message),
+        );
     }
 
     static unauthorized(res, errors, message) {
-        res.status(UNAUTHORIZED_ERROR).json(this.unauthorizedResponse(errors, message));
+        res.status(UNAUTHORIZED_ERROR).json(
+            this.unauthorizedResponse(errors, message),
+        );
     }
 
     static forbidden(res, errors, message) {
-        res.status(FORBIDDEN_ERROR).json(this.forbiddenResponse(errors, message));
+        res.status(FORBIDDEN_ERROR).json(
+            this.forbiddenResponse(errors, message),
+        );
     }
 
     static notFound(res, errors, message) {
-        res.status(NOT_FOUND_ERROR).json(this.notFoundResponse(errors, message));
+        res.status(NOT_FOUND_ERROR).json(
+            this.notFoundResponse(errors, message),
+        );
     }
 
     static internalServerError(res, errors, message) {
-        res.status(INTERNAL_SERVER_ERROR).json(this.internalServerErrorResponse(errors, message));
+        res.status(INTERNAL_SERVER_ERROR).json(
+            this.internalServerErrorResponse(errors, message),
+        );
     }
 }
 

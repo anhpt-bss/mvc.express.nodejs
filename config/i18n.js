@@ -7,22 +7,25 @@ const configureI18n = (app) => {
     i18next
         .use(Backend)
         // .use(i18nextMiddleware.LanguageDetector)
-        .init({
-            // debug: true,
-            backend: {
-                loadPath: path.join(__dirname, '../locales/{{lng}}.json'), // Path to translation files
+        .init(
+            {
+                // debug: true,
+                backend: {
+                    loadPath: path.join(__dirname, '../locales/{{lng}}.json'), // Path to translation files
+                },
+                lng: 'vi', // Set default language
+                fallbackLng: 'vi', // Define a fallback language
+                preload: ['vi', 'en'], // Preload both English and Vietnamese translations
             },
-            lng: 'vi', // Set default language
-            fallbackLng: 'vi', // Define a fallback language
-            preload: ['vi', 'en'], // Preload both English and Vietnamese translations
-        }, (err, t) => {
-            if (err) {
-                console.error('i18next initialization error:', err);
-            } else {
-                console.log('i18next initialized successfully!');
-                app.use(i18nextMiddleware.handle(i18next)); // Register i18next middleware
-            }
-        });
+            (err, t) => {
+                if (err) {
+                    console.error('i18next initialization error:', err);
+                } else {
+                    console.log('i18next initialized successfully!');
+                    app.use(i18nextMiddleware.handle(i18next)); // Register i18next middleware
+                }
+            },
+        );
 
     app.use(i18nextMiddleware.handle(i18next)); // Register i18next middleware
 

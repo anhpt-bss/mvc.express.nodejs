@@ -37,6 +37,15 @@ app.use(helmet());
 app.use(compression());
 app.use(cookieParser());
 
+// Static files
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
+
+// Resource static files
+app.use(
+    `/${constants.UPLOADS_BASE_PATH}`,
+    express.static(path.join(__dirname, constants.UPLOADS_BASE_PATH)),
+);
+
 // Rate limiter
 const rateLimiter = new RateLimiterMemory({
     points: 10, // 10 requests
@@ -53,12 +62,6 @@ app.use((req, res, next) => {
             res.status(429).send('Too Many Requests');
         });
 });
-
-// Static files
-app.use('/assets', express.static(path.join(__dirname, 'assets')));
-
-// Resource static files
-app.use(`/${constants.UPLOADS_BASE_PATH}`, express.static(path.join(__dirname, constants.UPLOADS_BASE_PATH)));
 
 // Routes
 app.use('/api', apiRouter);

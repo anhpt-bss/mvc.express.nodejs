@@ -7,7 +7,11 @@ exports.verifyAPIToken = (req, res, next) => {
     const accessToken = authHeader && authHeader.split(' ')[1];
 
     if (!accessToken) {
-        return HttpResponse.unauthorized(res, [], 'Unauthorized: No token provided');
+        return HttpResponse.unauthorized(
+            res,
+            [],
+            'Unauthorized: No token provided',
+        );
     }
 
     try {
@@ -15,7 +19,11 @@ exports.verifyAPIToken = (req, res, next) => {
         req.user = decoded;
         next();
     } catch (error) {
-        return HttpResponse.unauthorized(res, [], 'Unauthorized: Invalid token');
+        return HttpResponse.unauthorized(
+            res,
+            [],
+            'Unauthorized: Invalid token',
+        );
     }
 };
 
