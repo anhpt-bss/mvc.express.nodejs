@@ -17,7 +17,25 @@ router.use(checkAdminToken);
 
 // Routes privated
 router.get('/', (req, res) => {
-    res.render('admin', { page_title: 'Trang quản trị' });
+    res.render('admin', {}, (err, html) => {
+        if (err) {
+            return res.status(500).send(err.message);
+        }
+
+        // Pass the rendered content to the layout
+        res.render('admin/layout', { body: html, title: 'Bảng Điều Khiển', currentUser: req.user });
+    });
+});
+
+router.get('/users', (req, res) => {
+    res.render('admin/users', {}, (err, html) => {
+        if (err) {
+            return res.status(500).send(err.message);
+        }
+
+        // Pass the rendered content to the layout
+        res.render('admin/layout', { body: html, title: 'Người Dùng', currentUser: req.user });
+    });
 });
 
 router.get('/auth/logout', authController.logout);

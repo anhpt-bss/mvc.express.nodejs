@@ -1,5 +1,239 @@
-/* Login Styles */
+/* ---------------------- Layout Styles ---------------------- */
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+}
 
+.admin-layout .admin-aside {
+    width: 250px;
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: width 0.3s;
+}
+
+.admin-layout .aside-header {
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-layout .aside-header h3 {
+    transition: opacity 1s, width 0.3s;
+    height: 30px;
+}
+
+.admin-layout .aside-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex: 1;
+}
+
+.admin-layout .menu-item {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.admin-layout .menu-item a {
+    width: 100%;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+}
+
+.admin-layout .menu-item:hover {
+    background-color: #34495e;
+}
+
+.admin-layout .menu-item.active {
+    background-color: #1abc9c;
+}
+
+.admin-layout .sidebar-icon {
+    margin-right: 1rem;
+    width: 20px;
+    height: 20px;
+}
+
+.admin-layout .title {
+    transition: opacity 0.3s, width 0.3s;
+}
+
+.admin-layout .aside-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+}
+.admin-layout .logout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    text-decoration: none;
+    color: #fff;
+    background-color: #e74c3c;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.admin-layout .logout svg {
+    height: 16px;
+    width: 16px;
+    margin-right: 8px;
+}
+
+.admin-layout .logout:hover {
+    background-color: #c0392b;
+}
+
+.admin-layout .admin-aside .logout span {
+    transition: opacity 0.3s, width 0.3s;
+}
+
+.admin-layout .admin-aside.collapsed {
+    width: 80px;
+}
+.admin-layout .admin-aside.collapsed .aside-header {
+    justify-content: center;
+}
+.admin-layout .admin-aside.collapsed .aside-header h3 {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+}
+.admin-layout .admin-aside.collapsed .menu-item {
+    justify-content: center;
+}
+.admin-layout .admin-aside.collapsed .icon {
+    margin-right: 0;
+}
+.admin-layout .admin-aside.collapsed .title {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+}
+.admin-layout .admin-aside.collapsed .logout span {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+/* Layout content */
+.admin-layout .admin-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Layout nav */
+.admin-layout .admin-nav {
+    background-color: #ecf0f1;
+    padding: 0.65rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.admin-layout .admin-nav h1 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.admin-layout .nav-right {
+    display: flex;
+    align-items: center;
+}
+
+.admin-layout .user-info {
+    display: flex;
+    align-items: center;
+}
+
+.admin-layout .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-left: 0.5rem;
+}
+
+.admin-layout .username {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #696cff;
+}
+
+/* Layout main */
+.admin-layout .admin-main {
+    flex: 1;
+    padding: 1rem;
+}
+
+/* Layout footer */
+.admin-layout .admin-footer {
+    background-color: #ecf0f1;
+    text-align: center;
+    padding: 0.2rem;
+}
+
+/* Layout responsive */
+.admin-layout .nav-toggle,
+.admin-layout .aside-toggle,
+.admin-layout .collapse-toggle {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .admin-layout .admin-aside {
+        position: fixed;
+        left: -250px;
+        top: 0;
+        bottom: 0;
+        z-index: 1000;
+    }
+
+    .admin-layout .admin-aside.active {
+        left: 0;
+    }
+
+    .admin-layout .aside-toggle {
+        display: block;
+    }
+
+    .admin-layout .nav-toggle {
+        display: block;
+    }
+
+    .admin-layout .collapse-toggle {
+        display: none;
+    }
+
+    .admin-layout .admin-content {
+        margin-left: 0;
+    }
+}
+
+@media (min-width: 768px) {
+    .admin-layout .collapse-toggle {
+        display: block;
+        background-color: #34495e;
+        border: none;
+        color: #ecf0f1;
+        cursor: pointer;
+    }
+}
+
+/* ---------------------- Login Styles ---------------------- */
 .login-container {
     width: 100%;
     height: 100vh;
@@ -53,13 +287,11 @@
     height: 40%;
     right: 1%;
     z-index: -1;
-    background: radial-gradient(
-        circle,
-        rgb(194, 13, 170) 20%,
-        rgb(26, 186, 235) 60%,
+    background: radial-gradient(circle,
+            rgb(194, 13, 170) 20%,
+            rgb(26, 186, 235) 60%,
 
-        rgb(26, 186, 235) 100%
-    );
+            rgb(26, 186, 235) 100%);
     filter: blur(70px);
     border-radius: 50%;
 }
@@ -81,11 +313,9 @@
     height: 80%;
     right: -40%;
     background: rgb(157, 173, 203);
-    background: radial-gradient(
-        circle,
-        rgba(157, 173, 203, 1) 61%,
-        rgba(99, 122, 159, 1) 100%
-    );
+    background: radial-gradient(circle,
+            rgba(157, 173, 203, 1) 61%,
+            rgba(99, 122, 159, 1) 100%);
     border-radius: 50%;
     z-index: -1;
 }
@@ -125,8 +355,8 @@
     font-size: 0.9em;
 }
 
-.login-form .input:focus + label,
-.login-form .input:valid + label {
+.login-form .input:focus+label,
+.login-form .input:valid+label {
     transform: translateY(-120%) scale(0.9);
     transition: all 0.4s;
 }
@@ -144,7 +374,7 @@
         4px 4px 4px rgba(218, 218, 218, 0.13);
 }
 
-/* Toast Styles */
+/* ---------------------- Toast Styles ---------------------- */
 .com-toast {
     position: fixed;
     bottom: 20px;
