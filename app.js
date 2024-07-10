@@ -18,6 +18,7 @@ const compression = require('compression');
 const { RateLimiterMemory } = require('rate-limiter-flexible');
 const swaggerSetup = require('@config/swagger');
 const configureI18n = require('./config/i18n');
+const notificationMiddleware = require('@middleware/notification');
 
 // MongoDB
 connectDB();
@@ -63,6 +64,9 @@ app.use((req, res, next) => {
         });
 });
 
+// Notification middleware
+app.use(notificationMiddleware);
+
 // Routes
 app.use('/api', apiRouter);
 app.use('/admin', adminRouter);
@@ -72,11 +76,20 @@ app.use('/', clientRouter);
 swaggerSetup(app);
 
 // Middleware
-app.use((err, req, res, next) => {
-    logger.error(err.message);
-    res.status(500).send('Something broke!');
+app.use((error, req, res, next) => {
+    console.log('[---Log---][---App---]: ', error);
+    logger.error(error.message);
+    if (req.headers.accept && req.headers.accept.includes('application/json')) {
+        return HttpResponse.internalServerError(res);
+    } else {
+        res.locals.response = HttpResponse.internalServerErrorResponse();
+        return next();
+    }
 });
 
 app.listen(constants.PORT, () => {
-    console.log(`Server is running on port ${constants.PORT}`);
+    console.log(
+        '[---Log---][---App---]: ',
+        `Server is running on port ${constants.PORT}`,
+    );
 });

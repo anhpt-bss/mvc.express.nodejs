@@ -1,0 +1,8 @@
+<div>
+    <%- include('../components/form', {
+        fields_config: response.fields_config || [],
+        back_route: response.back_route,
+        next_route: response.next_route,
+        default_values: response.default_values || {}
+    }) %>
+</div>

@@ -5,6 +5,30 @@
     <link rel="stylesheet" type="text/css" href="/css/style.css">
 </head>
 <body>
-    <h1><%= page_title %></h1>
+    <h1>Detect urls</h1>
+
+    <div>
+        <textarea id="htmlTextarea"></textarea>
+    </div>
+
+    <button id="detectLinksButton">Detect links</button>
+
+    <div>
+        <textarea id="urlsTextarea"></textarea>
+    </div>
+
+    <h1>Replace urls</h1>
+
+    <div>
+        <textarea id="changeUrlsTextarea"></textarea>
+    </div>
+
+    <button id="replaceLinksButton">Replace link</button>
+
+    <div>
+        <textarea id="responseHtmlTextarea"></textarea>
+    </div>
+
+    <script src="/assets/js/convertHtml.js"></script>
 </body>
 </html>

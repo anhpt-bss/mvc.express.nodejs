@@ -1,4 +1,12 @@
 {
+    "common": {
+        "request_successfully": "Yêu cầu được xử lý thành công",
+        "bad_request": "Yêu cầu không hợp lệ",
+        "unauthorized_access": "Truy cập trái phép",
+        "access_forbidden": "Truy cập bị cấm",
+        "resource_not_found": "Không tìm thấy tài nguyên",
+        "internal_server_error": "Lỗi máy chủ nội bộ"
+    },
     "validation": {
         "name_required": "Tên là bắt buộc",
         "valid_email": "Vui lòng nhập email hợp lệ",
@@ -12,7 +20,6 @@
         "invalid_email_password": "Email hoặc mật khẩu không hợp lệ",
         "invalid_admin_user": "Người dùng quản trị không hợp lệ",
         "login_successful": "Đăng nhập thành công",
-        "internal_server_error": "Lỗi máy chủ nội bộ",
         "logout_successful": "Đăng xuất thành công"
     },
     "resource": {
@@ -20,5 +27,9 @@
         "files_uploaded_successfully": "Tệp đã tải lên thành công",
         "file_deleted_successfully": "Tệp đã được xóa thành công",
         "static_files_deleted_successfully": "Các tệp tĩnh đã được xóa thành công"
+    },
+    "user": {
+        "email_already_exists": "Email đã tồn tại",
+        "user_not_found": "Không tìm thấy người dùng"
     }
 }

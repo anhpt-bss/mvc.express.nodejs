@@ -4,6 +4,8 @@ const router = express.Router();
 const resourceController = require('@controllers/resource');
 const { verifyAPIToken } = require('@middleware/auth');
 
+router.post('/download-urls', resourceController.downloadFilesFromUrls);
+
 // Routes need authentication
 router.use(verifyAPIToken);
 

@@ -6,9 +6,13 @@ const {
     NOT_FOUND_ERROR,
     INTERNAL_SERVER_ERROR,
 } = require('./constants');
+const i18next = require('i18next');
 
 class HttpResponse {
-    static successResponse(data = {}, message = 'Request successful') {
+    static successResponse(
+        data = {},
+        message = i18next.t('common.request_successfully'),
+    ) {
         return {
             error: false,
             data,
@@ -18,7 +22,10 @@ class HttpResponse {
         };
     }
 
-    static badRequestResponse(errors = [], message = 'Bad request') {
+    static badRequestResponse(
+        errors = [],
+        message = i18next.t('common.bad_request'),
+    ) {
         return {
             error: true,
             data: null,
@@ -28,7 +35,10 @@ class HttpResponse {
         };
     }
 
-    static unauthorizedResponse(errors = [], message = 'Unauthorized access') {
+    static unauthorizedResponse(
+        errors = [],
+        message = i18next.t('common.unauthorized_access'),
+    ) {
         return {
             error: true,
             data: null,
@@ -38,7 +48,10 @@ class HttpResponse {
         };
     }
 
-    static forbiddenResponse(errors = [], message = 'Access forbidden') {
+    static forbiddenResponse(
+        errors = [],
+        message = i18next.t('common.access_forbidden'),
+    ) {
         return {
             error: true,
             data: null,
@@ -48,7 +61,10 @@ class HttpResponse {
         };
     }
 
-    static notFoundResponse(errors = [], message = 'Resource not found') {
+    static notFoundResponse(
+        errors = [],
+        message = i18next.t('common.resource_not_found'),
+    ) {
         return {
             error: true,
             data: null,
@@ -60,7 +76,7 @@ class HttpResponse {
 
     static internalServerErrorResponse(
         errors = [],
-        message = 'Internal server error',
+        message = i18next.t('common.internal_server_error'),
     ) {
         return {
             error: true,

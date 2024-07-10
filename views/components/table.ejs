@@ -1,0 +1,70 @@
+<div class="com-table">
+    <div class="table-header">
+        <h2></h2>
+        <a class="create-btn" href="<%= route %>/create">Tạo Mới</a>
+    </div>
+    <div class="table-scroll-container">
+        <table>
+            <thead>
+                <tr>
+                    <% for (var i = 0; i < tableHeaders.length; i++) { if(tableHeaders[i].is_show) { %>
+                        <th>
+                            <a href="?sort=<%= tableHeaders[i].field_name %>&order=<%= sort === tableHeaders[i].field_name && order === 'asc' ? 'desc' : 'asc' %>&limit=<%= limit %>&page=<%= page %>">
+                                <%= tableHeaders[i].field_label %>
+                                <% if (sort === tableHeaders[i].field_name) { %>
+                                    <span><%= order === 'asc' ? '▲' : '▼' %></span>
+                                <% } %>
+                            </a>
+                        </th>
+                    <% }} %>
+                    <th>Hành Động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for (var i = 0; i < tableData.length; i++) { %>
+                <tr>
+                    <% for (var j = 0; j < tableHeaders.length; j++) { if(tableHeaders[j].is_show) { %>
+                        <% if(tableHeaders[j].field_type === 'checkbox') { %>
+                            <td><%= tableData[i][tableHeaders[j].field_name] ? '✔️' : '❌' %></td>
+                        <% } else { %>
+                            <td><%= tableData[i][tableHeaders[j].field_name] %></td>
+                        <% } %>
+                    <% }} %>
+                    <td>
+                        <div class="table-action">
+                            <a class="table-action-btn" href="<%= route %>/edit/<%= tableData[i]._id %>">
+                                <svg class="icon icon-edit" style="fill: #428dff;"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-edit"></use></svg>
+                            </a>
+                            <a class="table-action-btn" href="<%= route %>/delete/<%= tableData[i]._id %>">
+                                <svg class="icon icon-bin" style="fill: #f86262;"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-bin"></use></svg>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+    <div class="table-footer">
+        <span>Tổng: <%= total %></span>
+        <div class="pagination">
+            <div class="limit">
+                <span>Giới hạn:</span>
+                <% [10, 15, 20, 25, 30].forEach(function (val) { %>
+                    <button class="limit-btn <%= val === limit ? 'active' : '' %>">
+                        <a href="?sort=<%= sort %>&order=<%= order %>&limit=<%= val %>&page=<%= page %>"><%= val %></a>
+                    </button>
+                <% }); %>
+            </div>
+            <div class="page">
+                <span>Trang: <%= page %> / <%= totalPages %></span>
+                <button class="pagination-btn <%= page === 1 ? 'disabled' : '' %>">
+                    <a href="?sort=<%= sort %>&order=<%= order %>&limit=<%= limit %>&page=<%= page - 1 %>">Trước</a>
+                </button>
+                <button class="pagination-btn <%= page === totalPages ? 'disabled' : '' %>">
+                    <a href="?sort=<%= sort %>&order=<%= order %>&limit=<%= limit %>&page=<%= page + 1 %>">Sau</a>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

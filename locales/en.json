@@ -1,4 +1,12 @@
 {
+    "common": {
+        "request_successfully": "Request processed successfully",
+        "bad_request": "Bad request",
+        "unauthorized_access": "Unauthorized access",
+        "access_forbidden": "Access forbidden",
+        "resource_not_found": "Resource not found",
+        "internal_server_error": "Internal server error"
+    },
     "validation": {
         "name_required": "Name is required",
         "valid_email": "Please include a valid email",
@@ -20,5 +28,9 @@
         "files_uploaded_successfully": "Files uploaded successfully",
         "file_deleted_successfully": "File deleted successfully",
         "static_files_deleted_successfully": "Static files deleted successfully"
+    },
+    "user": {
+        "email_already_exists": "Email already exists",
+        "user_not_found": "User not found"
     }
 }

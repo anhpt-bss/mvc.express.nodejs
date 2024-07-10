@@ -13,7 +13,7 @@ exports.userValidationRules = () => {
             .matches(/[a-zA-Z]/)
             .withMessage('validation.password_letter')
             .matches(/[!@#$%^&*(),.?":{}|<>]/)
-            .withMessage('validation.password_special_characters'),
+            .withMessage('validation.password_special_character'),
     ];
 };
 
@@ -43,9 +43,17 @@ exports.validate = (req, res, next) => {
         msg: req.t(error.msg),
     }));
 
-    return HttpResponse.badRequest(
-        res,
-        translatedErrors,
-        req.t('validation.errors'),
-    );
+    if (req.headers.accept && req.headers.accept.includes('application/json')) {
+        return HttpResponse.badRequest(
+            res,
+            translatedErrors,
+            req.t('validation.errors'),
+        );
+    } else {
+        res.locals.response = HttpResponse.badRequestResponse(
+            translatedErrors,
+            req.t('validation.errors'),
+        );
+        return next();
+    }
 };

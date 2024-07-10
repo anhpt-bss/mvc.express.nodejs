@@ -71,38 +71,37 @@ const HttpResponse = require('@services/httpResponse');
  *       500:
  *         description: Internal server error.
  */
-exports.login = async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        const translatedErrors = errors.array().map((error) => ({
-            ...error,
-            msg: req.t(error.msg),
-        }));
+exports.login = async (req, res, next) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            const translatedErrors = errors.array().map((error) => ({
+                ...error,
+                msg: req.t(error.msg),
+            }));
 
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
-            return HttpResponse.badRequest(
-                res,
-                translatedErrors,
-                req.t('validation.errors'),
-            );
-        } else {
-            return res.render(
-                'admin/signin',
-                HttpResponse.badRequestResponse(
+            if (
+                req.headers.accept &&
+                req.headers.accept.includes('application/json')
+            ) {
+                return HttpResponse.badRequest(
+                    res,
                     translatedErrors,
                     req.t('validation.errors'),
-                ),
-            );
+                );
+            } else {
+                res.locals.response = HttpResponse.badRequestResponse(
+                    translatedErrors,
+                    req.t('validation.errors'),
+                );
+                return next();
+            }
         }
-    }
 
-    const { email, password } = req.body;
+        const { email, password } = req.body;
 
-    try {
         const user = await User.findOne({ email });
+
         if (!user) {
             const errorMessage = req.t('auth.invalid_email_password');
             if (
@@ -111,10 +110,11 @@ exports.login = async (req, res) => {
             ) {
                 return HttpResponse.badRequest(res, [], errorMessage);
             } else {
-                return res.render(
-                    'admin/signin',
-                    HttpResponse.badRequestResponse([], errorMessage),
+                res.locals.response = HttpResponse.badRequestResponse(
+                    [],
+                    errorMessage,
                 );
+                return next();
             }
         }
 
@@ -128,10 +128,11 @@ exports.login = async (req, res) => {
             ) {
                 return HttpResponse.badRequest(res, [], errorMessage);
             } else {
-                return res.render(
-                    'admin/signin',
-                    HttpResponse.badRequestResponse([], errorMessage),
+                res.locals.response = HttpResponse.badRequestResponse(
+                    [],
+                    errorMessage,
                 );
+                return next();
             }
         }
 
@@ -143,10 +144,11 @@ exports.login = async (req, res) => {
             ) {
                 return HttpResponse.badRequest(res, [], errorMessage);
             } else {
-                return res.render(
-                    'admin/signin',
-                    HttpResponse.badRequestResponse([], errorMessage),
+                res.locals.response = HttpResponse.badRequestResponse(
+                    [],
+                    errorMessage,
                 );
+                return next();
             }
         }
 
@@ -167,21 +169,22 @@ exports.login = async (req, res) => {
                 secure: false,
                 sameSite: 'Strict',
             });
-            return res.redirect('/admin');
+            res.locals.response = HttpResponse.successResponse(
+                { token },
+                req.t('auth.login_successful'),
+            );
+            return next();
         }
     } catch (error) {
-        const errorMessage =
-            error.message || req.t('auth.internal_server_error');
+        console.log('[---Log---][---login---]: ', error);
         if (
             req.headers.accept &&
             req.headers.accept.includes('application/json')
         ) {
-            return HttpResponse.internalServerError(res, [], errorMessage);
+            return HttpResponse.internalServerError(res);
         } else {
-            return res.render(
-                'admin/signin',
-                HttpResponse.internalServerErrorResponse([], errorMessage),
-            );
+            res.locals.response = HttpResponse.internalServerErrorResponse();
+            return next();
         }
     }
 };
@@ -208,7 +211,7 @@ exports.login = async (req, res) => {
  *       500:
  *         description: Internal server error.
  */
-exports.logout = (req, res) => {
+exports.logout = (req, res, next) => {
     try {
         if (
             req.headers.accept &&
@@ -221,21 +224,22 @@ exports.logout = (req, res) => {
             );
         } else {
             res.clearCookie('access_token');
-            return res.redirect('/admin/auth/login');
+            res.locals.response = HttpResponse.successResponse(
+                null,
+                req.t('auth.logout_successful'),
+            );
+            return next();
         }
     } catch (error) {
-        const errorMessage =
-            error.message || req.t('auth.internal_server_error');
+        console.log('[---Log---][---logout---]: ', error);
         if (
             req.headers.accept &&
             req.headers.accept.includes('application/json')
         ) {
-            return HttpResponse.internalServerError(res, [], errorMessage);
+            return HttpResponse.internalServerError(res);
         } else {
-            return res.render(
-                'admin/',
-                HttpResponse.internalServerErrorResponse([], errorMessage),
-            );
+            res.locals.response = HttpResponse.internalServerErrorResponse();
+            return next();
         }
     }
 };

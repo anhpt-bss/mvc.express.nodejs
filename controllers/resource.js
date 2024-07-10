@@ -99,7 +99,7 @@ exports.uploadFiles = async (req, res) => {
         return HttpResponse.internalServerError(
             res,
             [],
-            req.t('auth.internal_server_error'),
+            req.t('common.internal_server_error'),
         );
     }
 };
@@ -154,7 +154,7 @@ exports.deleteFile = async (req, res) => {
         return HttpResponse.internalServerError(
             res,
             [],
-            req.t('auth.internal_server_error'),
+            req.t('common.internal_server_error'),
         );
     }
 };
@@ -196,7 +196,7 @@ exports.getStaticFiles = async (req, res) => {
         return HttpResponse.internalServerError(
             res,
             [],
-            req.t('auth.internal_server_error'),
+            req.t('common.internal_server_error'),
         );
     }
 };
@@ -256,7 +256,77 @@ exports.deleteStaticFiles = async (req, res) => {
         return HttpResponse.internalServerError(
             res,
             [],
-            req.t('auth.internal_server_error'),
+            req.t('common.internal_server_error'),
+        );
+    }
+};
+
+/**
+ * @swagger
+ * /api/resource/download-urls:
+ *   post:
+ *     summary: Download files from a list of URLs
+ *     tags: [Resource]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               server_path:
+ *                 type: string
+ *                 description: The path of the file server
+ *                 example: "https://thdaudio.com/img/products/ap200/description"
+ *               urls:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *     responses:
+ *       200:
+ *         description: Files downloaded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 files:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Resource'
+ *       400:
+ *         description: Bad request. Invalid input.
+ *       500:
+ *         description: Internal server error.
+ */
+
+exports.downloadFilesFromUrls = async (req, res) => {
+    try {
+        const { server_path, urls } = req.body;
+
+        if (!Array.isArray(urls)) {
+            return HttpResponse.badRequest(res, [], 'URLs should be an array');
+        }
+
+        const downloadedFiles = await ResourceService.downloadFilesFromUrls(
+            server_path,
+            urls,
+        );
+
+        return HttpResponse.success(
+            res,
+            { files: downloadedFiles },
+            'Files downloaded successfully',
+        );
+    } catch (error) {
+        return HttpResponse.internalServerError(
+            res,
+            [],
+            req.t('common.internal_server_error'),
         );
     }
 };

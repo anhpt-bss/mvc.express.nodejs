@@ -1,0 +1,27 @@
+<div class="com-form">
+    <form method="POST" action="<%= next_route %>">
+        <% fields_config.forEach(function(field) { %>
+            <div class="form-group <%= field.field_type %>">
+                <label for="<%= field.field_name %>"><%= field.field_label %></label>
+                <% if (field.field_type === 'textarea') { %>
+                    <textarea id="<%= field.field_name %>" name="<%= field.field_name %>" <%= field.is_required ? 'required' : '' %>><%= default_values[field.field_name] || '' %></textarea>
+                <% } else if (field.field_type === 'select') { %>
+                    <select id="<%= field.field_name %>" name="<%= field.field_name %>" <%= field.is_required ? 'required' : '' %>>
+                        <% field.options.forEach(function(option) { %>
+                            <option value="<%= option.value %>" <%= option.value === (default_values[field.field_name] || '') ? 'selected' : '' %>><%= option.label %></option>
+                        <% }); %>
+                    </select>
+                <% } else if (field.field_type === 'checkbox') { %>
+                    <input type="checkbox" id="<%= field.field_name %>" name="<%= field.field_name %>" <%= default_values[field.field_name] ? 'checked' : '' %> <%= field.is_required ? 'required' : '' %>>
+                <% } else { %>
+                    <input type="<%= field.field_type %>" id="<%= field.field_name %>" name="<%= field.field_name %>" value="<%= default_values[field.field_name] || '' %>" <%= field.is_required ? 'required' : '' %>>
+                <% } %>
+            </div>
+        <% }); %>
+
+        <div class="form-footer">
+            <a class="btn-cancel" href="<%= back_route %>">Hủy</a>
+            <button type="submit" class="btn-save">Lưu</button>
+        </div>
+    </form>
+</div>
