@@ -1,18 +1,23 @@
 const express = require('express');
+const logger = require('@config/logger');
 const { checkAdminToken, checkTokenForLogin } = require('@middleware/auth');
 const {
     loginValidationRules,
     userValidationRules,
-    validate,
 } = require('@middleware/validator');
 const authController = require('@controllers/auth');
 const userController = require('@controllers/user');
 const User = require('@models/user');
 const { DEFAULT_RESPONSE } = require('@services/httpResponse/constants');
 const { pushNotification } = require('@services/helper');
+const { readLogFile, deleteLogFile } = require('@services/logger');
 const router = express.Router();
 
 // Routes public
+router.get('/auth/login', checkTokenForLogin, (req, res) => {
+    res.render('admin/signin', { ...DEFAULT_RESPONSE });
+});
+
 router.post(
     '/auth/login',
     loginValidationRules(),
@@ -29,14 +34,12 @@ router.post(
             // Push notification
             pushNotification(res, 'success', controllerResponse);
 
+            logger.info(`[${new Date()}][---Login---]: ${req.body.email}`);
+
             return res.redirect('/admin');
         }
     },
 );
-
-router.get('/auth/login', checkTokenForLogin, (req, res) => {
-    res.render('admin/signin', { ...DEFAULT_RESPONSE });
-});
 
 // Verify token
 router.use(checkAdminToken);
@@ -220,6 +223,7 @@ router.get('/users/delete/:id', userController.deleteUser, (req, res) => {
     return res.redirect('/admin/users');
 });
 
+// Logout admin route
 router.get('/auth/logout', authController.logout, (req, res) => {
     const controllerResponse = res.locals.response;
 
@@ -232,8 +236,45 @@ router.get('/auth/logout', authController.logout, (req, res) => {
         // Push notification
         pushNotification(res, 'success', controllerResponse);
 
+        logger.info(`[${new Date()}][---Logout---]: ${req.user.email}`);
+
         return res.redirect('/admin/auth/login');
     }
+});
+
+// Endpoint to get log file contents
+router.get('/logs', (req, res) => {
+    readLogFile((error, data) => {
+        if (error) {
+            console.log('[---Log---][---/logs---]: ', error);
+            return res.redirect('/admin');
+        } else {
+            res.render('admin/logs', { data }, (error, html) => {
+                if (error) {
+                    console.log('[---Log---][---/logs---]: ', error);
+                    return res.status(500).send(error.message);
+                }
+        
+                // Pass the rendered content to the layout
+                res.render('admin/layout', {
+                    body: html,
+                    title: 'Nhật Ký Hệ Thống',
+                    currentUser: req.user,
+                });
+            });
+        }
+    });
+});
+
+// Endpoint to delete log file
+router.get('/logs/delete', (req, res) => {
+    deleteLogFile((err) => {
+        if (err) {
+            return res.redirect('/admin');
+        } else {
+            return res.redirect('/admin');
+        }
+    });
 });
 
 module.exports = router;

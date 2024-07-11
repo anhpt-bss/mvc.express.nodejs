@@ -13,7 +13,7 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
-const logger = require('./config/logger');
+const logger = require('@config/logger');
 const compression = require('compression');
 const { RateLimiterMemory } = require('rate-limiter-flexible');
 const swaggerSetup = require('@config/swagger');
@@ -77,8 +77,9 @@ swaggerSetup(app);
 
 // Middleware
 app.use((error, req, res, next) => {
-    console.log('[---Log---][---App---]: ', error);
-    logger.error(error.message);
+    
+    logger.error(`[${new Date()}][---App---]: ${error.message || 'Something Broke...'}`);
+
     if (req.headers.accept && req.headers.accept.includes('application/json')) {
         return HttpResponse.internalServerError(res);
     } else {
