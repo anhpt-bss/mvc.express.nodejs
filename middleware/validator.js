@@ -32,6 +32,18 @@ exports.loginValidationRules = () => {
     ];
 };
 
+exports.blogValidationRules = () => {
+    return [
+        body('title').notEmpty().withMessage('blog.title_required'),
+        body('summary').notEmpty().withMessage('blog.summary_required'),
+        body('content').notEmpty().withMessage('blog.content_required'),
+        body('banner')
+            .optional()
+            .isMongoId()
+            .withMessage('blog.banner_required'),
+    ];
+};
+
 exports.validate = (req, res, next) => {
     const errors = validationResult(req);
     if (errors.isEmpty()) {

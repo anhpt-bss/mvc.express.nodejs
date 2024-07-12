@@ -92,7 +92,7 @@ exports.uploadFiles = async (req, res) => {
 
         return HttpResponse.success(
             res,
-            { files: uploadedFiles },
+            uploadedFiles,
             req.t('resource.files_uploaded_successfully'),
         );
     } catch (error) {

@@ -1,17 +1,23 @@
 const express = require('express');
 const logger = require('@config/logger');
+const router = express.Router();
+
+const { DEFAULT_RESPONSE } = require('@services/httpResponse/constants');
+const { pushNotification } = require('@services/helper');
+const { readLogFile, deleteLogFile } = require('@services/logger');
+
 const { checkAdminToken, checkTokenForLogin } = require('@middleware/auth');
 const {
     loginValidationRules,
     userValidationRules,
+    blogValidationRules,
 } = require('@middleware/validator');
+
 const authController = require('@controllers/auth');
 const userController = require('@controllers/user');
+const blogController = require('@controllers/blog');
 const User = require('@models/user');
-const { DEFAULT_RESPONSE } = require('@services/httpResponse/constants');
-const { pushNotification } = require('@services/helper');
-const { readLogFile, deleteLogFile } = require('@services/logger');
-const router = express.Router();
+const Blog = require('@models/blog');
 
 // Routes public
 router.get('/auth/login', checkTokenForLogin, (req, res) => {
@@ -254,7 +260,7 @@ router.get('/logs', (req, res) => {
                     console.log('[---Log---][---/logs---]: ', error);
                     return res.status(500).send(error.message);
                 }
-        
+
                 // Pass the rendered content to the layout
                 res.render('admin/layout', {
                     body: html,
@@ -275,6 +281,171 @@ router.get('/logs/delete', (req, res) => {
             return res.redirect('/admin');
         }
     });
+});
+
+// Blogs admin route
+const blogFields = [
+    {
+        field_name: 'title',
+        field_label: 'Tiêu đề',
+        field_type: 'text',
+        is_required: true,
+        is_show: true,
+    },
+    {
+        field_name: 'summary',
+        field_label: 'Tóm tắt',
+        field_type: 'text',
+        is_required: true,
+        is_show: true,
+        width: '40%',
+    },
+    {
+        field_name: 'banner',
+        field_label: 'Ảnh tiêu đề',
+        field_type: 'file',
+        is_required: false,
+        is_show: true,
+        width: '20%',
+    },
+    {
+        field_name: 'content',
+        field_label: 'Nội dung',
+        field_type: 'editor',
+        is_required: true,
+        is_show: false,
+    },
+];
+
+router.get('/blogs', blogController.getAllBlogs, (req, res) => {
+    const controllerResponse = res.locals.response;
+
+    const response = {
+        ...controllerResponse,
+        table_headers: blogFields,
+        route: '/admin/blogs',
+    };
+
+    res.render('admin/blogs', { response }, (error, html) => {
+        if (error) {
+            console.log('[---Log---][---admin/blogs---]: ', error);
+            return res.status(500).send(error.message);
+        }
+
+        // Pass the rendered content to the layout
+        res.render('admin/layout', {
+            body: html,
+            title: 'Blogs',
+            currentUser: req.user,
+        });
+    });
+});
+
+router.get('/blogs/create', (req, res) => {
+    const response = {
+        ...DEFAULT_RESPONSE,
+        fields_config: blogFields,
+        back_route: '/admin/blogs',
+        next_route: '/admin/blogs/create',
+    };
+
+    res.render('admin/addAndEdit', { response }, (error, html) => {
+        if (error) {
+            console.log('[---Log---][---admin/blogs---]: ', error);
+            return res.status(500).send(error.message);
+        }
+
+        // Pass the rendered content to the layout
+        res.render('admin/layout', {
+            body: html,
+            title: 'Blogs',
+            currentUser: req.user,
+        });
+    });
+});
+
+router.post(
+    '/blogs/create',
+    blogValidationRules(),
+    blogController.createBlog,
+    (req, res) => {
+        const controllerResponse = res.locals.response;
+
+        if (controllerResponse.error) {
+            // Push notification
+            pushNotification(res, 'error', controllerResponse);
+
+            return res.redirect('/admin/blogs/create');
+        } else {
+            // Push notification
+            pushNotification(res, 'success', controllerResponse);
+
+            return res.redirect('/admin/blogs');
+        }
+    },
+);
+
+router.get('/blogs/edit/:id', async (req, res) => {
+    const blogItem = await Blog.findById(req.params.id)
+        .populate('banner')
+        .lean();
+
+    console.log('399', res.locals.server_url, res.locals.notification);
+    const response = {
+        ...DEFAULT_RESPONSE,
+        fields_config: blogFields,
+        back_route: '/admin/blogs',
+        next_route: `/admin/blogs/edit/${req.params.id}`,
+        default_values: blogItem,
+    };
+
+    res.render('admin/addAndEdit', { response }, (error, html) => {
+        if (error) {
+            console.log('[---Log---][---admin/blogs---]: ', error);
+            return res.status(500).send(error.message);
+        }
+
+        // Pass the rendered content to the layout
+        res.render('admin/layout', {
+            body: html,
+            title: 'Blogs',
+            currentUser: req.user,
+        });
+    });
+});
+
+router.post(
+    '/blogs/edit/:id',
+    blogValidationRules(),
+    blogController.updateBlog,
+    async (req, res) => {
+        const controllerResponse = res.locals.response;
+
+        if (controllerResponse.error) {
+            // Push notification
+            pushNotification(res, 'error', controllerResponse);
+
+            return res.redirect(`/admin/blogs/edit/${req.params.id}`);
+        } else {
+            // Push notification
+            pushNotification(res, 'success', controllerResponse);
+
+            return res.redirect('/admin/blogs');
+        }
+    },
+);
+
+router.get('/blogs/delete/:id', blogController.deleteBlog, (req, res) => {
+    const controllerResponse = res.locals.response;
+
+    // Push notification
+    pushNotification(
+        res,
+        controllerResponse.error ? 'error' : 'success',
+        controllerResponse,
+    );
+
+    return res.redirect('/admin/blogs');
 });
 
 module.exports = router;

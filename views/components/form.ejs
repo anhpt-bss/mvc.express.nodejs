@@ -1,5 +1,5 @@
 <div class="com-form">
-    <form method="POST" action="<%= next_route %>">
+    <form method="POST" action="<%= next_route %>" enctype="multipart/form-data" id="main-form">
         <% fields_config.forEach(function(field) { %>
             <div class="form-group <%= field.field_type %>">
                 <label for="<%= field.field_name %>"><%= field.field_label %></label>
@@ -13,6 +13,15 @@
                     </select>
                 <% } else if (field.field_type === 'checkbox') { %>
                     <input type="checkbox" id="<%= field.field_name %>" name="<%= field.field_name %>" <%= default_values[field.field_name] ? 'checked' : '' %> <%= field.is_required ? 'required' : '' %>>
+                <% } else if (field.field_type === 'file') { %>
+                    <input type="file" id="<%= field.field_name %>" name="files" class="file-input" data-preview-target="file-preview-<%= field.field_name %>" <%= field.is_required ? 'required' : '' %>>
+                    <div class="form-file-preview">
+                        <img id="file-preview-<%= field.field_name %>" src="<%= default_values[field.field_name] ? `${server_url}/${default_values[field.field_name].path}` : '' %>" alt="">
+                    </div>
+                <% } else if (field.field_type === 'editor') { %>
+                    <div id="<%= field.field_name %>" class="jodit-editor"></div>
+                    <input type="hidden" id="<%= field.field_name %>-input" name="<%= field.field_name %>" value="<%= default_values[field.field_name] || '' %>">
+                    <div id="config-data" style="display: none;" data-serverurl="<%= server_url %>"></div>
                 <% } else { %>
                     <input type="<%= field.field_type %>" id="<%= field.field_name %>" name="<%= field.field_name %>" value="<%= default_values[field.field_name] || '' %>" <%= field.is_required ? 'required' : '' %>>
                 <% } %>
@@ -25,3 +34,5 @@
         </div>
     </form>
 </div>
+
+<script src="/assets/js/form.js"></script>

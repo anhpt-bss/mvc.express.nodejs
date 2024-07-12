@@ -1,0 +1,2 @@
+# Ignore formatting for files in assets/libraries
+assets/libraries/**

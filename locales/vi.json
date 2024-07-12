@@ -14,7 +14,9 @@
         "password_number": "Mật khẩu phải chứa một số",
         "password_letter": "Mật khẩu phải chứa một chữ cái",
         "password_special_character": "Mật khẩu phải chứa một ký tự đặc biệt",
-        "errors": "Lỗi xác thực"
+        "errors": "Lỗi xác thực",
+        "field_required": "Trường này bắt buộc",
+        "valid_id": "Vui lòng cung cấp một ID hợp lệ"
     },
     "auth": {
         "invalid_email_password": "Email hoặc mật khẩu không hợp lệ",
@@ -31,5 +33,21 @@
     "user": {
         "email_already_exists": "Email đã tồn tại",
         "user_not_found": "Không tìm thấy người dùng"
+    },
+    "blog": {
+        "title": "Tiêu đề",
+        "summary": "Tóm tắt",
+        "slug": "Slug",
+        "content": "Nội dung",
+        "banner": "Ảnh tiêu đề",
+        "create_blog": "Tạo Blog",
+        "edit_blog": "Chỉnh sửa Blog",
+        "delete_blog": "Xóa Blog",
+        "blog_list": "Danh sách Blog",
+        "no_blogs_found": "Không tìm thấy blog",
+        "title_required": "Tiêu đề là bắt buộc",
+        "summary_required": "Tóm tắt là bắt buộc",
+        "content_required": "Nội dung là bắt buộc",
+        "banner_required": "Ảnh tiêu đề là bắt buộc"
     }
 }

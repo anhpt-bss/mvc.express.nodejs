@@ -8,7 +8,7 @@
             <thead>
                 <tr>
                     <% for (var i = 0; i < tableHeaders.length; i++) { if(tableHeaders[i].is_show) { %>
-                        <th>
+                        <th style="width: <%= tableHeaders[i].width %>">
                             <a href="?sort=<%= tableHeaders[i].field_name %>&order=<%= sort === tableHeaders[i].field_name && order === 'asc' ? 'desc' : 'asc' %>&limit=<%= limit %>&page=<%= page %>">
                                 <%= tableHeaders[i].field_label %>
                                 <% if (sort === tableHeaders[i].field_name) { %>
@@ -26,6 +26,8 @@
                     <% for (var j = 0; j < tableHeaders.length; j++) { if(tableHeaders[j].is_show) { %>
                         <% if(tableHeaders[j].field_type === 'checkbox') { %>
                             <td><%= tableData[i][tableHeaders[j].field_name] ? '✔️' : '❌' %></td>
+                        <% } else if(tableHeaders[j].field_type === 'file') { %>
+                            <td><%= tableData[i][tableHeaders[j].field_name].filename %></td>
                         <% } else { %>
                             <td><%= tableData[i][tableHeaders[j].field_name] %></td>
                         <% } %>

@@ -6,6 +6,7 @@ const constants = {
         process.env.MONGODB_URI || 'mongodb://localhost:27017/mydatabase',
     JWT_SECRET_KEY: process.env.JWT_SECRET_KEY || 'token_secret_key',
     UPLOADS_BASE_PATH: process.env.UPLOADS_BASE_PATH || 'uploads',
+    SERVER_URL: process.env.SERVER_URL || 'http://localhost:3000',
 };
 
 module.exports = constants;

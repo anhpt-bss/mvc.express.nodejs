@@ -4,7 +4,11 @@ const User = require('@models/user');
 
 exports.verifyAPIToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
-    const accessToken = authHeader && authHeader.split(' ')[1];
+    let accessToken = authHeader && authHeader.split(' ')[1];
+
+    if (!accessToken) {
+        accessToken = req.cookies['access_token'];
+    }
 
     if (!accessToken) {
         return HttpResponse.unauthorized(

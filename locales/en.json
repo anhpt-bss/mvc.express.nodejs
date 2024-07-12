@@ -14,7 +14,9 @@
         "password_number": "Password must contain a number",
         "password_letter": "Password must contain a letter",
         "password_special_character": "Password must contain a special character",
-        "errors": "Validation errors"
+        "errors": "Validation errors",
+        "field_required": "This field is required",
+        "valid_id": "Please provide a valid ID"
     },
     "auth": {
         "invalid_email_password": "Invalid email or password",
@@ -32,5 +34,21 @@
     "user": {
         "email_already_exists": "Email already exists",
         "user_not_found": "User not found"
+    },
+    "blog": {
+        "title": "Title",
+        "summary": "Summary",
+        "slug": "Slug",
+        "content": "Content",
+        "banner": "Banner",
+        "create_blog": "Create Blog",
+        "edit_blog": "Edit Blog",
+        "delete_blog": "Delete Blog",
+        "blog_list": "Blog List",
+        "no_blogs_found": "No blogs found",
+        "title_required": "Title is required",
+        "summary_required": "Summary is required",
+        "content_required": "Content is required",
+        "banner_required": "Banner is required"
     }
 }

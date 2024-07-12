@@ -1,7 +1,7 @@
 module.exports = [
     // Ignore files in the node_modules directory
     {
-        ignores: ['node_modules/**'],
+        ignores: ['node_modules/**', 'assets/libraries/**'],
     },
     // Configuration for JavaScript, ECMAScript modules, and CommonJS modules
     {

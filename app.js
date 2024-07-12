@@ -19,6 +19,8 @@ const { RateLimiterMemory } = require('rate-limiter-flexible');
 const swaggerSetup = require('@config/swagger');
 const configureI18n = require('./config/i18n');
 const notificationMiddleware = require('@middleware/notification');
+const { upload } = require('@config/multer');
+const HttpResponse = require('@services/httpResponse');
 
 // MongoDB
 connectDB();
@@ -30,13 +32,13 @@ configureI18n(app);
 app.set('view engine', 'ejs');
 
 // Middleware
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
 app.use(morgan('dev'));
 app.use(cors());
 app.use(helmet());
 app.use(compression());
 app.use(cookieParser());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
 // Static files
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
@@ -67,6 +69,15 @@ app.use((req, res, next) => {
 // Notification middleware
 app.use(notificationMiddleware);
 
+// Middleware set app locals value
+app.use((req, res, next) => {
+    res.locals.server_url = constants.SERVER_URL;
+    next();
+});
+
+// Use multer middleware for handling file uploads
+app.use(upload());
+
 // Routes
 app.use('/api', apiRouter);
 app.use('/admin', adminRouter);
@@ -75,15 +86,20 @@ app.use('/', clientRouter);
 // Swagger
 swaggerSetup(app);
 
-// Middleware
+// Error handling middleware
 app.use((error, req, res, next) => {
-    
-    logger.error(`[${new Date()}][---App---]: ${error.message || 'Something Broke...'}`);
+    console.log('[---Log---][---App---]: ', error);
+    logger.error(
+        `[${new Date()}][---App---]: ${error.message || 'Something Broke...'}`,
+    );
 
     if (req.headers.accept && req.headers.accept.includes('application/json')) {
-        return HttpResponse.internalServerError(res);
+        return HttpResponse.internalServerError(res, [], error.message);
     } else {
-        res.locals.response = HttpResponse.internalServerErrorResponse();
+        res.locals.response = HttpResponse.internalServerErrorResponse(
+            [],
+            error.message,
+        );
         return next();
     }
 });

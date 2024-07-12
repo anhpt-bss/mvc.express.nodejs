@@ -532,9 +532,9 @@
 
 .com-table .table-scroll-container {
     max-height: calc(100vh - 220px);
-    overflow-x: auto;
-    overflow-y: auto;
     position: relative;
+    overflow: auto;
+    width: 100%;
 }
 
 .com-table table {
@@ -547,6 +547,12 @@
     top: 0;
     background-color: #f1f1f1;
     z-index: 10;
+    width: 30%;
+}
+
+.com-table thead th:last-child {
+    width: 7%;
+    text-align: center;
 }
 
 .com-table th,
@@ -567,6 +573,7 @@
 .com-table .table-action {
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 .com-table .table-action-btn {
@@ -658,6 +665,16 @@
     width: 100%;
     padding: 8px;
     box-sizing: border-box;
+}
+
+.com-form .form-file-preview {
+    margin-top: 8px;
+}
+
+.com-form .form-file-preview img {
+    width: auto;
+    height: 100%;
+    max-height: 200px;
 }
 
 .com-form .form-footer {
