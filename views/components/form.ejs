@@ -7,8 +7,9 @@
                     <textarea id="<%= field.field_name %>" name="<%= field.field_name %>" <%= field.is_required ? 'required' : '' %>><%= default_values[field.field_name] || '' %></textarea>
                 <% } else if (field.field_type === 'select') { %>
                     <select id="<%= field.field_name %>" name="<%= field.field_name %>" <%= field.is_required ? 'required' : '' %>>
-                        <% field.options.forEach(function(option) { %>
-                            <option value="<%= option.value %>" <%= option.value === (default_values[field.field_name] || '') ? 'selected' : '' %>><%= option.label %></option>
+                        <option value> -- Danh Mục Gốc -- </option>
+                        <% options_list[field.field_name] && options_list[field.field_name].forEach(function(option) { %>
+                            <option value="<%= option.value %>" <%= option.value.toString() === (default_values[field.field_name] && default_values[field.field_name].toString() || '') ? 'selected' : '' %>><%= option.label %></option>
                         <% }); %>
                     </select>
                 <% } else if (field.field_type === 'checkbox') { %>

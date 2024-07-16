@@ -3,30 +3,25 @@ const slug = require('mongoose-slug-updater');
 
 mongoose.plugin(slug);
 
-const blogSchema = new mongoose.Schema({
-    title: {
-        type: String,
+const categorySchema = new mongoose.Schema({
+    position: {
+        type: Number,
         required: true,
     },
-    summary: {
+    name: {
         type: String,
         required: true,
     },
     slug: {
         type: String,
         unique: true,
-        slug: 'title',
+        slug: 'name',
     },
-    banner: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Resource',
-        required: true,
-    },
-    content: {
+    description: {
         type: String,
-        required: true,
+        required: false,
     },
-    category: {
+    parent_cate: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',
         required: false,
@@ -41,4 +36,4 @@ const blogSchema = new mongoose.Schema({
     },
 });
 
-module.exports = mongoose.model('Blog', blogSchema);
+module.exports = mongoose.model('Category', categorySchema);

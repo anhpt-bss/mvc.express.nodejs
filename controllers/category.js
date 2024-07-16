@@ -1,68 +1,65 @@
-const Blog = require('@models/blog');
-const Resource = require('@models/resource');
-const ResourceService = require('@services/resource');
+const Category = require('@models/category');
 const { validationResult } = require('express-validator');
 const HttpResponse = require('@services/httpResponse');
 
 /**
  * @swagger
  * tags:
- *   name: Blogs
- *   description: API endpoints for managing blogs
+ *   name: Categories
+ *   description: API endpoints for managing categories
  */
 
 /**
  * @swagger
  * components:
  *   schemas:
- *     Blog:
+ *     Category:
  *       type: object
  *       required:
- *         - title
- *         - summary
- *         - content
+ *         - position
+ *         - name
  *       properties:
- *         title:
+ *         position:
+ *           type: number
+ *           description: The position of the category
+ *         name:
  *           type: string
- *           description: The title of the blog
- *         summary:
+ *           description: The name of the category
+ *         slug:
  *           type: string
- *           description: The summary of the blog
- *         banner:
+ *           description: The slug of the category
+ *         description:
  *           type: string
- *           description: The ID of the banner resource
- *         content:
+ *           description: The description of the category
+ *         parent_cate:
  *           type: string
- *           description: The content of the blog
- *         category:
- *           type: string
- *           description: The category ID
+ *           description: The parent category ID
  *         created_by:
  *           type: string
- *           description: The creator of the blog
+ *           description: The creator of the category
  *         created_time:
  *           type: string
  *           format: date-time
- *           description: The creation time of the blog
+ *           description: The creation time of the category
  *       example:
- *         title: Blog Title
- *         summary: Blog Summary
- *         banner: 60b5ed725e5f5c1b4aef1a23
- *         content: Blog Content
- *         category: 60b5ed725e5f5c1b4aef1a23
+ *         position: 1
+ *         name: Electronics
+ *         slug: electronics
+ *         description: All electronic items
+ *         parent_cate: null
  *         created_by: Admin
- *         created_time: 2021-05-31T14:48:00.000Z
+ *         created_time: 2024-07-15T00:00:00.000Z
  */
 
 /**
  * @swagger
- * /api/blog/get-list:
+ * /api/category/get-list:
  *   get:
- *     summary: Get all blogs
- *     tags: [Blogs]
+ *     summary: Get all categories
+ *     tags: [Categories]
  *     responses:
  *       200:
- *         description: List of blogs
+ *         description: List of categories
  *         content:
  *           application/json:
  *             schema:
@@ -71,37 +68,36 @@ const HttpResponse = require('@services/httpResponse');
  *                 data:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/Blog'
+ *                     $ref: '#/components/schemas/Category'
  *       400:
- *         description: Bad request
+ *         description: Bad request.
  *       401:
- *         description: Unauthorized access
+ *         description: Unauthorized access.
  *       403:
- *         description: Access forbidden
+ *         description: Access forbidden.
  *       404:
- *         description: Resource not found
+ *         description: Resource not found.
  *       500:
- *         description: Internal server error
+ *         description: Internal server error.
  */
-exports.getAllBlogs = async (req, res, next) => {
+exports.getAllCategories = async (req, res, next) => {
     try {
         const {
             page = 1,
             limit = 10,
-            sort = 'created_time',
-            order = 'desc',
+            sort = 'position',
+            order = 'asc',
         } = req.query;
 
-        const blogs = await Blog.find()
+        const categories = await Category.find()
             .sort({ [sort]: order === 'asc' ? 1 : -1 })
             .skip((page - 1) * limit)
-            .limit(parseInt(limit))
-            .populate('banner');
+            .limit(parseInt(limit));
 
-        const total = await Blog.countDocuments();
+        const total = await Category.countDocuments();
 
         const response = {
-            data_list: blogs,
+            data_list: categories,
             total,
             page: parseInt(page),
             limit: parseInt(limit),
@@ -119,7 +115,7 @@ exports.getAllBlogs = async (req, res, next) => {
             return next();
         }
     } catch (error) {
-        console.log('[---Log---][---getAllBlogs---]: ', error);
+        console.log('[---Log---][---getAllCategories---]: ', error);
         if (
             req.headers.accept &&
             req.headers.accept.includes('application/json')
@@ -134,35 +130,37 @@ exports.getAllBlogs = async (req, res, next) => {
 
 /**
  * @swagger
- * /api/blog/create:
+ * /api/category/create:
  *   post:
- *     summary: Create a new blog
- *     tags: [Blogs]
+ *     summary: Create a new category
+ *     tags: [Categories]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Blog'
+ *             $ref: '#/components/schemas/Category'
  *     responses:
  *       200:
- *         description: New blog created successfully
+ *         description: New category created successfully
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Blog'
+ *               $ref: '#/components/schemas/Category'
  *       400:
- *         description: Bad request
+ *         description: Bad request.
  *       401:
- *         description: Unauthorized access
+ *         description: Unauthorized access.
  *       403:
- *         description: Access forbidden
+ *         description: Access forbidden.
  *       404:
- *         description: Resource not found
+ *         description: Resource not found.
  *       500:
- *         description: Internal server error
+ *         description: Internal server error.
  */
-exports.createBlog = async (req, res, next) => {
+exports.createCategory = async (req, res, next) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -189,35 +187,49 @@ exports.createBlog = async (req, res, next) => {
             }
         }
 
-        const { title, summary, content, category } = req.body;
+        const { position, name, description, parent_cate } = req.body;
 
-        let bannerFile;
-        if (req.files) {
-            bannerFile = await ResourceService.uploadFiles(req, res);
+        const existingCategory = await Category.findOne({ name });
+
+        if (existingCategory) {
+            if (
+                req.headers.accept &&
+                req.headers.accept.includes('application/json')
+            ) {
+                return HttpResponse.badRequest(
+                    res,
+                    [],
+                    req.t('category.name_already_exists'),
+                );
+            } else {
+                res.locals.response = HttpResponse.badRequestResponse(
+                    [],
+                    req.t('category.name_already_exists'),
+                );
+                return next();
+            }
         }
 
-        const blog = new Blog({
-            title,
-            summary,
-            banner:
-                bannerFile && bannerFile?.length > 0 ? bannerFile[0]._id : null,
-            content,
-            category,
+        const category = new Category({
+            position,
+            name,
+            description,
+            parent_cate: parent_cate === '' ? null : parent_cate,
         });
 
-        await blog.save();
+        await category.save();
 
         if (
             req.headers.accept &&
             req.headers.accept.includes('application/json')
         ) {
-            return HttpResponse.success(res, blog);
+            return HttpResponse.success(res, category);
         } else {
-            res.locals.response = HttpResponse.successResponse(blog);
+            res.locals.response = HttpResponse.successResponse(category);
             return next();
         }
     } catch (error) {
-        console.log('[---Log---][---createBlog---]: ', error);
+        console.log('[---Log---][---createCategory---]: ', error);
         if (
             req.headers.accept &&
             req.headers.accept.includes('application/json')
@@ -232,39 +244,39 @@ exports.createBlog = async (req, res, next) => {
 
 /**
  * @swagger
- * /api/blog/{id}:
+ * /api/category/{id}:
  *   get:
- *     summary: Get a blog by ID
- *     tags: [Blogs]
+ *     summary: Get a category by ID
+ *     tags: [Categories]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         description: The blog ID
+ *         description: The category ID
  *     responses:
  *       200:
- *         description: Blog found
+ *         description: Category found
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Blog'
+ *               $ref: '#/components/schemas/Category'
  *       400:
- *         description: Bad request
+ *         description: Bad request.
  *       401:
- *         description: Unauthorized access
+ *         description: Unauthorized access.
  *       403:
- *         description: Access forbidden
+ *         description: Access forbidden.
  *       404:
- *         description: Resource not found
+ *         description: Resource not found.
  *       500:
- *         description: Internal server error
+ *         description: Internal server error.
  */
-exports.getBlogById = async (req, res, next) => {
+exports.getCategoryById = async (req, res, next) => {
     try {
-        const blog = await Blog.findById(req.params.id).populate('banner');
-        if (!blog) {
+        const category = await Category.findById(req.params.id);
+        if (!category) {
             if (
                 req.headers.accept &&
                 req.headers.accept.includes('application/json')
@@ -272,20 +284,20 @@ exports.getBlogById = async (req, res, next) => {
                 return HttpResponse.badRequest(
                     res,
                     [],
-                    req.t('blog.blog_not_found'),
+                    req.t('category.category_not_found'),
                 );
             } else {
                 res.locals.response = HttpResponse.badRequestResponse(
                     [],
-                    req.t('blog.blog_not_found'),
+                    req.t('category.category_not_found'),
                 );
                 return next();
             }
         }
 
-        return HttpResponse.success(res, blog);
+        return HttpResponse.success(res, category);
     } catch (error) {
-        console.log('[---Log---][---getBlogById---]: ', error);
+        console.log('[---Log---][---getCategoryById---]: ', error);
         if (
             req.headers.accept &&
             req.headers.accept.includes('application/json')
@@ -300,42 +312,44 @@ exports.getBlogById = async (req, res, next) => {
 
 /**
  * @swagger
- * /api/blog/{id}:
+ * /api/category/{id}:
  *   put:
- *     summary: Update a blog by ID
- *     tags: [Blogs]
+ *     summary: Update a category by ID
+ *     tags: [Categories]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         description: The blog ID
+ *         description: The category ID
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Blog'
+ *             $ref: '#/components/schemas/Category'
  *     responses:
  *       200:
- *         description: Blog updated successfully
+ *         description: Category updated successfully
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Blog'
+ *               $ref: '#/components/schemas/Category'
  *       400:
- *         description: Bad request
+ *         description: Bad request.
  *       401:
- *         description: Unauthorized access
+ *         description: Unauthorized access.
  *       403:
- *         description: Access forbidden
+ *         description: Access forbidden.
  *       404:
- *         description: Resource not found
+ *         description: Resource not found.
  *       500:
- *         description: Internal server error
+ *         description: Internal server error.
  */
-exports.updateBlog = async (req, res, next) => {
+exports.updateCategory = async (req, res, next) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -362,10 +376,10 @@ exports.updateBlog = async (req, res, next) => {
             }
         }
 
-        const { title, summary, content, category } = req.body;
-        const blog = await Blog.findById(req.params.id);
+        const { position, name, description, parent_cate } = req.body;
+        const category = await Category.findById(req.params.id);
 
-        if (!blog) {
+        if (!category) {
             if (
                 req.headers.accept &&
                 req.headers.accept.includes('application/json')
@@ -373,46 +387,36 @@ exports.updateBlog = async (req, res, next) => {
                 return HttpResponse.badRequest(
                     res,
                     [],
-                    req.t('blog.blog_not_found'),
+                    req.t('category.category_not_found'),
                 );
             } else {
                 res.locals.response = HttpResponse.badRequestResponse(
                     [],
-                    req.t('blog.blog_not_found'),
+                    req.t('category.category_not_found'),
                 );
                 return next();
             }
         }
 
-        if (title) blog.title = title;
-        if (summary) blog.summary = summary;
-        if (content) blog.content = content;
-        if (category) blog.category = category;
+        if (position) category.position = position;
+        if (name) category.name = name;
+        if (description) category.description = description;
+        if (parent_cate) category.parent_cate = parent_cate;
+        else category.parent_cate = null;
 
-        let bannerFile;
-        if (req.files) {
-            bannerFile = await ResourceService.uploadFiles(req, res);
-            blog.banner =
-                bannerFile && bannerFile?.length > 0
-                    ? bannerFile[0]._id
-                    : blog.banner;
-        } else if (banner) {
-            blog.banner = blog.banner;
-        }
-
-        await blog.save();
+        await category.save();
 
         if (
             req.headers.accept &&
             req.headers.accept.includes('application/json')
         ) {
-            return HttpResponse.success(res, blog);
+            return HttpResponse.success(res, category);
         } else {
-            res.locals.response = HttpResponse.successResponse(blog);
+            res.locals.response = HttpResponse.successResponse(category);
             return next();
         }
     } catch (error) {
-        console.log('[---Log---][---updateBlog---]: ', error);
+        console.log('[---Log---][---updateCategory---]: ', error);
         if (
             req.headers.accept &&
             req.headers.accept.includes('application/json')
@@ -427,35 +431,37 @@ exports.updateBlog = async (req, res, next) => {
 
 /**
  * @swagger
- * /api/blog/{id}:
+ * /api/category/{id}:
  *   delete:
- *     summary: Delete a blog by ID
- *     tags: [Blogs]
+ *     summary: Delete a category by ID
+ *     tags: [Categories]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         description: The blog ID
+ *         description: The category ID
  *     responses:
  *       200:
- *         description: Blog deleted successfully
+ *         description: Category deleted successfully
  *       400:
- *         description: Bad request
+ *         description: Bad request.
  *       401:
- *         description: Unauthorized access
+ *         description: Unauthorized access.
  *       403:
- *         description: Access forbidden
+ *         description: Access forbidden.
  *       404:
- *         description: Resource not found
+ *         description: Resource not found.
  *       500:
- *         description: Internal server error
+ *         description: Internal server error.
  */
-exports.deleteBlog = async (req, res, next) => {
+exports.deleteCategory = async (req, res, next) => {
     try {
-        const blog = await Blog.findById(req.params.id);
-        if (!blog) {
+        const category = await Category.findById(req.params.id);
+        if (!category) {
             if (
                 req.headers.accept &&
                 req.headers.accept.includes('application/json')
@@ -463,18 +469,18 @@ exports.deleteBlog = async (req, res, next) => {
                 return HttpResponse.badRequest(
                     res,
                     [],
-                    req.t('blog.blog_not_found'),
+                    req.t('category.category_not_found'),
                 );
             } else {
                 res.locals.response = HttpResponse.badRequestResponse(
                     [],
-                    req.t('blog.blog_not_found'),
+                    req.t('category.category_not_found'),
                 );
                 return next();
             }
         }
 
-        await Blog.deleteOne({ _id: req.params.id });
+        await Category.deleteOne({ _id: req.params.id });
 
         if (
             req.headers.accept &&
@@ -488,7 +494,7 @@ exports.deleteBlog = async (req, res, next) => {
             return next();
         }
     } catch (error) {
-        console.log('[---Log---][---deleteBlog---]: ', error);
+        console.log('[---Log---][---deleteCategory---]: ', error);
         if (
             req.headers.accept &&
             req.headers.accept.includes('application/json')

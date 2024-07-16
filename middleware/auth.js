@@ -1,6 +1,7 @@
 const HttpResponse = require('@services/httpResponse');
 const { verifyToken } = require('@config/jwt');
 const User = require('@models/user');
+const { pushNotification } = require('@services/helper');
 
 exports.verifyAPIToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
@@ -43,12 +44,22 @@ exports.checkAdminToken = async (req, res, next) => {
         const user = await User.findById(decoded.id);
 
         if (!user || !user.is_admin) {
+            // Push notification
+            pushNotification(res, 'info', {
+                title: 'Phiên đăng nhập hết hạn',
+                content: 'Vui lòng đăng nhập lại!',
+            });
             return res.redirect('/admin/auth/login');
         }
 
         req.user = user;
         next();
     } catch (err) {
+        // Push notification
+        pushNotification(res, 'info', {
+            title: 'Phiên đăng nhập hết hạn',
+            content: 'Vui lòng đăng nhập lại!',
+        });
         res.redirect('/admin/auth/login');
     }
 };

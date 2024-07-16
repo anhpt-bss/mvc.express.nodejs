@@ -49,5 +49,12 @@
         "summary_required": "Tóm tắt là bắt buộc",
         "content_required": "Nội dung là bắt buộc",
         "banner_required": "Ảnh tiêu đề là bắt buộc"
+    },
+    "category": {
+        "position_required": "Vị trí là bắt buộc",
+        "position_must_be_numeric": "Vị trí phải là một giá trị số",
+        "name_required": "Tên là bắt buộc",
+        "description_must_be_string": "Mô tả phải là một chuỗi",
+        "parent_cate_must_be_mongoid": "Danh mục cha phải là một ID MongoDB hợp lệ"
     }
 }

@@ -11,13 +11,17 @@ const {
     loginValidationRules,
     userValidationRules,
     blogValidationRules,
+    categoryValidationRules,
 } = require('@middleware/validator');
 
 const authController = require('@controllers/auth');
 const userController = require('@controllers/user');
 const blogController = require('@controllers/blog');
+const categoryController = require('@controllers/category');
+
 const User = require('@models/user');
 const Blog = require('@models/blog');
+const Category = require('@models/category');
 
 // Routes public
 router.get('/auth/login', checkTokenForLogin, (req, res) => {
@@ -315,6 +319,14 @@ const blogFields = [
         is_required: true,
         is_show: false,
     },
+    {
+        field_name: 'category',
+        field_label: 'Danh mục',
+        field_type: 'select',
+        is_required: false,
+        is_show: true,
+        options: [],
+    },
 ];
 
 router.get('/blogs', blogController.getAllBlogs, (req, res) => {
@@ -341,12 +353,20 @@ router.get('/blogs', blogController.getAllBlogs, (req, res) => {
     });
 });
 
-router.get('/blogs/create', (req, res) => {
+router.get('/blogs/create', async (req, res) => {
+    const categoryList = await Category.find().lean();
+
     const response = {
         ...DEFAULT_RESPONSE,
         fields_config: blogFields,
         back_route: '/admin/blogs',
         next_route: '/admin/blogs/create',
+        options_list: {
+            category: categoryList.map((item) => ({
+                label: item.name,
+                value: item._id,
+            })),
+        },
     };
 
     res.render('admin/addAndEdit', { response }, (error, html) => {
@@ -389,14 +409,20 @@ router.get('/blogs/edit/:id', async (req, res) => {
     const blogItem = await Blog.findById(req.params.id)
         .populate('banner')
         .lean();
+    const categoryList = await Category.find().lean();
 
-    console.log('399', res.locals.server_url, res.locals.notification);
     const response = {
         ...DEFAULT_RESPONSE,
         fields_config: blogFields,
         back_route: '/admin/blogs',
         next_route: `/admin/blogs/edit/${req.params.id}`,
         default_values: blogItem,
+        options_list: {
+            category: categoryList.map((item) => ({
+                label: item.name,
+                value: item._id,
+            })),
+        },
     };
 
     res.render('admin/addAndEdit', { response }, (error, html) => {
@@ -447,5 +473,174 @@ router.get('/blogs/delete/:id', blogController.deleteBlog, (req, res) => {
 
     return res.redirect('/admin/blogs');
 });
+
+// Category admin routes
+const categoryFields = [
+    {
+        field_name: 'position',
+        field_label: 'Vị trí',
+        field_type: 'number',
+        is_required: true,
+        is_show: true,
+        width: '10%',
+    },
+    {
+        field_name: 'name',
+        field_label: 'Tên',
+        field_type: 'text',
+        is_required: true,
+        is_show: true,
+    },
+    {
+        field_name: 'description',
+        field_label: 'Mô tả',
+        field_type: 'editor',
+        is_required: false,
+        is_show: false,
+    },
+    {
+        field_name: 'parent_cate',
+        field_label: 'Danh mục cha',
+        field_type: 'select',
+        is_required: false,
+        is_show: true,
+        options: [],
+    },
+];
+
+router.get('/categories', categoryController.getAllCategories, (req, res) => {
+    const controllerResponse = res.locals.response;
+
+    const response = {
+        ...controllerResponse,
+        table_headers: categoryFields,
+        route: '/admin/categories',
+    };
+
+    res.render('admin/categories', { response }, (error, html) => {
+        if (error) {
+            console.log('[---Log---][---admin/categories---]: ', error);
+            return res.status(500).send(error.message);
+        }
+
+        res.render('admin/layout', {
+            body: html,
+            title: 'Danh Mục',
+            currentUser: req.user,
+        });
+    });
+});
+
+router.get('/categories/create', async (req, res) => {
+    const categoryList = await Category.find().lean();
+
+    const response = {
+        ...DEFAULT_RESPONSE,
+        fields_config: categoryFields,
+        back_route: '/admin/categories',
+        next_route: '/admin/categories/create',
+        options_list: {
+            parent_cate: categoryList.map((item) => ({
+                label: item.name,
+                value: item._id,
+            })),
+        },
+    };
+
+    res.render('admin/addAndEdit', { response }, (error, html) => {
+        if (error) {
+            console.log('[---Log---][---admin/categories---]: ', error);
+            return res.status(500).send(error.message);
+        }
+
+        res.render('admin/layout', {
+            body: html,
+            title: 'Danh Mục',
+            currentUser: req.user,
+        });
+    });
+});
+
+router.post(
+    '/categories/create',
+    categoryValidationRules(),
+    categoryController.createCategory,
+    (req, res) => {
+        const controllerResponse = res.locals.response;
+
+        if (controllerResponse.error) {
+            pushNotification(res, 'error', controllerResponse);
+            return res.redirect('/admin/categories/create');
+        } else {
+            pushNotification(res, 'success', controllerResponse);
+            return res.redirect('/admin/categories');
+        }
+    },
+);
+
+router.get('/categories/edit/:id', async (req, res) => {
+    const categoryItem = await Category.findById(req.params.id).lean();
+    const categoryList = await Category.find().lean();
+
+    const response = {
+        ...DEFAULT_RESPONSE,
+        fields_config: categoryFields,
+        back_route: '/admin/categories',
+        next_route: `/admin/categories/edit/${req.params.id}`,
+        default_values: categoryItem,
+        options_list: {
+            parent_cate: categoryList.map((item) => ({
+                label: item.name,
+                value: item._id,
+            })),
+        },
+    };
+
+    res.render('admin/addAndEdit', { response }, (error, html) => {
+        if (error) {
+            console.log('[---Log---][---admin/categories---]: ', error);
+            return res.status(500).send(error.message);
+        }
+
+        res.render('admin/layout', {
+            body: html,
+            title: 'Danh Mục',
+            currentUser: req.user,
+        });
+    });
+});
+
+router.post(
+    '/categories/edit/:id',
+    categoryValidationRules(),
+    categoryController.updateCategory,
+    async (req, res) => {
+        const controllerResponse = res.locals.response;
+
+        if (controllerResponse.error) {
+            pushNotification(res, 'error', controllerResponse);
+            return res.redirect(`/admin/categories/edit/${req.params.id}`);
+        } else {
+            pushNotification(res, 'success', controllerResponse);
+            return res.redirect('/admin/categories');
+        }
+    },
+);
+
+router.get(
+    '/categories/delete/:id',
+    categoryController.deleteCategory,
+    (req, res) => {
+        const controllerResponse = res.locals.response;
+
+        pushNotification(
+            res,
+            controllerResponse.error ? 'error' : 'success',
+            controllerResponse,
+        );
+
+        return res.redirect('/admin/categories');
+    },
+);
 
 module.exports = router;

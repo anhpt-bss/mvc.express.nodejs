@@ -44,6 +44,22 @@ exports.blogValidationRules = () => {
     ];
 };
 
+exports.categoryValidationRules = () => {
+    return [
+        body('position')
+            .notEmpty()
+            .withMessage('category.position_required')
+            .isNumeric()
+            .withMessage('category.position_must_be_numeric'),
+        body('name').notEmpty().withMessage('category.name_required'),
+        body('description')
+            .optional()
+            .isString()
+            .withMessage('category.description_must_be_string'),
+        body('parent_cate').optional(),
+    ];
+};
+
 exports.validate = (req, res, next) => {
     const errors = validationResult(req);
     if (errors.isEmpty()) {

@@ -39,6 +39,19 @@ const pushNotification = (res, type, response) => {
             );
             break;
 
+        case 'info':
+            res.cookie(
+                'notification',
+                {
+                    type: 'info',
+                    title: response.title || null,
+                    content: response.content || null,
+                    errors: null,
+                },
+                { httpOnly: true },
+            );
+            break;
+
         default:
             break;
     }

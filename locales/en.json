@@ -50,5 +50,12 @@
         "summary_required": "Summary is required",
         "content_required": "Content is required",
         "banner_required": "Banner is required"
+    },
+    "category": {
+        "position_required": "Position is required",
+        "position_must_be_numeric": "Position must be a numeric value",
+        "name_required": "Name is required",
+        "description_must_be_string": "Description must be a string",
+        "parent_cate_must_be_mongoid": "Parent category must be a valid MongoDB ID"
     }
 }

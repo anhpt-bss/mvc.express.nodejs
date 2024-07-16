@@ -177,6 +177,7 @@
     height: 30px;
     border-radius: 50%;
     margin-left: 8px;
+    border: 1px solid #fff;
 }
 
 .admin-layout .username {
@@ -249,20 +250,20 @@
 }
 /* ---------------------- Dashboard Styles ---------------------- */
 .admin-dashboard-container #bg {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	z-index: -1;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
 }
 
 .admin-dashboard-container #bg canvas {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }
 
 .admin-dashboard-container .banner-container {
@@ -272,8 +273,9 @@
     padding: 16px;
 }
 
-.admin-dashboard-container .banner-container h2, .admin-dashboard-container .banner-container h6 {
-    color: #Fff;
+.admin-dashboard-container .banner-container h2,
+.admin-dashboard-container .banner-container h6 {
+    color: #fff;
     margin-bottom: 16px;
 }
 
