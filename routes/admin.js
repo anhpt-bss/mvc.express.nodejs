@@ -25,6 +25,7 @@ const User = require('@models/user');
 const Blog = require('@models/blog');
 const Category = require('@models/category');
 const Product = require('@models/product');
+const Resource = require('@models/resource');
 
 // Routes public
 router.get('/auth/login', checkTokenForLogin, (req, res) => {
@@ -58,8 +59,45 @@ router.post(
 router.use(checkAdminToken);
 
 // Routes privated
-router.get('/', (req, res) => {
-    res.render('admin', {}, (error, html) => {
+router.get('/', async (req, res) => {
+    const totalBlog = await Blog.countDocuments();
+    const totalCategory = await Category.countDocuments();
+    const totalProduct = await Product.countDocuments();
+    const totalResource = await Resource.countDocuments();
+    const totalUser = await User.countDocuments();
+
+    const response = {
+        current_user: req.user,
+        dashboard_summary: [
+            {
+                name: 'Người Dùng',
+                total: totalUser,
+                href: 'admin/users'
+            },
+            {
+                name: 'Danh Mục',
+                total: totalCategory,
+                href: 'admin/categories'
+            },
+            {
+                name: 'Sản Phẩm',
+                total: totalProduct,
+                href: 'admin/products'
+            },
+            {
+                name: 'Blog',
+                total: totalBlog,
+                href: 'admin/blogs'
+            },
+            {
+                name: 'Tệp Tải Lên',
+                total: totalResource,
+                href: 'admin/resources'
+            }
+        ]
+    };
+
+    res.render('admin', { response }, (error, html) => {
         if (error) {
             console.log('[---Log---][---admin/---]: ', error);
             return res.status(500).send(error.message);
