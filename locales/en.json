@@ -57,5 +57,22 @@
         "name_required": "Name is required",
         "description_must_be_string": "Description must be a string",
         "parent_cate_must_be_mongoid": "Parent category must be a valid MongoDB ID"
+    },
+    "product": {
+        "product_code_required": "Product code is required.",
+        "product_name_required": "Product name is required.",
+        "product_summary_required": "Product summary is required.",
+        "product_price_valid": "Product price must be a valid number.",
+        "product_discount_valid": "Product discount must be a valid number.",
+        "product_quantity_valid": "Product quantity must be a valid integer.",
+        "shipping_fee_valid": "Shipping fee must be a valid number.",
+        "product_gallery_valid": "Product gallery must be a valid array.",
+        "product_gallery_ids_valid": "Each item in the product gallery must be a valid ID.",
+        "product_code_valid": "Product code is not valid.",
+        "product_specifications_valid": "Product specifications are not valid.",
+        "product_description_valid": "Product description is not valid.",
+        "manufacturer_valid": "Manufacturer is not valid.",
+        "banner_valid": "Banner must be a valid ID.",
+        "category_valid": "Category must be a valid ID."
     }
 }

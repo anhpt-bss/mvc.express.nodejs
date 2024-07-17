@@ -1,6 +1,32 @@
 const { body, validationResult } = require('express-validator');
 const HttpResponse = require('@services/httpResponse');
 
+exports.validate = (req, res, next) => {
+    const errors = validationResult(req);
+    if (errors.isEmpty()) {
+        return next();
+    }
+
+    const translatedErrors = errors.array().map((error) => ({
+        ...error,
+        msg: req.t(error.msg),
+    }));
+
+    if (req.headers.accept && req.headers.accept.includes('application/json')) {
+        return HttpResponse.badRequest(
+            res,
+            translatedErrors,
+            req.t('validation.errors'),
+        );
+    } else {
+        res.locals.response = HttpResponse.badRequestResponse(
+            translatedErrors,
+            req.t('validation.errors'),
+        );
+        return next();
+    }
+};
+
 exports.userValidationRules = () => {
     return [
         body('name').notEmpty().withMessage('validation.name_required'),
@@ -60,28 +86,39 @@ exports.categoryValidationRules = () => {
     ];
 };
 
-exports.validate = (req, res, next) => {
-    const errors = validationResult(req);
-    if (errors.isEmpty()) {
-        return next();
-    }
-
-    const translatedErrors = errors.array().map((error) => ({
-        ...error,
-        msg: req.t(error.msg),
-    }));
-
-    if (req.headers.accept && req.headers.accept.includes('application/json')) {
-        return HttpResponse.badRequest(
-            res,
-            translatedErrors,
-            req.t('validation.errors'),
-        );
-    } else {
-        res.locals.response = HttpResponse.badRequestResponse(
-            translatedErrors,
-            req.t('validation.errors'),
-        );
-        return next();
-    }
+exports.productValidationRules = () => {
+    return [
+        body('product_code')
+            .notEmpty()
+            .withMessage('product.product_code_required'),
+        body('product_name')
+            .notEmpty()
+            .withMessage('product.product_name_required'),
+        body('product_summary')
+            .notEmpty()
+            .withMessage('product.product_summary_required'),
+        body('product_price')
+            .optional(),
+        body('product_discount')
+            .optional(),
+        body('product_quantity')
+            .optional(),
+        body('shipping_fee')
+            .optional(),
+        body('product_gallery')
+            .optional()
+            .isArray()
+            .withMessage('product.product_gallery_valid')
+            .custom((value) => value.every((id) => mongoose.Types.ObjectId.isValid(id)))
+            .withMessage('product.product_gallery_ids_valid'),
+        body('product_specifications')
+            .optional(),
+        body('product_description')
+            .optional(),
+        body('manufacturer')
+            .optional(),
+        body('category')
+            .isMongoId()
+            .withMessage('product.category_valid'),
+    ];
 };

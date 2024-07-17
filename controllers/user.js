@@ -386,11 +386,10 @@ exports.updateUser = async (req, res, next) => {
             }
         }
 
-        if (name) user.name = name;
-        if (email) user.email = email;
-        if (password) user.password = password;
-        if (typeof is_admin !== 'undefined')
-            user.is_admin = is_admin ? true : false;
+        user.name = name;
+        user.email = email;
+        user.password = password;
+        user.is_admin = is_admin ? true : false;
 
         await user.save();
 

@@ -1,5 +1,4 @@
 const Blog = require('@models/blog');
-const Resource = require('@models/resource');
 const ResourceService = require('@services/resource');
 const { validationResult } = require('express-validator');
 const HttpResponse = require('@services/httpResponse');
@@ -96,7 +95,8 @@ exports.getAllBlogs = async (req, res, next) => {
             .sort({ [sort]: order === 'asc' ? 1 : -1 })
             .skip((page - 1) * limit)
             .limit(parseInt(limit))
-            .populate('banner');
+            .populate('banner')
+            .populate('category');
 
         const total = await Blog.countDocuments();
 
@@ -384,10 +384,10 @@ exports.updateBlog = async (req, res, next) => {
             }
         }
 
-        if (title) blog.title = title;
-        if (summary) blog.summary = summary;
-        if (content) blog.content = content;
-        if (category) blog.category = category;
+        blog.title = title;
+        blog.summary = summary;
+        blog.content = content;
+        blog.category = category;
 
         let bannerFile;
         if (req.files) {
@@ -396,8 +396,6 @@ exports.updateBlog = async (req, res, next) => {
                 bannerFile && bannerFile?.length > 0
                     ? bannerFile[0]._id
                     : blog.banner;
-        } else if (banner) {
-            blog.banner = blog.banner;
         }
 
         await blog.save();

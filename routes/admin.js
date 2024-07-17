@@ -12,16 +12,19 @@ const {
     userValidationRules,
     blogValidationRules,
     categoryValidationRules,
+    productValidationRules
 } = require('@middleware/validator');
 
 const authController = require('@controllers/auth');
 const userController = require('@controllers/user');
 const blogController = require('@controllers/blog');
 const categoryController = require('@controllers/category');
+const productController = require('@controllers/product');
 
 const User = require('@models/user');
 const Blog = require('@models/blog');
 const Category = require('@models/category');
+const Product = require('@models/product');
 
 // Routes public
 router.get('/auth/login', checkTokenForLogin, (req, res) => {
@@ -362,6 +365,7 @@ router.get('/blogs/create', async (req, res) => {
         back_route: '/admin/blogs',
         next_route: '/admin/blogs/create',
         options_list: {
+            default_option: '-- Danh Mục Gốc --',
             category: categoryList.map((item) => ({
                 label: item.name,
                 value: item._id,
@@ -418,6 +422,7 @@ router.get('/blogs/edit/:id', async (req, res) => {
         next_route: `/admin/blogs/edit/${req.params.id}`,
         default_values: blogItem,
         options_list: {
+            default_option: '-- Danh Mục Gốc --',
             category: categoryList.map((item) => ({
                 label: item.name,
                 value: item._id,
@@ -540,6 +545,7 @@ router.get('/categories/create', async (req, res) => {
         back_route: '/admin/categories',
         next_route: '/admin/categories/create',
         options_list: {
+            default_option: '-- Danh Mục Gốc --',
             parent_cate: categoryList.map((item) => ({
                 label: item.name,
                 value: item._id,
@@ -589,6 +595,7 @@ router.get('/categories/edit/:id', async (req, res) => {
         next_route: `/admin/categories/edit/${req.params.id}`,
         default_values: categoryItem,
         options_list: {
+            default_option: '-- Danh Mục Gốc --',
             parent_cate: categoryList.map((item) => ({
                 label: item.name,
                 value: item._id,
@@ -642,5 +649,246 @@ router.get(
         return res.redirect('/admin/categories');
     },
 );
+
+// Product fields configuration
+const productFields = [
+    {
+        field_name: 'product_code',
+        field_label: 'Mã sản phẩm',
+        field_type: 'text',
+        is_required: true,
+        is_show: true,
+        width: '10%'
+    },
+    {
+        field_name: 'product_name',
+        field_label: 'Tên sản phẩm',
+        field_type: 'text',
+        is_required: true,
+        is_show: true,
+        width: '30%'
+    },
+    {
+        field_name: 'product_summary',
+        field_label: 'Mô tả ngắn',
+        field_type: 'text',
+        is_required: true,
+        is_show: true,
+        width: '40%'
+    },
+    {
+        field_name: 'category',
+        field_label: 'Danh mục',
+        field_type: 'select',
+        is_required: true,
+        is_show: true,
+        options: [],
+        width: '10%'
+    },
+    {
+        field_name: 'product_price',
+        field_label: 'Giá sản phẩm',
+        field_type: 'number',
+        is_required: false,
+        is_show: false,
+    },
+    {
+        field_name: 'product_discount',
+        field_label: 'Giảm giá',
+        field_type: 'number',
+        is_required: false,
+        is_show: false,
+    },
+    {
+        field_name: 'product_quantity',
+        field_label: 'Số lượng',
+        field_type: 'number',
+        is_required: false,
+        is_show: false,
+    },
+    {
+        field_name: 'shipping_fee',
+        field_label: 'Phí vận chuyển',
+        field_type: 'number',
+        is_required: false,
+        is_show: false,
+    },
+    {
+        field_name: 'manufacturer',
+        field_label: 'Nhà sản xuất',
+        field_type: 'text',
+        is_required: false,
+        is_show: false,
+    },
+    {
+        field_name: 'product_gallery',
+        field_label: 'Bộ sưu tập',
+        field_type: 'files',
+        is_required: false,
+        is_show: false,
+    },
+    {
+        field_name: 'product_specifications',
+        field_label: 'Thông số kỹ thuật',
+        field_type: 'editor',
+        is_required: false,
+        is_show: false,
+    },
+    {
+        field_name: 'product_description',
+        field_label: 'Mô tả chi tiết',
+        field_type: 'editor',
+        is_required: false,
+        is_show: false,
+    },
+];
+
+// GET all products
+router.get('/products', productController.getAllProducts, (req, res) => {
+    const controllerResponse = res.locals.response;
+
+    const response = {
+        ...controllerResponse,
+        table_headers: productFields,
+        route: '/admin/products',
+    };
+
+    res.render('admin/products', { response }, (error, html) => {
+        if (error) {
+            console.log('[---Log---][---admin/products---]: ', error);
+            return res.status(500).send(error.message);
+        }
+
+        // Pass the rendered content to the layout
+        res.render('admin/layout', {
+            body: html,
+            title: 'Sản phẩm',
+            currentUser: req.user,
+        });
+    });
+});
+
+// GET create product page
+router.get('/products/create', async (req, res) => {
+    const categoryList = await Category.find().lean();
+    const response = {
+        ...DEFAULT_RESPONSE,
+        fields_config: productFields,
+        back_route: '/admin/products',
+        next_route: '/admin/products/create',
+        options_list: {
+            category: categoryList.map((item) => ({
+                label: item.name,
+                value: item._id,
+            })),
+        },
+    };
+
+    res.render('admin/addAndEdit', { response }, (error, html) => {
+        if (error) {
+            console.log('[---Log---][---admin/products---]: ', error);
+            return res.status(500).send(error.message);
+        }
+
+        // Pass the rendered content to the layout
+        res.render('admin/layout', {
+            body: html,
+            title: 'Thêm sản phẩm',
+            currentUser: req.user,
+        });
+    });
+});
+
+// POST create product
+router.post(
+    '/products/create',
+    productValidationRules(),
+    productController.createProduct,
+    (req, res) => {
+        const controllerResponse = res.locals.response;
+
+        if (controllerResponse.error) {
+            // Push notification
+            pushNotification(res, 'error', controllerResponse);
+
+            return res.redirect('/admin/products/create');
+        } else {
+            // Push notification
+            pushNotification(res, 'success', controllerResponse);
+
+            return res.redirect('/admin/products');
+        }
+    },
+);
+
+// GET edit product page
+router.get('/products/edit/:id', async (req, res) => {
+    const productItem = await Product.findById(req.params.id).populate('product_gallery').lean();
+    const categoryList = await Category.find().lean();
+
+    const response = {
+        ...DEFAULT_RESPONSE,
+        fields_config: productFields,
+        back_route: '/admin/products',
+        next_route: `/admin/products/edit/${req.params.id}`,
+        default_values: productItem,
+        options_list: {
+            category: categoryList.map((item) => ({
+                label: item.name,
+                value: item._id,
+            })),
+        },
+    };
+
+    res.render('admin/addAndEdit', { response }, (error, html) => {
+        if (error) {
+            console.log('[---Log---][---admin/products---]: ', error);
+            return res.status(500).send(error.message);
+        }
+
+        // Pass the rendered content to the layout
+        res.render('admin/layout', {
+            body: html,
+            title: 'Chỉnh sửa sản phẩm',
+            currentUser: req.user,
+        });
+    });
+});
+
+// POST edit product
+router.post(
+    '/products/edit/:id',
+    productValidationRules(),
+    productController.updateProduct,
+    async (req, res) => {
+        const controllerResponse = res.locals.response;
+
+        if (controllerResponse.error) {
+            // Push notification
+            pushNotification(res, 'error', controllerResponse);
+
+            return res.redirect(`/admin/products/edit/${req.params.id}`);
+        } else {
+            // Push notification
+            pushNotification(res, 'success', controllerResponse);
+
+            return res.redirect('/admin/products');
+        }
+    },
+);
+
+// GET delete product
+router.get('/products/delete/:id', productController.deleteProduct, (req, res) => {
+    const controllerResponse = res.locals.response;
+
+    // Push notification
+    pushNotification(
+        res,
+        controllerResponse.error ? 'error' : 'success',
+        controllerResponse,
+    );
+
+    return res.redirect('/admin/products');
+});
 
 module.exports = router;

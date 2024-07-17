@@ -28,6 +28,8 @@
                             <td><%= tableData[i][tableHeaders[j].field_name] ? '✔️' : '❌' %></td>
                         <% } else if(tableHeaders[j].field_type === 'file') { %>
                             <td><%= tableData[i][tableHeaders[j].field_name].filename %></td>
+                        <% } else if(tableHeaders[j].field_name === 'category' || tableHeaders[j].field_name === 'parent_cate') { %>
+                            <td><%= tableData[i][tableHeaders[j].field_name] ? tableData[i][tableHeaders[j].field_name].name : '' %></td>
                         <% } else { %>
                             <td><%= tableData[i][tableHeaders[j].field_name] %></td>
                         <% } %>

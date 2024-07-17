@@ -2,12 +2,19 @@
     <form method="POST" action="<%= next_route %>" enctype="multipart/form-data" id="main-form">
         <% fields_config.forEach(function(field) { %>
             <div class="form-group <%= field.field_type %>">
-                <label for="<%= field.field_name %>"><%= field.field_label %></label>
+                <label for="<%= field.field_name %>">
+                    <%= field.field_label %>
+                    <span class="form-required"><%= field.is_required ? '*' : '' %></span>
+                </label>
                 <% if (field.field_type === 'textarea') { %>
                     <textarea id="<%= field.field_name %>" name="<%= field.field_name %>" <%= field.is_required ? 'required' : '' %>><%= default_values[field.field_name] || '' %></textarea>
                 <% } else if (field.field_type === 'select') { %>
                     <select id="<%= field.field_name %>" name="<%= field.field_name %>" <%= field.is_required ? 'required' : '' %>>
-                        <option value> -- Danh Mục Gốc -- </option>
+                        <% if(options_list.default_option) { %>
+                            <option value><%= options_list.default_option %></option>
+                        <% } else { %>
+                            <option value disabled selected> -- Chọn -- </option>
+                        <% } %>
                         <% options_list[field.field_name] && options_list[field.field_name].forEach(function(option) { %>
                             <option value="<%= option.value %>" <%= option.value.toString() === (default_values[field.field_name] && default_values[field.field_name].toString() || '') ? 'selected' : '' %>><%= option.label %></option>
                         <% }); %>
@@ -15,10 +22,29 @@
                 <% } else if (field.field_type === 'checkbox') { %>
                     <input type="checkbox" id="<%= field.field_name %>" name="<%= field.field_name %>" <%= default_values[field.field_name] ? 'checked' : '' %> <%= field.is_required ? 'required' : '' %>>
                 <% } else if (field.field_type === 'file') { %>
-                    <input type="file" id="<%= field.field_name %>" name="files" class="file-input" data-preview-target="file-preview-<%= field.field_name %>" <%= field.is_required ? 'required' : '' %>>
-                    <div class="form-file-preview">
-                        <img id="file-preview-<%= field.field_name %>" src="<%= default_values[field.field_name] ? `${server_url}/${default_values[field.field_name].path}` : '' %>" alt="">
+                    <input type="file" id="<%= field.field_name %>" name="files" class="files-input" data-preview-target="file-preview-<%= field.field_name %>" <%= field.is_required ? 'required' : '' %>>
+                    <div class="form-file-preview" id="file-preview-<%= field.field_name %>">
+                        <% if (default_values[field.field_name]) { %>
+                            <div>
+                                <a href="<%= `${server_url}/${default_values[field.field_name].path}` %>" target="_blank">
+                                    <img src="<%= `${server_url}/${default_values[field.field_name].path}` %>" alt="">
+                                </a>
+                            </div>
+                        <% } %>
                     </div>
+                <% } else if (field.field_type === 'files') { %>
+                    <input type="file" multiple id="<%= field.field_name %>" name="files" class="files-input" data-preview-target="file-preview-<%= field.field_name %>" <%= field.is_required ? 'required' : '' %>>
+                    <div class="form-file-preview" id="file-preview-<%= field.field_name %>">
+                        <% if (default_values[field.field_name]) { %>
+                            <% default_values[field.field_name].forEach(function(item) { %>
+                                <div>
+                                    <a href="<%= `${server_url}/${item.path}` %>" target="_blank">
+                                        <img src="<%= `${server_url}/${item.path}` %>" alt="">
+                                    </a>
+                                </div>
+                            <% }); %>
+                        <% } %>
+                    </div>                    
                 <% } else if (field.field_type === 'editor') { %>
                     <div id="<%= field.field_name %>" class="jodit-editor"></div>
                     <input type="hidden" id="<%= field.field_name %>-input" name="<%= field.field_name %>" value="<%= default_values[field.field_name] || '' %>">
@@ -39,4 +65,5 @@
 <!-- Jodit editor -->
 <link rel="stylesheet" href="/assets/libraries/jodit/es2021/jodit.min.css">
 <script src="/assets/libraries/jodit/es2021/jodit.min.js"></script>
+<script src="/assets/js/jodit.js"></script>
 <script src="/assets/js/form.js"></script>

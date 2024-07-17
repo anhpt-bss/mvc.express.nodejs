@@ -703,6 +703,10 @@
     padding: 16px;
 }
 
+.com-form .form-required {
+    color: red;
+}
+
 .com-form .form-group {
     margin-bottom: 15px;
 }
@@ -728,12 +732,38 @@
 
 .com-form .form-file-preview {
     margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
 .com-form .form-file-preview img {
     width: auto;
     height: 100%;
     max-height: 200px;
+}
+
+.com-form .form-file-preview .file-preview-item {
+    position: relative;
+}
+
+.com-form .form-file-preview .file-preview-item .remove-button {
+    display: none;
+    padding: 4px;
+    border: none;
+    background: transparent;
+}
+
+.com-form .form-file-preview .file-preview-item:hover .remove-button {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.com-form .form-file-preview .file-preview-item .remove-button svg {
+    width: 30px;
+    height: 30px;
 }
 
 .com-form .form-footer {

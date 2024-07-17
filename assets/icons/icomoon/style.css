@@ -1,10 +1,10 @@
 .icon {
-    display: inline-block;
-    width: 1em;
-    height: 1em;
-    stroke-width: 0;
-    stroke: currentColor;
-    fill: currentColor;
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  stroke-width: 0;
+  stroke: currentColor;
+  fill: currentColor;
 }
 
 /* ==========================================
@@ -16,9 +16,9 @@ Single-colored icons can be modified like so:
 ========================================== */
 
 .icon-bin {
-    width: 0.7861328125em;
+  width: 0.7861328125em;
 }
 
 .icon-edit {
-    width: 1.0009765625em;
+  width: 1.0009765625em;
 }

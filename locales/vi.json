@@ -56,5 +56,22 @@
         "name_required": "Tên là bắt buộc",
         "description_must_be_string": "Mô tả phải là một chuỗi",
         "parent_cate_must_be_mongoid": "Danh mục cha phải là một ID MongoDB hợp lệ"
+    },
+    "product": {
+        "product_code_required": "Mã sản phẩm là bắt buộc.",
+        "product_name_required": "Tên sản phẩm là bắt buộc.",
+        "product_summary_required": "Mô tả ngắn là bắt buộc.",
+        "product_price_valid": "Giá sản phẩm phải là một số hợp lệ.",
+        "product_discount_valid": "Giảm giá phải là một số hợp lệ.",
+        "product_quantity_valid": "Số lượng sản phẩm phải là một số nguyên hợp lệ.",
+        "shipping_fee_valid": "Phí vận chuyển phải là một số hợp lệ.",
+        "product_gallery_valid": "Bộ sưu tập phải là một mảng hợp lệ.",
+        "product_gallery_ids_valid": "Mỗi mục trong bộ sưu tập phải là một ID hợp lệ.",
+        "product_code_valid": "Mã sản phẩm không hợp lệ.",
+        "product_specifications_valid": "Thông số kỹ thuật không hợp lệ.",
+        "product_description_valid": "Mô tả chi tiết không hợp lệ.",
+        "manufacturer_valid": "Nhà sản xuất không hợp lệ.",
+        "banner_valid": "Banner phải là một ID hợp lệ.",
+        "category_valid": "Danh mục phải là một ID hợp lệ."
     }
 }
