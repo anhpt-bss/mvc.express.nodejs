@@ -43,6 +43,16 @@ exports.userValidationRules = () => {
     ];
 };
 
+exports.resourceValidationRules = () => {
+    return [
+        body('filename').notEmpty().withMessage('resource.filename_required'),
+        body('size').isNumeric().withMessage('resource.size_required'),
+        body('mimetype').notEmpty().withMessage('resource.mimetype_required'),
+        body('path').notEmpty().withMessage('resource.path_required'),
+        body('category').optional().isString().withMessage('resource.category_required'),
+    ];
+};
+
 exports.loginValidationRules = () => {
     return [
         body('email').isEmail().withMessage('validation.valid_email'),

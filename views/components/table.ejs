@@ -29,7 +29,8 @@
                         <% } else if(tableHeaders[j].field_type === 'file') { %>
                             <td><%= tableData[i][tableHeaders[j].field_name].filename %></td>
                         <% } else if(tableHeaders[j].field_name === 'category' || tableHeaders[j].field_name === 'parent_cate') { %>
-                            <td><%= tableData[i][tableHeaders[j].field_name] ? tableData[i][tableHeaders[j].field_name].name : '' %></td>
+                            <% console.log(tableHeaders[j].field_name, tableData[i][tableHeaders[j].field_name]); %>
+                            <td><%= tableData[i][tableHeaders[j].field_name] && tableData[i][tableHeaders[j].field_name].name ? tableData[i][tableHeaders[j].field_name].name : tableData[i][tableHeaders[j].field_name] %></td>
                         <% } else { %>
                             <td><%= tableData[i][tableHeaders[j].field_name] %></td>
                         <% } %>

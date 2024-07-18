@@ -251,6 +251,7 @@ exports.createProduct = async (req, res, next) => {
 
         let galleryFiles = [];
         if (req.files) {
+            req.body.resource_category = 'Sản Phẩm';
             galleryFiles = await ResourceService.uploadFiles(req, res);
         }
 
@@ -481,6 +482,7 @@ exports.updateProduct = async (req, res, next) => {
 
         let galleryFiles = [];
         if (req.files) {
+            req.body.resource_category = 'Sản Phẩm';
             galleryFiles = await ResourceService.uploadFiles(req, res);
             product.product_gallery =
                 galleryFiles && galleryFiles?.length > 0

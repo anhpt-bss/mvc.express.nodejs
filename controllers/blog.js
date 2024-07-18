@@ -193,6 +193,7 @@ exports.createBlog = async (req, res, next) => {
 
         let bannerFile;
         if (req.files) {
+            req.body.resource_category = 'Blog';
             bannerFile = await ResourceService.uploadFiles(req, res);
         }
 
@@ -391,6 +392,7 @@ exports.updateBlog = async (req, res, next) => {
 
         let bannerFile;
         if (req.files) {
+            req.body.resource_category = 'Blog';
             bannerFile = await ResourceService.uploadFiles(req, res);
             blog.banner =
                 bannerFile && bannerFile?.length > 0

@@ -17,6 +17,11 @@ const resourceSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    category: {
+        type: String,
+        required: false,
+        default: 'Hệ Thống'
+    }
 });
 
 module.exports = mongoose.model('Resource', resourceSchema);

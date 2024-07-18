@@ -29,7 +29,15 @@
         "no_files_selected": "No files selected",
         "files_uploaded_successfully": "Files uploaded successfully",
         "file_deleted_successfully": "File deleted successfully",
-        "static_files_deleted_successfully": "Static files deleted successfully"
+        "static_files_deleted_successfully": "Static files deleted successfully",
+        "filename_required": "Filename is required",
+        "size_required": "Size must be a number",
+        "mimetype_required": "MIME type is required",
+        "path_required": "Path is required",
+        "category_required": "Category must be a string",
+        "resource_not_found": "Resource not found",
+        "resource_in_use_blog": "Resource is in use by a blog banner and cannot be deleted",
+        "resource_in_use_product": "Resource is in use by a product gallery and cannot be deleted"
     },
     "user": {
         "email_already_exists": "Email already exists",

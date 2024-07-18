@@ -15,6 +15,10 @@ Single-colored icons can be modified like so:
 }
 ========================================== */
 
+.icon-resources {
+  width: 1.048828125em;
+}
+
 .icon-bin {
   width: 0.7861328125em;
 }

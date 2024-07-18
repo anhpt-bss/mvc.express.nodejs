@@ -7,6 +7,9 @@ const constants = require('@config/constants');
 class ResourceService {
     static uploadFiles(req, res, next) {
         return new Promise(async (resolve, reject) => {
+            const { resource_category } = req.body;
+            console.log('resource_category', resource_category);
+
             const uploadedFiles = [];
             for (const file of req.files) {
                 const existingFile = await Resource.findOne({
@@ -17,7 +20,6 @@ class ResourceService {
                 if (existingFile) {
                     uploadedFiles.push(existingFile);
                     if (fs.existsSync(file.path)) {
-                        console.log('Remove duplicate file', file.path);
                         fs.unlinkSync(file.path);
                     }
                 } else {
@@ -26,6 +28,7 @@ class ResourceService {
                         size: file.size,
                         mimetype: file.mimetype,
                         path: `${constants.UPLOADS_BASE_PATH}/${file.filename}`,
+                        category: resource_category || null
                     });
                     await newResource.save();
                     uploadedFiles.push(newResource);

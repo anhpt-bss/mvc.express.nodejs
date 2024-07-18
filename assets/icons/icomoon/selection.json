@@ -4,6 +4,35 @@
     {
       "icon": {
         "paths": [
+          "M1073.714 544c0 13.714-8.571 27.429-17.714 37.714l-192 226.286c-33.143 38.857-100.571 69.714-150.857 69.714h-621.714c-20.571 0-49.714-6.286-49.714-32 0-13.714 8.571-27.429 17.714-37.714l192-226.286c33.143-38.857 100.571-69.714 150.857-69.714h621.714c20.571 0 49.714 6.286 49.714 32zM877.714 347.429v91.429h-475.429c-71.429 0-160 40.571-206.286 95.429l-195.429 229.714c0-4.571-0.571-9.714-0.571-14.286v-548.571c0-70.286 57.714-128 128-128h182.857c70.286 0 128 57.714 128 128v18.286h310.857c70.286 0 128 57.714 128 128z"
+        ],
+        "attrs": [
+          {}
+        ],
+        "width": 1074,
+        "isMulticolor": false,
+        "isMulticolor2": false,
+        "tags": [
+          "folder-open"
+        ],
+        "grid": 14
+      },
+      "attrs": [
+        {}
+      ],
+      "properties": {
+        "order": 1,
+        "id": 0,
+        "prevSize": 28,
+        "name": "resources"
+      },
+      "setIdx": 0,
+      "setId": 5,
+      "iconIdx": 0
+    },
+    {
+      "icon": {
+        "paths": [
           "M128 416h320v224h160v-224h320v480h-800v-480zM448 384h-320l160-256h192l-32 256zM608 384h320l-160-256h-192l32 256zM480 384h96l-32-256h-32l-32 256zM480 416v192h96v-192h-96zM192 672v32h224v-32h-224zM192 800v32h224v-32h-224zM192 736v32h160v-32h-160z"
         ],
         "attrs": [
@@ -25,7 +54,7 @@
         "prevSize": 32,
         "name": "products"
       },
-      "setIdx": 0,
+      "setIdx": 1,
       "setId": 4,
       "iconIdx": 0
     },
@@ -53,7 +82,7 @@
         "prevSize": 24,
         "name": "categories"
       },
-      "setIdx": 1,
+      "setIdx": 2,
       "setId": 3,
       "iconIdx": 0
     },
@@ -83,7 +112,7 @@
         "prevSize": 32,
         "name": "blogs"
       },
-      "setIdx": 2,
+      "setIdx": 3,
       "setId": 2,
       "iconIdx": 0
     },
@@ -111,7 +140,7 @@
         "prevSize": 24,
         "name": "users"
       },
-      "setIdx": 3,
+      "setIdx": 4,
       "setId": 1,
       "iconIdx": 0
     },
@@ -139,7 +168,7 @@
         "prevSize": 24,
         "name": "dashboard"
       },
-      "setIdx": 3,
+      "setIdx": 4,
       "setId": 1,
       "iconIdx": 1
     },
@@ -167,7 +196,7 @@
         "prevSize": 24,
         "name": "log-out"
       },
-      "setIdx": 3,
+      "setIdx": 4,
       "setId": 1,
       "iconIdx": 2
     },
@@ -196,7 +225,7 @@
         "name": "check-circle",
         "code": 59649
       },
-      "setIdx": 3,
+      "setIdx": 4,
       "setId": 1,
       "iconIdx": 3
     },
@@ -226,7 +255,7 @@
         "code": 59648,
         "name": "warning"
       },
-      "setIdx": 3,
+      "setIdx": 4,
       "setId": 1,
       "iconIdx": 4
     },
@@ -256,7 +285,7 @@
         "name": "clear",
         "code": 59650
       },
-      "setIdx": 3,
+      "setIdx": 4,
       "setId": 1,
       "iconIdx": 5
     },
@@ -285,7 +314,7 @@
         "prevSize": 28,
         "name": "bin"
       },
-      "setIdx": 4,
+      "setIdx": 5,
       "setId": 0,
       "iconIdx": 0
     },
@@ -315,7 +344,7 @@
         "prevSize": 28,
         "name": "edit"
       },
-      "setIdx": 4,
+      "setIdx": 5,
       "setId": 0,
       "iconIdx": 1
     },
@@ -343,7 +372,7 @@
         "prevSize": 28,
         "name": "bell"
       },
-      "setIdx": 4,
+      "setIdx": 5,
       "setId": 0,
       "iconIdx": 2
     }

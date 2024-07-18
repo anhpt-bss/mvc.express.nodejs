@@ -12,7 +12,8 @@ const {
     userValidationRules,
     blogValidationRules,
     categoryValidationRules,
-    productValidationRules
+    productValidationRules,
+    resourceValidationRules
 } = require('@middleware/validator');
 
 const authController = require('@controllers/auth');
@@ -20,6 +21,7 @@ const userController = require('@controllers/user');
 const blogController = require('@controllers/blog');
 const categoryController = require('@controllers/category');
 const productController = require('@controllers/product');
+const resourceController = require('@controllers/resource');
 
 const User = require('@models/user');
 const Blog = require('@models/blog');
@@ -272,6 +274,178 @@ router.get('/users/delete/:id', userController.deleteUser, (req, res) => {
     );
 
     return res.redirect('/admin/users');
+});
+
+// Resource admin routes
+const resourceFields = [
+    {
+        field_name: 'filename',
+        field_label: 'Tên tệp',
+        field_type: 'text',
+        is_required: true,
+        is_show: true,
+        width: '20%'
+    },
+    {
+        field_name: 'size',
+        field_label: 'Kích thước',
+        field_type: 'number',
+        is_required: true,
+        is_show: true,
+        width: '10%'
+    },
+    {
+        field_name: 'mimetype',
+        field_label: 'Loại MIME',
+        field_type: 'text',
+        is_required: true,
+        is_show: true,
+        width: '10%'
+    },
+    {
+        field_name: 'category',
+        field_label: 'Danh mục',
+        field_type: 'text',
+        is_required: false,
+        is_show: true,
+        width: '10%'
+    },
+    {
+        field_name: 'path',
+        field_label: 'Đường dẫn',
+        field_type: 'text',
+        is_required: true,
+        is_show: true,
+        width: '40%'
+    },
+];
+
+router.get('/resources', resourceController.getAllResources, (req, res) => {
+    const controllerResponse = res.locals.response;
+
+    const response = {
+        ...controllerResponse,
+        table_headers: resourceFields,
+        route: '/admin/resources',
+    };
+
+    res.render('admin/resources', { response }, (error, html) => {
+        if (error) {
+            console.log('[---Log---][---admin/resources---]: ', error);
+            return res.status(500).send(error.message);
+        }
+
+        // Pass the rendered content to the layout
+        res.render('admin/layout', {
+            body: html,
+            title: 'Tệp Tải Lên',
+            currentUser: req.user,
+        });
+    });
+});
+
+router.get('/resources/create', (req, res) => {
+    const response = {
+        ...DEFAULT_RESPONSE,
+        fields_config: resourceFields,
+        back_route: '/admin/resources',
+        next_route: '/admin/resources/create',
+    };
+
+    res.render('admin/addAndEdit', { response }, (error, html) => {
+        if (error) {
+            console.log('[---Log---][---admin/resources---]: ', error);
+            return res.status(500).send(error.message);
+        }
+
+        // Pass the rendered content to the layout
+        res.render('admin/layout', {
+            body: html,
+            title: 'Thêm Tài nguyên',
+            currentUser: req.user,
+        });
+    });
+});
+
+router.post(
+    '/resources/create',
+    resourceValidationRules(),
+    resourceController.createResource,
+    (req, res) => {
+        const controllerResponse = res.locals.response;
+
+        if (controllerResponse.error) {
+            // Push notification
+            pushNotification(res, 'error', controllerResponse);
+
+            return res.redirect('/admin/resources/create');
+        } else {
+            // Push notification
+            pushNotification(res, 'success', controllerResponse);
+
+            return res.redirect('/admin/resources');
+        }
+    },
+);
+
+router.get('/resources/edit/:id', async (req, res) => {
+    const resourceItem = await Resource.findById(req.params.id).lean();
+
+    const response = {
+        ...DEFAULT_RESPONSE,
+        fields_config: resourceFields,
+        back_route: '/admin/resources',
+        next_route: `/admin/resources/edit/${req.params.id}`,
+        default_values: resourceItem,
+    };
+
+    res.render('admin/addAndEdit', { response }, (error, html) => {
+        if (error) {
+            console.log('[---Log---][---admin/resources---]: ', error);
+            return res.status(500).send(error.message);
+        }
+
+        // Pass the rendered content to the layout
+        res.render('admin/layout', {
+            body: html,
+            title: 'Chỉnh sửa Tài nguyên',
+            currentUser: req.user,
+        });
+    });
+});
+
+router.post(
+    '/resources/edit/:id',
+    resourceValidationRules(),
+    resourceController.updateResource,
+    async (req, res) => {
+        const controllerResponse = res.locals.response;
+
+        if (controllerResponse.error) {
+            // Push notification
+            pushNotification(res, 'error', controllerResponse);
+
+            return res.redirect(`/admin/resources/edit/${req.params.id}`);
+        } else {
+            // Push notification
+            pushNotification(res, 'success', controllerResponse);
+
+            return res.redirect('/admin/resources');
+        }
+    },
+);
+
+router.get('/resources/delete/:id', resourceController.deleteResource, (req, res) => {
+    const controllerResponse = res.locals.response;
+
+    // Push notification
+    pushNotification(
+        res,
+        controllerResponse.error ? 'error' : 'success',
+        controllerResponse,
+    );
+
+    return res.redirect('/admin/resources');
 });
 
 // Logout admin route

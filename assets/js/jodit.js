@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         accept: 'application/json',
                     },
                     prepareData: function (formData) {
+                        formData.append('resource_category', 'Editor');
                         return formData;
                     },
                     filesVariableName: function () {

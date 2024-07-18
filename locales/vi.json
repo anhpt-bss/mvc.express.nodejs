@@ -28,7 +28,15 @@
         "no_files_selected": "Không có tệp nào được chọn",
         "files_uploaded_successfully": "Tệp đã tải lên thành công",
         "file_deleted_successfully": "Tệp đã được xóa thành công",
-        "static_files_deleted_successfully": "Các tệp tĩnh đã được xóa thành công"
+        "static_files_deleted_successfully": "Các tệp tĩnh đã được xóa thành công",
+        "filename_required": "Tên tệp tin là bắt buộc",
+        "size_required": "Kích thước phải là một số",
+        "mimetype_required": "Loại MIME là bắt buộc",
+        "path_required": "Đường dẫn là bắt buộc",
+        "category_required": "Thể loại phải là một chuỗi",
+        "resource_not_found": "Không tìm thấy tài nguyên",
+        "resource_in_use_blog": "Tài nguyên đang được sử dụng bởi banner blog và không thể xóa",
+        "resource_in_use_product": "Tài nguyên đang được sử dụng bởi thư viện sản phẩm và không thể xóa"
     },
     "user": {
         "email_already_exists": "Email đã tồn tại",
