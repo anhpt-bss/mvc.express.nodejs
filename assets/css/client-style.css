@@ -85,7 +85,7 @@ header {
                 width: 20%;
 
                 img {
-                    height: 100px;
+                    height: 80px;
                     width: auto;
                     max-width: 90%;
                 }
@@ -100,7 +100,7 @@ header {
 
                     #search-input {
                         width: 100%;
-                        padding: 10px;
+                        padding: 8px 16px;
                         border: 1px solid #ccc;
                         border-radius: 4px;
                         font-size: 16px;
@@ -124,7 +124,7 @@ header {
                         z-index: 999;
 
                         .suggestion-item {
-                            padding: 10px;
+                            padding: 8px 16px;
                             cursor: pointer;
 
                             &:hover {
@@ -159,12 +159,12 @@ header {
                     position: relative;
 
                     a {
-                        font-size: 16px;
+                        font-size: 14px;
                         font-weight: 500;
                         color: #2b2b2b;
                         text-decoration: none;
                         display: block;
-                        padding: 10px 20px;
+                        padding: 8px 16px;
                         transition: background 0.3s;
                         white-space: nowrap;
                         text-transform: uppercase;
@@ -201,7 +201,7 @@ header {
 
                         li {
                             position: relative;
-                            padding: 8px 20px;
+                            padding: 8px 16px;
 
                             .submenu {
                                 left: 100%;
@@ -220,14 +220,14 @@ header {
 
                                 >a {
                                     color: #008CC0;
-                                    padding-left: 10px;
+                                    padding-left: 8px;
                                     border-left: 2px solid #3ca0e7;
                                     transition: all 0.3s ease;
                                 }
                             }
 
                             a {
-                                font-size: 16px;
+                                font-size: 14px;
                                 padding: 0;
                                 color: #2b2b2b;
                                 text-decoration: none;
@@ -348,7 +348,7 @@ header {
     }
 }
 
-@media (max-width: 1280px) {
+@media (max-width: 1024px) {
     header {
         .header-nav {
             .nav-container {
@@ -499,7 +499,7 @@ header {
     }
 }
 
-@media (max-width: 1280px) {
+@media (max-width: 1024px) {
     .app-bar {
         display: flex;
     }
@@ -514,7 +514,7 @@ footer {
         padding: 16px;
         .logo {
             width: 100%;
-            margin-bottom: 16px;
+            margin-bottom: 8px;
             img {
                 height: 50px;
                 width: auto;
@@ -576,7 +576,7 @@ footer {
     }
 }
 
-@media (max-width: 1280px) {
+@media (max-width: 1024px) {
     footer {
         padding-bottom: 70px;
     }
