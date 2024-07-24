@@ -21,6 +21,7 @@ const configureI18n = require('./config/i18n');
 const notificationMiddleware = require('@middleware/notification');
 const { upload } = require('@config/multer');
 const HttpResponse = require('@services/httpResponse');
+const Category = require('@models/category');
 
 // MongoDB
 connectDB();
@@ -70,9 +71,71 @@ app.use((req, res, next) => {
 app.use(notificationMiddleware);
 
 // Middleware set app locals value
-app.use((req, res, next) => {
-    res.locals.server_url = constants.SERVER_URL;
-    next();
+async function getCategoryTree() {
+    try {
+        const categories = await Category.aggregate([
+            {
+                $graphLookup: {
+                    from: 'categories',
+                    startWith: '$_id',
+                    connectFromField: '_id',
+                    connectToField: 'parent_cate',
+                    as: 'sub_category'
+                }
+            },
+            {
+                $match: { parent_cate: null }
+            },
+            {
+                $sort: { position: 1 }
+            }
+        ]);
+
+        // Hàm đệ quy để sắp xếp các subcategories
+        const sortSubCategories = (category) => {
+            if (category.sub_category && Array.isArray(category.sub_category)) {
+                category.sub_category.sort((a, b) => a.position - b.position);
+                category.sub_category.forEach(sortSubCategories);
+            }
+        };
+
+        categories.forEach(sortSubCategories);
+
+        return categories;
+    } catch (error) {
+        console.error('Error building category tree:', error);
+        throw error;
+    }
+}
+
+app.use(async (req, res, next) => {
+    try {
+        const allCategories = await Category.find().sort({ position: 1 });
+
+        const categoryMap = new Map();
+        allCategories.forEach(category => {
+            categoryMap.set(category._id.toString(), { ...category.toObject(), sub_category: [] });
+        });
+
+        const rootCategories = [];
+        allCategories.forEach(category => {
+            if (category.parent_cate) {
+                const parent = categoryMap.get(category.parent_cate.toString());
+                if (parent) {
+                    parent.sub_category.push(categoryMap.get(category._id.toString()));
+                }
+            } else {
+                rootCategories.push(categoryMap.get(category._id.toString()));
+            }
+        });
+
+        res.locals.app_categories = rootCategories;
+        res.locals.server_url = constants.SERVER_URL;
+        next();
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
 });
 
 // Use multer middleware for handling file uploads

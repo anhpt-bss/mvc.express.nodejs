@@ -1,0 +1,139 @@
+<header>
+    <nav class="header-nav">
+        <div class="container nav-container">
+            <button class="open-side-panel-btn">☰</button>
+            <div class="icon-nav-info">
+                <a href="mailto:noithatthuongphat@gmail.com">
+                    <svg class="icon icon-mail nav-info-icon" style="fill: #202020;"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-mail"></use></svg>
+                </a>
+
+                <a href="tel:0936 27 26 25">
+                    <svg class="icon icon-call nav-info-icon" style="fill: #202020;"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-call"></use></svg>
+                </a>
+            </div>
+
+            <div class="nav-info">
+                <svg class="icon icon-location nav-info-icon" style="fill: #202020;"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-location"></use></svg>
+                Thành phố Hồ Chí Minh
+            </div>
+            <div class="nav-info">
+                <svg class="icon icon-mail nav-info-icon" style="fill: #202020;"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-mail"></use></svg>
+                <a href="mailto:support@decor.com">support@decor.com</a>
+            </div>
+            <div class="nav-info">
+                <svg class="icon icon-call nav-info-icon" style="fill: #202020;"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-call"></use></svg>
+                <a href="tel:0123 456 789">0123 456 789</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container header-container">
+        <div class="header-top">
+            <div class="logo">
+                <a id="menu_item" href="/"><img src="assets/images/logo.svg" alt="logo" /></a>
+            </div>
+            <div class="search">
+                <div class="search-container">
+                    <input type="text" id="search-input" placeholder="Tìm kiếm sản phẩm..." autocomplete="off">
+                    <div id="suggestions"></div>
+                </div>
+            </div>
+            <div class="cart"></div>
+        </div>
+        <div class="header-menu">
+            <ul class="menu-list">
+                <li><a id="menu_item" href="/">Trang Chủ</a></li>
+                <li><a id="menu_item" href="/about">Giới Thiệu</a></li>
+
+                <% function renderCategories(categories) { %>
+                    <% categories.forEach(category => { %>
+                        <li>
+                            <a id="menu_item" href="<%= `/${category.slug}` %>"><%= category.name %></a>
+                            <% if (category.sub_category && category.sub_category.length > 0) { %>
+                                <ul class="submenu">
+                                    <%= renderCategories(category.sub_category) %>
+                                </ul>
+                            <% } %>
+                        </li>
+                    <% }) %>
+                <% } %>
+                <%= app_categories && renderCategories(app_categories) %>
+
+                <li><a id="menu_item" href="/contact">Liên Hệ</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="sidepanel" class="side-panel">
+        <div class="close-side-panel-btn">×</div>
+
+        <ul class="menu-collapsible">
+            <li><a id="menu_item" href="/" class="active">Trang Chủ</a></li>
+            <li><a id="menu_item" href="/about">Giới Thiệu</a></li>
+
+            <% function renderSidePanelCategories(categories) { %>
+                <% categories.forEach(category => { %>
+                    <li>
+                        <div class="mainmenu">
+                            <a id="menu_item" href="<%= `/${category.slug}` %>"><%= category.name %></a>
+                            <% if (category.sub_category && category.sub_category.length > 0) { %>
+                                <button class="toggle-submenu-btn"></button>
+                            <% } %>
+                        </div>
+                        <% if (category.sub_category && category.sub_category.length > 0) { %>
+                            <ul class="submenu">
+                                <%= renderSidePanelCategories(category.sub_category) %>
+                            </ul>
+                        <% } %>
+                    </li>
+                <% }) %>
+            <% } %>
+            <%= app_categories && renderSidePanelCategories(app_categories) %>
+
+            <li><a id="menu_item" href="/contact">Liên Hệ</a></li>
+        </ul>
+
+    </div>
+</header>
+
+<div class="app-bar">
+    <div class="app-bar-side">
+        <div class="app-bar-element open-side-panel-btn">
+            <a class="app-bar-inner">
+                <svg class="icon icon-categories page-icon" style="fill: #202020;"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-categories"></use></svg>
+                <div>Danh Mục</div>
+            </a>
+        </div>
+        <div class="app-bar-element">
+            <a class="app-bar-inner" id="menu_item" href="/about">
+                <svg class="icon icon-info page-icon" style="fill: #202020;"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-info"></use></svg>
+                <div>Giới Thiệu</div>
+            </a>
+        </div>
+    </div>
+    <div class="app-bar-center">
+        <img src="/assets/icons/combined-shape.svg" alt="" class="shape-icon" />
+        <div class="app-bar-element">
+            <a class="app-bar-inner" id="menu_item" href="/">
+                <svg class="icon icon-home page-icon" style="fill: #202020;"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-home"></use></svg>
+                <div>Trang Chủ</div>
+            </a>
+        </div>
+    </div>
+    <div class="app-bar-side">
+        <div class="app-bar-element">
+            <a class="app-bar-inner" id="menu_item" href="/contact">
+                <svg class="icon icon-contacts page-icon" style="fill: #202020;"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-contacts"></use></svg>
+                <div>Liên Hệ</div>
+            </a>
+        </div>
+        <div class="app-bar-element">
+            <a class="app-bar-inner" id="menu_item" href="/user">
+                <svg class="icon icon-user-circle page-icon" style="fill: #202020;"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-user-circle"></use></svg>
+                <div>Người Dùng</div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script src="/assets/js/header-menu.js"></script>
+<script src="/assets/js/search.js"></script>

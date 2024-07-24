@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decor | <%= title %></title>
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="/assets/icons/favicon.ico" />
+
+  <!-- Core CSS -->
+  <link rel="stylesheet" href="/assets/css/core.css" />
+  <link rel="stylesheet" href="/assets/css/client-style.css" />
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <main class="main-container">
+        <%- body %>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <!-- Toast -->
+    <%- include('../components/toast') %>
+    <!-- / Toast -->
+</body>
+</html>
