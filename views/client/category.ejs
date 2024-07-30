@@ -1,0 +1,54 @@
+<div class="container category-container">
+    <div class="row">
+        <div class="col-12">
+            <div class="session-title">
+                <h3><%= response.category.name %></h3>
+            </div>
+
+            <div class="html"><%- response.category.description %></div>
+
+            <% if (response.products) { %>
+                <div class="row">
+                    <% response.products.forEach(function(product) { %>
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="product-item">
+                                <a href="product/<%= product.slug %>">
+                                    <% if(product.product_gallery && product.product_gallery.length > 0) { %>
+                                        <div class="product-img">
+                                            <img src="<%= product.product_gallery[0].path %>" alt="" title="<%= product.product_gallery[0].filename %>" />
+                                        </div>
+                                    <% } %>
+                                    <div class="product-name"><%= product.product_name %></div>
+                                </a>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } %>
+
+            <% if (response.blogs) { %>
+                <div class="row">
+                    <% response.blogs.forEach(function(blog) { %>
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="blog-item">
+                                <a href="blog/<%= blog.slug %>">
+                                    <% if(blog.banner) { %>
+                                        <div class="blog-img">
+                                            <img src="<%= blog.banner.path %>" alt="" title="<%= blog.banner.filename %>" />
+                                        </div>
+                                    <% } %>
+                                    <div class="blog-name"><%= blog.title %></div>
+                                    <div class="blog-summary"><%= blog.summary %></div>
+                                </a>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } %>
+
+            <% if ((!response.blogs || response.blogs.length <= 0) && (!response.products || response.products.length <= 0)) { %>
+                <%- include('../components/empty') %>
+            <% } %>
+        </div>
+    </div>
+</div>

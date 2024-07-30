@@ -1,0 +1,27 @@
+<div class="com-thumb-carousel">
+  <div style="--swiper-navigation-color: #fff; --swiper-pagination-color: #fff" class="swiper swiper-preview">
+    <div class="swiper-wrapper">
+      <% slides.forEach(function(slide) { %>
+        <div class="swiper-slide">
+          <div class="swiper-zoom-container">
+            <img src="/<%= slide.path %>" title="<%= slide.filename %>"/>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+  </div>
+  <div thumbsSlider="" class="swiper swiper-thumb">
+    <div class="swiper-wrapper">
+      <% slides.forEach(function(slide) { %>
+        <div class="swiper-slide">
+          <img src="/<%= slide.path %>" title="<%= slide.filename %>"/>
+        </div>
+      <% }); %>
+    </div>
+  </div>
+</div>
+
+<script src="/assets/libraries/swiper/11.1.8/swiper-bundle.min.js"></script>
+<script src="/assets/js/swiper.js"></script>

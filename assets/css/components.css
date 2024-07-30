@@ -1,0 +1,46 @@
+.com-thumb-carousel {
+  .swiper {
+    width: 100%;
+    height: 100%;
+    height: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    .swiper-slide {
+      text-align: center;
+      font-size: 18px;
+      background: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-size: cover;
+      background-position: center;
+      img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+    &.swiper-preview {
+      height: 80%;
+      width: 100%;
+      img {
+        cursor: zoom-in;
+      }
+    }
+    
+    &.swiper-thumb {
+      height: 20%;
+      box-sizing: border-box;
+      padding: 10px 0;
+      .swiper-slide {
+        width: 25%;
+        height: 100%;
+        opacity: 0.4;
+      }
+      .swiper-slide-thumb-active {
+        opacity: 1;
+      }
+    }
+  }
+}

@@ -33,9 +33,15 @@ configureI18n(app);
 app.set('view engine', 'ejs');
 
 // Middleware
+const cspDirectives = {
+    frameSrc: ['\'self\'', 'https://www.google.com'],  // Allow framing of Google
+    imgSrc: ['\'self\'', 'data:', '*'],
+};
+app.use(helmet.contentSecurityPolicy({
+    directives: cspDirectives
+}));
 app.use(morgan('dev'));
 app.use(cors());
-app.use(helmet());
 app.use(compression());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
