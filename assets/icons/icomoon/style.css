@@ -15,6 +15,14 @@ Single-colored icons can be modified like so:
 }
 ========================================== */
 
+.icon-undo {
+  width: 0.857421875em;
+}
+
+.icon-rocket {
+  width: 0.9443359375em;
+}
+
 .icon-resources {
   width: 1.048828125em;
 }

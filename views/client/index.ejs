@@ -1,27 +1,126 @@
-<div style="height: 100vh;">
-    <!-- <h1>Detect urls</h1>
-
-    <div>
-        <textarea id="htmlTextarea"></textarea>
+<div class="container home-container">
+    <div class="row mb-16">
+        <div class="col-12">
+            <div>
+                <%- include('../components/bannerCarousel', {
+                    slides: [
+                        {
+                            path: '/assets/images/home-carousel/slide1.jpg',
+                            description: 'THI CÔNG NỘI THẤT PHÒNG NGỦ'
+                        },
+                        {
+                            path: '/assets/images/home-carousel/slide2.jpg',
+                            description: 'THI CÔNG NỘI THẤT PHÒNG TẮM'
+                        },
+                        {
+                            path: '/assets/images/home-carousel/slide3.jpg',
+                            description: 'THI CÔNG NỘI THẤT PHÒNG BẾP'
+                        },
+                        {
+                            path: '/assets/images/home-carousel/slide4.jpg',
+                            description: 'THI CÔNG NỘI THẤT QUẦY BAR'
+                        },
+                        {
+                            path: '/assets/images/home-carousel/slide5.jpg',
+                            description: 'THI CÔNG NỘI THẤT VĂN PHÒNG'
+                        },
+                        {
+                            path: '/assets/images/home-carousel/slide6.jpg',
+                            description: 'THI CÔNG NỘI THẤT PHÒNG KHÁCH'
+                        },
+                        {
+                            path: '/assets/images/home-carousel/slide7.jpg',
+                            description: 'THI CÔNG NỘI THẤT SHOWROOM'
+                        },
+                    ]
+                }) %>
+            </div>
+        </div>
     </div>
 
-    <button id="detectLinksButton">Detect links</button>
-
-    <div>
-        <textarea id="urlsTextarea"></textarea>
+    <div class="row mb-16">
+        <div class="col-lg-4 col-md-4 col-sm-12">
+            <div class="top-banner">
+                <img src="/assets/images/home-carousel/banner_3_top_1.webp" alt=""/>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12">
+            <div class="top-banner">
+                <img src="/assets/images/home-carousel/banner_3_top_2.webp" alt=""/>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12">
+            <div class="top-banner">
+                <img src="/assets/images/home-carousel/banner_3_top_3.webp" alt=""/>
+            </div>
+        </div>
     </div>
 
-    <h1>Replace urls</h1>
+    <% if (response.products) { %>
+        <div class="row category-container">
+            <div class="session-title">
+                <h3>Sản Phẩm Mới</h3>
+            </div>
 
-    <div>
-        <textarea id="changeUrlsTextarea"></textarea>
+            <% response.products.forEach(function(product) { %>
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="product-item">
+                        <a href="product/<%= product.slug %>">
+                            <% if(product.product_gallery && product.product_gallery.length > 0) { %>
+                                <div class="product-img">
+                                    <img src="<%= product.product_gallery[0].path %>" alt="" title="<%= product.product_gallery[0].filename %>" />
+                                </div>
+                            <% } %>
+                            <div class="product-name"><%= product.product_name %></div>
+                        </a>
+                    </div>
+                </div>
+            <% }); %>
+
+            <div class="category-actions">
+                <a class="view-more-btn" href="/san-pham">Xem Thêm >></a>
+            </div>
+        </div>
+    <% } %>
+
+    <%- include('./partials/testimonials-cta-service') %>
+    
+    <% if (response.blogs) { %>
+        <div class="row category-container">
+            <div class="session-title">
+                <h3>Tạp Chí Tin Tức</h3>
+            </div>
+
+            <% response.blogs.forEach(function(blog) { %>
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="blog-item">
+                        <a href="blog/<%= blog.slug %>">
+                            <% if(blog.banner) { %>
+                                <div class="blog-img">
+                                    <img src="<%= blog.banner.path %>" alt="" title="<%= blog.banner.filename %>" />
+                                </div>
+                            <% } %>
+                            <div class="blog-name"><%= blog.title %></div>
+                            <div class="blog-summary"><%= blog.summary %></div>
+                        </a>
+                    </div>
+                </div>
+            <% }); %>
+
+            <div class="category-actions">
+                <a class="view-more-btn" href="/tin-tuc">Xem Thêm >></a>
+            </div>
+        </div>
+    <% } %>
+
+    <div class="row">
+        <div class="col-12">
+            
+        </div>
     </div>
 
-    <button id="replaceLinksButton">Replace link</button>
-
-    <div>
-        <textarea id="responseHtmlTextarea"></textarea>
+    <div class="row">
+        <div class="col-12">
+        </div>
     </div>
-
-    <script src="/assets/js/convertHtml.js"></script> -->
 </div>

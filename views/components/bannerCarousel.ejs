@@ -1,0 +1,29 @@
+<div class="com-swipe-carousel">
+    <div class="swiper swiper-slide">
+        <div class="swiper-wrapper">
+            <% slides.forEach(function(slide) { %>
+                <div class="swiper-slide">
+                    <img src="<%= slide.path %>" alt="" />
+                    <div class="slide-description">
+                        <div><%= slide.description %></div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+
+        <div class="swiper-pagination"></div>
+        
+        <div class="autoplay-progress">
+            <svg viewBox="0 0 48 48">
+                <circle cx="24" cy="24" r="20"></circle>
+            </svg>
+            <span></span>
+        </div>
+    </div>
+</div>
+
+<!-- Initialize Swiper -->
+<script src="/assets/js/swiper/carousel.js"></script>

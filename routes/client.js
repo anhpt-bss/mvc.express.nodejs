@@ -9,8 +9,21 @@ const Blog = require('@models/blog');
 const Product = require('@models/product');
 
 router.get('/', async (req, res) => {
+    const products = await Product.find()
+        .sort({ created_time: 1 })
+        .skip(0)
+        .limit(6)
+        .populate('product_gallery')
+        .populate('category');
 
-    const response = {};
+    const blogs = await Blog.find()
+        .sort({ created_time: 1 })
+        .skip(0)
+        .limit(6)
+        .populate('category')
+        .populate('banner');
+    
+    const response = { products, blogs };
 
     res.render('client', { response }, (error, html) => {
         if (error) {

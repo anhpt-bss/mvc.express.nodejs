@@ -103,6 +103,14 @@ body {
     gap: 16px;
 }
 
+.mt-16 {
+    margin-top: 16px;
+}
+
+.mb-16 {
+    margin-bottom: 16px;
+}
+
 hr {
     margin: 1rem 0;
     color: #d9dee3;
