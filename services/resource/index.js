@@ -28,7 +28,7 @@ class ResourceService {
                         size: file.size,
                         mimetype: file.mimetype,
                         path: `${constants.UPLOADS_BASE_PATH}/${file.filename}`,
-                        category: resource_category || null
+                        category: resource_category || null,
                     });
                     await newResource.save();
                     uploadedFiles.push(newResource);

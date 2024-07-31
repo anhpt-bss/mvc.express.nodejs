@@ -13,7 +13,7 @@ const {
     blogValidationRules,
     categoryValidationRules,
     productValidationRules,
-    resourceValidationRules
+    resourceValidationRules,
 } = require('@middleware/validator');
 
 const authController = require('@controllers/auth');
@@ -74,29 +74,29 @@ router.get('/', async (req, res) => {
             {
                 name: 'Người Dùng',
                 total: totalUser,
-                href: 'admin/users'
+                href: 'admin/users',
             },
             {
                 name: 'Danh Mục',
                 total: totalCategory,
-                href: 'admin/categories'
+                href: 'admin/categories',
             },
             {
                 name: 'Sản Phẩm',
                 total: totalProduct,
-                href: 'admin/products'
+                href: 'admin/products',
             },
             {
                 name: 'Blog',
                 total: totalBlog,
-                href: 'admin/blogs'
+                href: 'admin/blogs',
             },
             {
                 name: 'Tệp Tải Lên',
                 total: totalResource,
-                href: 'admin/resources'
-            }
-        ]
+                href: 'admin/resources',
+            },
+        ],
     };
 
     res.render('admin', { response }, (error, html) => {
@@ -284,7 +284,7 @@ const resourceFields = [
         field_type: 'text',
         is_required: true,
         is_show: true,
-        width: '20%'
+        width: '20%',
     },
     {
         field_name: 'size',
@@ -292,7 +292,7 @@ const resourceFields = [
         field_type: 'number',
         is_required: true,
         is_show: true,
-        width: '10%'
+        width: '10%',
     },
     {
         field_name: 'mimetype',
@@ -300,7 +300,7 @@ const resourceFields = [
         field_type: 'text',
         is_required: true,
         is_show: true,
-        width: '10%'
+        width: '10%',
     },
     {
         field_name: 'category',
@@ -308,7 +308,7 @@ const resourceFields = [
         field_type: 'text',
         is_required: false,
         is_show: true,
-        width: '10%'
+        width: '10%',
     },
     {
         field_name: 'path',
@@ -316,7 +316,7 @@ const resourceFields = [
         field_type: 'text',
         is_required: true,
         is_show: true,
-        width: '40%'
+        width: '40%',
     },
 ];
 
@@ -435,18 +435,22 @@ router.post(
     },
 );
 
-router.get('/resources/delete/:id', resourceController.deleteResource, (req, res) => {
-    const controllerResponse = res.locals.response;
+router.get(
+    '/resources/delete/:id',
+    resourceController.deleteResource,
+    (req, res) => {
+        const controllerResponse = res.locals.response;
 
-    // Push notification
-    pushNotification(
-        res,
-        controllerResponse.error ? 'error' : 'success',
-        controllerResponse,
-    );
+        // Push notification
+        pushNotification(
+            res,
+            controllerResponse.error ? 'error' : 'success',
+            controllerResponse,
+        );
 
-    return res.redirect('/admin/resources');
-});
+        return res.redirect('/admin/resources');
+    },
+);
 
 // Logout admin route
 router.get('/auth/logout', authController.logout, (req, res) => {
@@ -870,7 +874,7 @@ const productFields = [
         field_type: 'text',
         is_required: true,
         is_show: true,
-        width: '10%'
+        width: '10%',
     },
     {
         field_name: 'product_name',
@@ -878,7 +882,7 @@ const productFields = [
         field_type: 'text',
         is_required: true,
         is_show: true,
-        width: '30%'
+        width: '30%',
     },
     {
         field_name: 'product_summary',
@@ -886,7 +890,7 @@ const productFields = [
         field_type: 'text',
         is_required: true,
         is_show: true,
-        width: '40%'
+        width: '40%',
     },
     {
         field_name: 'category',
@@ -895,7 +899,7 @@ const productFields = [
         is_required: true,
         is_show: true,
         options: [],
-        width: '10%'
+        width: '10%',
     },
     {
         field_name: 'product_price',
@@ -1035,7 +1039,9 @@ router.post(
 
 // GET edit product page
 router.get('/products/edit/:id', async (req, res) => {
-    const productItem = await Product.findById(req.params.id).populate('product_gallery').lean();
+    const productItem = await Product.findById(req.params.id)
+        .populate('product_gallery')
+        .lean();
     const categoryList = await Category.find().lean();
 
     const response = {
@@ -1090,17 +1096,21 @@ router.post(
 );
 
 // GET delete product
-router.get('/products/delete/:id', productController.deleteProduct, (req, res) => {
-    const controllerResponse = res.locals.response;
+router.get(
+    '/products/delete/:id',
+    productController.deleteProduct,
+    (req, res) => {
+        const controllerResponse = res.locals.response;
 
-    // Push notification
-    pushNotification(
-        res,
-        controllerResponse.error ? 'error' : 'success',
-        controllerResponse,
-    );
+        // Push notification
+        pushNotification(
+            res,
+            controllerResponse.error ? 'error' : 'success',
+            controllerResponse,
+        );
 
-    return res.redirect('/admin/products');
-});
+        return res.redirect('/admin/products');
+    },
+);
 
 module.exports = router;

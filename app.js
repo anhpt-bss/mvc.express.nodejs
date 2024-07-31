@@ -34,12 +34,14 @@ app.set('view engine', 'ejs');
 
 // Middleware
 const cspDirectives = {
-    frameSrc: ['\'self\'', 'https://www.google.com'],  // Allow framing of Google
+    frameSrc: ['\'self\'', 'https://www.google.com'], // Allow framing of Google
     imgSrc: ['\'self\'', 'data:', '*'],
 };
-app.use(helmet.contentSecurityPolicy({
-    directives: cspDirectives
-}));
+app.use(
+    helmet.contentSecurityPolicy({
+        directives: cspDirectives,
+    }),
+);
 app.use(morgan('dev'));
 app.use(cors());
 app.use(compression());
@@ -86,15 +88,15 @@ async function getCategoryTree() {
                     startWith: '$_id',
                     connectFromField: '_id',
                     connectToField: 'parent_cate',
-                    as: 'sub_category'
-                }
+                    as: 'sub_category',
+                },
             },
             {
-                $match: { parent_cate: null }
+                $match: { parent_cate: null },
             },
             {
-                $sort: { position: 1 }
-            }
+                $sort: { position: 1 },
+            },
         ]);
 
         // Hàm đệ quy để sắp xếp các subcategories
@@ -119,16 +121,21 @@ app.use(async (req, res, next) => {
         const allCategories = await Category.find().sort({ position: 1 });
 
         const categoryMap = new Map();
-        allCategories.forEach(category => {
-            categoryMap.set(category._id.toString(), { ...category.toObject(), sub_category: [] });
+        allCategories.forEach((category) => {
+            categoryMap.set(category._id.toString(), {
+                ...category.toObject(),
+                sub_category: [],
+            });
         });
 
         const rootCategories = [];
-        allCategories.forEach(category => {
+        allCategories.forEach((category) => {
             if (category.parent_cate) {
                 const parent = categoryMap.get(category.parent_cate.toString());
                 if (parent) {
-                    parent.sub_category.push(categoryMap.get(category._id.toString()));
+                    parent.sub_category.push(
+                        categoryMap.get(category._id.toString()),
+                    );
                 }
             } else {
                 rootCategories.push(categoryMap.get(category._id.toString()));

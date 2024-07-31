@@ -6,6 +6,6 @@ const swiper4 = new Swiper('.swiper-cards', {
     centeredSlides: true,
     autoplay: {
         delay: 3000,
-        disableOnInteraction: false
+        disableOnInteraction: false,
     },
 });

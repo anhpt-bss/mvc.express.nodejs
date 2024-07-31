@@ -316,7 +316,8 @@
     flex-direction: column;
 }
 
-.admin-dashboard-container .db-user-info h1, .admin-dashboard-container .db-user-info h6 {
+.admin-dashboard-container .db-user-info h1,
+.admin-dashboard-container .db-user-info h6 {
     color: #fff;
     margin-bottom: 8px;
 }
@@ -353,10 +354,14 @@
 }
 
 @media (max-width: 575px) {
-    .admin-dashboard-container .banner-container, .admin-dashboard-container .dashboard-info {
+    .admin-dashboard-container .banner-container,
+    .admin-dashboard-container .dashboard-info {
         background: #ffffffdb;
     }
-    .admin-dashboard-container a, .admin-dashboard-container h1, .admin-dashboard-container h6, .admin-dashboard-container h2 {
+    .admin-dashboard-container a,
+    .admin-dashboard-container h1,
+    .admin-dashboard-container h6,
+    .admin-dashboard-container h2 {
         color: #696cff !important;
     }
 
@@ -419,11 +424,13 @@
     height: 40%;
     right: 1%;
     z-index: -1;
-    background: radial-gradient(circle,
-            rgb(194, 13, 170) 20%,
-            rgb(26, 186, 235) 60%,
+    background: radial-gradient(
+        circle,
+        rgb(194, 13, 170) 20%,
+        rgb(26, 186, 235) 60%,
 
-            rgb(26, 186, 235) 100%);
+        rgb(26, 186, 235) 100%
+    );
     filter: blur(70px);
     border-radius: 50%;
 }
@@ -445,9 +452,11 @@
     height: 80%;
     right: -40%;
     background: rgb(157, 173, 203);
-    background: radial-gradient(circle,
-            rgba(157, 173, 203, 1) 61%,
-            rgba(99, 122, 159, 1) 100%);
+    background: radial-gradient(
+        circle,
+        rgba(157, 173, 203, 1) 61%,
+        rgba(99, 122, 159, 1) 100%
+    );
     border-radius: 50%;
     z-index: -1;
 }
@@ -487,8 +496,8 @@
     font-size: 0.9em;
 }
 
-.login-form .input:focus+label,
-.login-form .input:valid+label {
+.login-form .input:focus + label,
+.login-form .input:valid + label {
     transform: translateY(-120%) scale(0.9);
     transition: all 0.4s;
 }

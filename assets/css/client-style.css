@@ -3,7 +3,6 @@
 \*-----------------------------------*/
 
 :root {
-
     /**
      * colors
      */
@@ -55,7 +54,6 @@
      */
 
     --transition-timing: 0.2s ease;
-
 }
 
 /* 
@@ -78,14 +76,14 @@
 .row-title {
     font-size: 20px;
     font-weight: 500;
-    color: #008CC0;
+    color: #008cc0;
     line-height: 1;
     display: flex;
     align-items: center;
     margin-bottom: 16px;
 
     svg {
-        fill: #008CC0;
+        fill: #008cc0;
         margin-right: 8px;
         width: 24px;
         height: 24px;
@@ -95,7 +93,7 @@
 .socials-list {
     a {
         &:hover {
-            color: #008CC0;
+            color: #008cc0;
         }
 
         img {
@@ -131,7 +129,7 @@ header {
     flex-direction: column;
     align-items: center;
     background-color: #fff;
-    box-shadow: 0 0 .5rem rgba(0, 0, 0, .2);
+    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2);
 
     .header-nav {
         width: 100%;
@@ -176,7 +174,7 @@ header {
                 border: none;
 
                 &:hover {
-                    color: #008CC0;
+                    color: #008cc0;
                 }
             }
 
@@ -234,7 +232,7 @@ header {
                         position: absolute;
                         top: 100%;
                         width: 100%;
-                        box-shadow: 0 0 .5rem rgba(0, 0, 0, .2);
+                        box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2);
                         border-top: none;
                         background-color: white;
                         border-radius: 0 0 4px 4px;
@@ -251,11 +249,8 @@ header {
                                 background-color: #f0f0f0;
                             }
                         }
-
                     }
                 }
-
-
             }
 
             .cart {
@@ -290,12 +285,12 @@ header {
                         text-transform: uppercase;
 
                         &:hover {
-                            color: #008CC0;
+                            color: #008cc0;
                         }
 
                         &.active {
                             color: #fff !important;
-                            background: #008CC0;
+                            background: #008cc0;
                             border-radius: 0 10px 0 10px;
                         }
                     }
@@ -306,7 +301,7 @@ header {
                         position: absolute;
                         left: 0;
                         top: 90%;
-                        box-shadow: 0 0 .5rem rgba(0, 0, 0, .2);
+                        box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2);
                         border-radius: 5px;
                         list-style: none;
                         padding: 0;
@@ -317,7 +312,10 @@ header {
                         opacity: 0;
                         visibility: hidden;
                         transform: translateY(20px);
-                        transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
+                        transition:
+                            transform 0.3s ease,
+                            opacity 0.3s ease,
+                            visibility 0.3s ease;
 
                         li {
                             position: relative;
@@ -327,19 +325,22 @@ header {
                                 left: 100%;
                                 top: 0;
                                 transform: translateX(-20px);
-                                transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
+                                transition:
+                                    transform 0.3s ease,
+                                    opacity 0.3s ease,
+                                    visibility 0.3s ease;
                             }
 
                             &:hover {
-                                >.submenu {
+                                > .submenu {
                                     display: block;
                                     opacity: 1;
                                     visibility: visible;
                                     transform: translateX(0);
                                 }
 
-                                >a {
-                                    color: #008CC0;
+                                > a {
+                                    color: #008cc0;
                                     padding-left: 8px;
                                     border-left: 2px solid #3ca0e7;
                                     transition: all 0.3s ease;
@@ -355,7 +356,7 @@ header {
                                 transition: background 0.3s;
 
                                 &.active {
-                                    color: #008CC0 !important;
+                                    color: #008cc0 !important;
                                     padding-left: 8px;
                                     border-left: 2px solid #3ca0e7;
                                     transition: all 0.3s ease;
@@ -366,7 +367,7 @@ header {
                         }
                     }
 
-                    &:hover>.submenu {
+                    &:hover > .submenu {
                         display: block;
                         opacity: 1;
                         visibility: visible;
@@ -439,7 +440,7 @@ header {
                         }
 
                         &.active:after {
-                            content: "\2212";
+                            content: '\2212';
                         }
                     }
                 }
@@ -454,7 +455,7 @@ header {
                     display: block;
 
                     &.active {
-                        color: #008CC0;
+                        color: #008cc0;
                     }
                 }
 
@@ -465,7 +466,9 @@ header {
                     max-height: 0;
                     opacity: 0;
                     overflow: hidden;
-                    transition: max-height 0.3s ease, opacity 0.3s ease;
+                    transition:
+                        max-height 0.3s ease,
+                        opacity 0.3s ease;
 
                     &.open {
                         max-height: 100vh;
@@ -474,7 +477,6 @@ header {
                 }
             }
         }
-
     }
 }
 
@@ -536,7 +538,7 @@ header {
     height: 50px;
     width: 100%;
     min-width: 320px;
-    background-color: #FFFFFF;
+    background-color: #ffffff;
     margin: 0px auto;
     z-index: 3;
     will-change: transform;
@@ -557,11 +559,11 @@ header {
 
             &.active {
                 .page-icon {
-                    fill: #008CC0 !important;
+                    fill: #008cc0 !important;
                 }
 
                 div {
-                    color: #008CC0;
+                    color: #008cc0;
                 }
             }
 
@@ -604,7 +606,7 @@ header {
                 padding-bottom: 10px;
 
                 &.active {
-                    background: #008CC0;
+                    background: #008cc0;
 
                     .page-icon {
                         fill: #fff !important;
@@ -623,7 +625,6 @@ header {
                 div {
                     color: #202020;
                 }
-
             }
         }
     }
@@ -677,10 +678,10 @@ footer {
                 color: #202020;
 
                 &:hover {
-                    color: #008CC0;
+                    color: #008cc0;
 
                     svg {
-                        fill: #008CC0;
+                        fill: #008cc0;
                     }
                 }
 
@@ -770,7 +771,7 @@ footer {
         }
 
         button {
-            background-color: #008CC0;
+            background-color: #008cc0;
             color: white;
             padding: 0.75rem;
             border: none;
@@ -782,7 +783,6 @@ footer {
                 opacity: 0.8;
             }
         }
-
     }
 }
 
@@ -848,8 +848,8 @@ footer {
             font-size: 16px;
             font-weight: 500;
             line-height: 1.2;
-            color: #008CC0;
-            border: 1px solid #008CC0;
+            color: #008cc0;
+            border: 1px solid #008cc0;
             border-radius: 5px;
 
             &:hover {
@@ -981,13 +981,13 @@ footer {
         .name {
             font-size: 24px;
             font-weight: 500;
-            color: #008CC0;
+            color: #008cc0;
         }
 
         .price {
             font-size: 18px;
             font-weight: 500;
-            color: #B10606;
+            color: #b10606;
         }
 
         .tag {
@@ -1011,7 +1011,6 @@ footer {
 \*-----------------------------------*/
 
 .testimonials-cta-service-container {
-
     .testimonial-container {
         height: 100%;
 
@@ -1064,7 +1063,6 @@ footer {
     }
 
     .cta-container {
-
         .slide-swiper-pagination {
             text-align: center;
         }
@@ -1176,7 +1174,7 @@ footer {
             .icon {
                 width: 35px;
                 height: 35px;
-                fill: #008CC0;
+                fill: #008cc0;
                 -webkit-transition: var(--transition-timing);
                 -o-transition: var(--transition-timing);
                 transition: var(--transition-timing);
@@ -1197,6 +1195,5 @@ footer {
                 margin-bottom: 0;
             }
         }
-
     }
 }

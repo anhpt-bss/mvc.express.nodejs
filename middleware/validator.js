@@ -49,7 +49,10 @@ exports.resourceValidationRules = () => {
         body('size').isNumeric().withMessage('resource.size_required'),
         body('mimetype').notEmpty().withMessage('resource.mimetype_required'),
         body('path').notEmpty().withMessage('resource.path_required'),
-        body('category').optional().isString().withMessage('resource.category_required'),
+        body('category')
+            .optional()
+            .isString()
+            .withMessage('resource.category_required'),
     ];
 };
 
@@ -107,28 +110,21 @@ exports.productValidationRules = () => {
         body('product_summary')
             .notEmpty()
             .withMessage('product.product_summary_required'),
-        body('product_price')
-            .optional(),
-        body('product_discount')
-            .optional(),
-        body('product_quantity')
-            .optional(),
-        body('shipping_fee')
-            .optional(),
+        body('product_price').optional(),
+        body('product_discount').optional(),
+        body('product_quantity').optional(),
+        body('shipping_fee').optional(),
         body('product_gallery')
             .optional()
             .isArray()
             .withMessage('product.product_gallery_valid')
-            .custom((value) => value.every((id) => mongoose.Types.ObjectId.isValid(id)))
+            .custom((value) =>
+                value.every((id) => mongoose.Types.ObjectId.isValid(id)),
+            )
             .withMessage('product.product_gallery_ids_valid'),
-        body('product_specifications')
-            .optional(),
-        body('product_description')
-            .optional(),
-        body('manufacturer')
-            .optional(),
-        body('category')
-            .isMongoId()
-            .withMessage('product.category_valid'),
+        body('product_specifications').optional(),
+        body('product_description').optional(),
+        body('manufacturer').optional(),
+        body('category').isMongoId().withMessage('product.category_valid'),
     ];
 };

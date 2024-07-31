@@ -32,11 +32,13 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: false,
     },
-    product_gallery: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Resource',
-        required: true,
-    }],
+    product_gallery: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Resource',
+            required: true,
+        },
+    ],
     product_specifications: {
         type: String,
         required: false,

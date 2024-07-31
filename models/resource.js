@@ -20,8 +20,8 @@ const resourceSchema = new mongoose.Schema({
     category: {
         type: String,
         required: false,
-        default: 'Hệ Thống'
-    }
+        default: 'Hệ Thống',
+    },
 });
 
 module.exports = mongoose.model('Resource', resourceSchema);

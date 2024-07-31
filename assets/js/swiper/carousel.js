@@ -7,20 +7,20 @@ const swiper3 = new Swiper('.swiper-slide', {
     centeredSlides: true,
     autoplay: {
         delay: 7000,
-        disableOnInteraction: false
+        disableOnInteraction: false,
     },
     pagination: {
         el: '.swiper-pagination',
-        clickable: true
+        clickable: true,
     },
     navigation: {
         nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev'
+        prevEl: '.swiper-button-prev',
     },
     on: {
         autoplayTimeLeft(s, time, progress) {
             progressCircle.style.setProperty('--progress', 1 - progress);
             progressContent.textContent = `${Math.ceil(time / 1000)}s`;
-        }
-    }
+        },
+    },
 });

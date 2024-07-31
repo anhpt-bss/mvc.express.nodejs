@@ -16,18 +16,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Menu collapse
     const toggleButtons = document.querySelectorAll('.toggle-submenu-btn');
-    
+
     toggleButtons.forEach((button) => {
         button.addEventListener('click', (event) => {
             // Prevent the event from bubbling up to parent elements
             event.stopPropagation();
-                
+
             const listItem = button.closest('li');
             const submenu = listItem.querySelector('.submenu');
-    
+
             if (submenu) {
                 const isExpanded = submenu.classList.contains('open');
-    
+
                 if (isExpanded) {
                     submenu.classList.remove('open');
                     button.classList.remove('active');
@@ -38,13 +38,13 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
-    
+
     // Set menu active
     const menuItem = document.querySelectorAll('#menu_item');
     const urlHref = `${this.location.origin}${this.location.pathname}`;
 
     menuItem.forEach((menu) => {
-        if(urlHref === menu.href) {
+        if (urlHref === menu.href) {
             menu.classList.add('active');
         }
     });

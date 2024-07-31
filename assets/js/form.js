@@ -9,7 +9,9 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function previewFiles(input) {
-    const previewContainer = document.getElementById(input.getAttribute('data-preview-target'));
+    const previewContainer = document.getElementById(
+        input.getAttribute('data-preview-target'),
+    );
     previewContainer.innerHTML = ''; // Clear existing previews
 
     const files = input.files;
@@ -18,7 +20,8 @@ function previewFiles(input) {
         const previewWrapper = document.createElement('div');
         const previewImage = document.createElement('img');
         const removeButton = document.createElement('button');
-        const removeIcon = '<svg class="icon icon-clear" style="fill: #fff;"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-clear"></use></svg>';
+        const removeIcon =
+            '<svg class="icon icon-clear" style="fill: #fff;"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-clear"></use></svg>';
 
         removeButton.type = 'button';
         removeButton.classList.add('remove-button');
@@ -35,9 +38,11 @@ function previewFiles(input) {
         previewContainer.appendChild(previewWrapper);
 
         removeButton.addEventListener('click', function () {
-            const updatedFiles = Array.from(input.files).filter((_, i) => i !== index);
+            const updatedFiles = Array.from(input.files).filter(
+                (_, i) => i !== index,
+            );
             const dataTransfer = new DataTransfer();
-            updatedFiles.forEach(file => dataTransfer.items.add(file));
+            updatedFiles.forEach((file) => dataTransfer.items.add(file));
             input.files = dataTransfer.files;
             previewFiles(input); // Re-render previews
         });

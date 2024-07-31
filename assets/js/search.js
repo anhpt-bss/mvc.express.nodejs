@@ -18,15 +18,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function fetchSuggestions(query) {
         fetch(`/search?q=${encodeURIComponent(query)}`)
-            .then(response => response.json())
-            .then(data => {
+            .then((response) => response.json())
+            .then((data) => {
                 renderSuggestions(data);
             })
-            .catch(error => {
-                const data = [
-                    'a',
-                    'b'
-                ];
+            .catch((error) => {
+                const data = ['a', 'b'];
                 renderSuggestions(data);
                 console.error('Error fetching suggestions:', error);
             });
@@ -34,9 +31,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderSuggestions(suggestions) {
         if (suggestions.length === 0) {
-            suggestionsBox.innerHTML = '<div class="suggestion-item">No suggestions found</div>';
+            suggestionsBox.innerHTML =
+                '<div class="suggestion-item">No suggestions found</div>';
         } else {
-            suggestionsBox.innerHTML = suggestions.map(item => `<div class="suggestion-item">${item}</div>`).join('');
+            suggestionsBox.innerHTML = suggestions
+                .map((item) => `<div class="suggestion-item">${item}</div>`)
+                .join('');
         }
         suggestionsBox.style.display = 'block';
     }
@@ -50,7 +50,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.addEventListener('click', (event) => {
-        if (!searchInput.contains(event.target) && !suggestionsBox.contains(event.target)) {
+        if (
+            !searchInput.contains(event.target) &&
+            !suggestionsBox.contains(event.target)
+        ) {
             suggestionsBox.innerHTML = '';
             suggestionsBox.style.display = 'none';
         }
