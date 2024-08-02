@@ -6,7 +6,7 @@ const { DEFAULT_RESPONSE } = require('@services/httpResponse/constants');
 const { pushNotification } = require('@services/helper');
 const { readLogFile, deleteLogFile } = require('@services/logger');
 
-const { checkAdminToken, checkTokenForLogin } = require('@middleware/auth');
+const { checkAdminToken, checkAdminTokenForLogin } = require('@middleware/auth');
 const {
     loginValidationRules,
     userValidationRules,
@@ -30,7 +30,7 @@ const Product = require('@models/product');
 const Resource = require('@models/resource');
 
 // Routes public
-router.get('/auth/login', checkTokenForLogin, (req, res) => {
+router.get('/auth/login', checkAdminTokenForLogin, (req, res) => {
     res.render('admin/signin', { ...DEFAULT_RESPONSE });
 });
 

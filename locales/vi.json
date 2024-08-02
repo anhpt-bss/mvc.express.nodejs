@@ -21,6 +21,7 @@
     "auth": {
         "invalid_email_password": "Email hoặc mật khẩu không hợp lệ",
         "invalid_admin_user": "Người dùng quản trị không hợp lệ",
+        "invalid_client_user": "Người dùng không hợp lệ",
         "login_successful": "Đăng nhập thành công",
         "logout_successful": "Đăng xuất thành công"
     },

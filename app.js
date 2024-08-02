@@ -154,13 +154,14 @@ app.use(async (req, res, next) => {
 // Use multer middleware for handling file uploads
 app.use(upload());
 
+// Swagger
+swaggerSetup(app);
+
 // Routes
 app.use('/api', apiRouter);
 app.use('/admin', adminRouter);
 app.use('/', clientRouter);
 
-// Swagger
-swaggerSetup(app);
 
 // Error handling middleware
 app.use((error, req, res, next) => {

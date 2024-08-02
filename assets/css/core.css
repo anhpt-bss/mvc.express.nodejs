@@ -111,6 +111,10 @@ body {
     margin-bottom: 16px;
 }
 
+.m-auto {
+    margin: auto;
+}
+
 hr {
     margin: 1rem 0;
     color: #d9dee3;

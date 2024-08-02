@@ -21,6 +21,7 @@
     "auth": {
         "invalid_email_password": "Invalid email or password",
         "invalid_admin_user": "Invalid admin user",
+        "invalid_client_user": "Invalid client user",
         "login_successful": "Login successful",
         "internal_server_error": "Internal server error",
         "logout_successful": "Successfully logged out"

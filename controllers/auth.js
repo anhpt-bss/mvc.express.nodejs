@@ -98,7 +98,7 @@ exports.login = async (req, res, next) => {
             }
         }
 
-        const { email, password } = req.body;
+        const { email, password, source } = req.body;
 
         const user = await User.findOne({ email });
 
@@ -136,8 +136,14 @@ exports.login = async (req, res, next) => {
             }
         }
 
-        if (!user.is_admin) {
-            const errorMessage = req.t('auth.invalid_admin_user');
+        let errorMessage = null;
+        if(source === 'client' && user.is_admin) {
+            errorMessage = req.t('auth.invalid_client_user');
+        } else if (!source && !user.is_admin) {
+            errorMessage = req.t('auth.invalid_admin_user');
+        }
+
+        if(errorMessage) {
             if (
                 req.headers.accept &&
                 req.headers.accept.includes('application/json')
@@ -164,11 +170,20 @@ exports.login = async (req, res, next) => {
                 req.t('auth.login_successful'),
             );
         } else {
-            res.cookie('access_token', token, {
-                httpOnly: true,
-                secure: false,
-                sameSite: 'Strict',
-            });
+            if(source === 'client') {
+                res.cookie('client_access_token', token, {
+                    httpOnly: true,
+                    secure: false,
+                    sameSite: 'Strict',
+                });
+            } else {
+                res.cookie('admin_access_token', token, {
+                    httpOnly: true,
+                    secure: false,
+                    sameSite: 'Strict',
+                });
+            }
+            
             res.locals.response = HttpResponse.successResponse(
                 { token },
                 req.t('auth.login_successful'),
@@ -223,7 +238,11 @@ exports.logout = (req, res, next) => {
                 req.t('auth.logout_successful'),
             );
         } else {
-            res.clearCookie('access_token');
+            if(req.user.is_admin) {
+                res.clearCookie('admin_access_token');
+            } else {
+                res.clearCookie('client_access_token');
+            }
             res.locals.response = HttpResponse.successResponse(
                 null,
                 req.t('auth.logout_successful'),

@@ -3,11 +3,124 @@ const express = require('express');
 const router = express.Router();
 
 const HttpResponse = require('@services/httpResponse');
+const { pushNotification } = require('@services/helper');
+
+const { checkClientToken, checkClientTokenForLogin } = require('@middleware/auth');
+const {
+    loginValidationRules,
+    userValidationRules,
+} = require('@middleware/validator');
+
+const authController = require('@controllers/auth');
+const userController = require('@controllers/user');
 
 const Category = require('@models/category');
 const Blog = require('@models/blog');
 const Product = require('@models/product');
 
+// Signin
+router.get('/signin', checkClientTokenForLogin, async (req, res) => {
+
+    const response = { };
+
+    res.render('client/signin', { response }, (error, html) => {
+        if (error) {
+            console.log('[---Log---][---client/signin---]: ', error);
+            return res.status(500).send(error.message);
+        }
+
+        // Pass the rendered content to the layout
+        res.render('client/layout', {
+            body: html,
+            title: 'Đăng Nhập',
+            currentUser: req.user,
+        });
+    });
+});
+
+router.post(
+    '/signin',
+    loginValidationRules(),
+    authController.login,
+    (req, res) => {
+        const controllerResponse = res.locals.response;
+
+        if (controllerResponse.error) {
+            // Push notification
+            pushNotification(res, 'error', controllerResponse);
+
+            return res.redirect('/signin');
+        } else {
+            // Push notification
+            pushNotification(res, 'success', controllerResponse);
+
+            return res.redirect('/');
+        }
+    },
+);
+
+// Signup
+router.get('/signup', checkClientTokenForLogin, async (req, res) => {
+
+    const response = { };
+
+    res.render('client/signup', { response }, (error, html) => {
+        if (error) {
+            console.log('[---Log---][---client/signup---]: ', error);
+            return res.status(500).send(error.message);
+        }
+
+        // Pass the rendered content to the layout
+        res.render('client/layout', {
+            body: html,
+            title: 'Đăng Ký',
+            currentUser: req.user,
+        });
+    });
+});
+
+router.post(
+    '/signup',
+    userValidationRules(),
+    userController.createUser,
+    (req, res) => {
+        const controllerResponse = res.locals.response;
+
+        if (controllerResponse.error) {
+            // Push notification
+            pushNotification(res, 'error', controllerResponse);
+
+            return res.redirect('/signup');
+        } else {
+            // Push notification
+            pushNotification(res, 'success', controllerResponse);
+
+            return res.redirect('/signin');
+        }
+    },
+);
+
+// Verify token
+router.use(checkClientToken);
+
+// Logout client
+router.get('/logout', authController.logout, (req, res) => {
+    const controllerResponse = res.locals.response;
+
+    if (controllerResponse.error) {
+        // Push notification
+        pushNotification(res, 'error', controllerResponse);
+
+        return res.redirect('/');
+    } else {
+        // Push notification
+        pushNotification(res, 'success', controllerResponse);
+
+        return res.redirect('/signin');
+    }
+});
+
+// Home
 router.get('/', async (req, res) => {
     const products = await Product.find()
         .sort({ created_time: 1 })
@@ -40,6 +153,7 @@ router.get('/', async (req, res) => {
     });
 });
 
+// About
 router.get('/about', async (req, res) => {
     const response = {};
 
@@ -58,6 +172,7 @@ router.get('/about', async (req, res) => {
     });
 });
 
+// Contact
 router.get('/contact', async (req, res) => {
     const response = {};
 
@@ -80,6 +195,7 @@ router.get('/contact', async (req, res) => {
     );
 });
 
+// Category
 router.get('/:slug', async (req, res) => {
     const { slug } = req.params;
     const rootCategories = res.locals.app_categories;
@@ -167,6 +283,7 @@ router.get('/:slug', async (req, res) => {
     });
 });
 
+// Product detail
 router.get('/product/:slug', async (req, res) => {
     const { slug } = req.params;
 
@@ -195,6 +312,7 @@ router.get('/product/:slug', async (req, res) => {
     });
 });
 
+// Blog detail
 router.get('/blog/:slug', async (req, res) => {
     const { slug } = req.params;
 

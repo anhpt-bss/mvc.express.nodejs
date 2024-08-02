@@ -3,12 +3,13 @@ const { verifyToken } = require('@config/jwt');
 const User = require('@models/user');
 const { pushNotification } = require('@services/helper');
 
+// For api
 exports.verifyAPIToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     let accessToken = authHeader && authHeader.split(' ')[1];
 
     if (!accessToken) {
-        accessToken = req.cookies['access_token'];
+        accessToken = req.cookies['admin_access_token'];
     }
 
     if (!accessToken) {
@@ -24,6 +25,7 @@ exports.verifyAPIToken = (req, res, next) => {
         req.user = decoded;
         next();
     } catch (error) {
+        console.log(error);
         return HttpResponse.unauthorized(
             res,
             [],
@@ -32,8 +34,9 @@ exports.verifyAPIToken = (req, res, next) => {
     }
 };
 
+// For admin
 exports.checkAdminToken = async (req, res, next) => {
-    const accessToken = req.cookies.access_token;
+    const accessToken = req.cookies.admin_access_token;
 
     if (!accessToken) {
         return res.redirect('/admin/auth/login');
@@ -54,7 +57,8 @@ exports.checkAdminToken = async (req, res, next) => {
 
         req.user = user;
         next();
-    } catch (err) {
+    } catch (error) {
+        console.log(error);
         // Push notification
         pushNotification(res, 'info', {
             title: 'Phiên đăng nhập hết hạn',
@@ -64,8 +68,8 @@ exports.checkAdminToken = async (req, res, next) => {
     }
 };
 
-exports.checkTokenForLogin = async (req, res, next) => {
-    const accessToken = req.cookies.access_token;
+exports.checkAdminTokenForLogin = async (req, res, next) => {
+    const accessToken = req.cookies.admin_access_token;
 
     if (!accessToken) {
         return next();
@@ -80,7 +84,62 @@ exports.checkTokenForLogin = async (req, res, next) => {
         } else {
             return next();
         }
-    } catch (err) {
+    } catch (error) {
+        console.log(error);
+        return next();
+    }
+};
+
+// For client
+exports.checkClientToken = async (req, res, next) => {
+    const accessToken = req.cookies.client_access_token;
+
+    if (!accessToken) {
+        return next();
+    }
+
+    try {
+        const decoded = verifyToken(accessToken);
+        const user = await User.findById(decoded.id);
+
+        if (!user || user.is_admin) {
+            // Push notification
+            pushNotification(res, 'info', {
+                title: 'Phiên đăng nhập hết hạn',
+                content: 'Vui lòng đăng nhập lại!',
+            });
+        }
+
+        req.user = user;
+        next();
+    } catch (error) {
+        console.log(error);
+        // Push notification
+        pushNotification(res, 'info', {
+            title: 'Phiên đăng nhập hết hạn',
+            content: 'Vui lòng đăng nhập lại!',
+        });
+    }
+};
+
+exports.checkClientTokenForLogin = async (req, res, next) => {
+    const accessToken = req.cookies.client_access_token;
+
+    if (!accessToken) {
+        return next();
+    }
+
+    try {
+        const decoded = verifyToken(accessToken);
+        const user = await User.findById(decoded.id);
+
+        if (user && !user.is_admin) {
+            return res.redirect('/');
+        } else {
+            return next();
+        }
+    } catch (error) {
+        console.log(error);
         return next();
     }
 };
