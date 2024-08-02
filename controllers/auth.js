@@ -137,13 +137,13 @@ exports.login = async (req, res, next) => {
         }
 
         let errorMessage = null;
-        if(source === 'client' && user.is_admin) {
+        if (source === 'client' && user.is_admin) {
             errorMessage = req.t('auth.invalid_client_user');
         } else if (!source && !user.is_admin) {
             errorMessage = req.t('auth.invalid_admin_user');
         }
 
-        if(errorMessage) {
+        if (errorMessage) {
             if (
                 req.headers.accept &&
                 req.headers.accept.includes('application/json')
@@ -170,7 +170,7 @@ exports.login = async (req, res, next) => {
                 req.t('auth.login_successful'),
             );
         } else {
-            if(source === 'client') {
+            if (source === 'client') {
                 res.cookie('client_access_token', token, {
                     httpOnly: true,
                     secure: false,
@@ -183,7 +183,7 @@ exports.login = async (req, res, next) => {
                     sameSite: 'Strict',
                 });
             }
-            
+
             res.locals.response = HttpResponse.successResponse(
                 { token },
                 req.t('auth.login_successful'),
@@ -238,7 +238,7 @@ exports.logout = (req, res, next) => {
                 req.t('auth.logout_successful'),
             );
         } else {
-            if(req.user.is_admin) {
+            if (req.user.is_admin) {
                 res.clearCookie('admin_access_token');
             } else {
                 res.clearCookie('client_access_token');

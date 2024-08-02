@@ -162,7 +162,6 @@ app.use('/api', apiRouter);
 app.use('/admin', adminRouter);
 app.use('/', clientRouter);
 
-
 // Error handling middleware
 app.use((error, req, res, next) => {
     console.log('[---Log---][---App---]: ', error);

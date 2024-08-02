@@ -5,7 +5,10 @@ const router = express.Router();
 const HttpResponse = require('@services/httpResponse');
 const { pushNotification } = require('@services/helper');
 
-const { checkClientToken, checkClientTokenForLogin } = require('@middleware/auth');
+const {
+    checkClientToken,
+    checkClientTokenForLogin,
+} = require('@middleware/auth');
 const {
     loginValidationRules,
     userValidationRules,
@@ -20,8 +23,7 @@ const Product = require('@models/product');
 
 // Signin
 router.get('/signin', checkClientTokenForLogin, async (req, res) => {
-
-    const response = { };
+    const response = {};
 
     res.render('client/signin', { response }, (error, html) => {
         if (error) {
@@ -61,8 +63,7 @@ router.post(
 
 // Signup
 router.get('/signup', checkClientTokenForLogin, async (req, res) => {
-
-    const response = { };
+    const response = {};
 
     res.render('client/signup', { response }, (error, html) => {
         if (error) {

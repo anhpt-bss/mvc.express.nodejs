@@ -6,7 +6,10 @@ const { DEFAULT_RESPONSE } = require('@services/httpResponse/constants');
 const { pushNotification } = require('@services/helper');
 const { readLogFile, deleteLogFile } = require('@services/logger');
 
-const { checkAdminToken, checkAdminTokenForLogin } = require('@middleware/auth');
+const {
+    checkAdminToken,
+    checkAdminTokenForLogin,
+} = require('@middleware/auth');
 const {
     loginValidationRules,
     userValidationRules,
