@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Close the dropdown if the user clicks outside of it
     window.onclick = function (event) {
-        console.log(event.target);
         if (!event.target.matches('#click-dropdown')) {
             const dropdowns = document.getElementById('dropdown-content');
             if (dropdowns) {
@@ -21,14 +20,5 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
         }
-        // if (!event.target.matches('#click-dropdown')) {
-        //      let i;
-        //      for (i = 0; i < dropdowns.length; i++) {
-        //          const openDropdown = dropdowns[i];
-        //          if (openDropdown.classList.contains('show')) {
-        //              openDropdown.classList.remove('show');
-        //          }
-        //      }
-        // }
     };
 });

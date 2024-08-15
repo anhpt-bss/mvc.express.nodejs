@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 // Function to show toast
 function showToastEventHandler(type, title, content, errorMessages) {
     const toast = document.getElementById('com-toast');
+    const toastIcon = document.getElementById('toast-icon');
     const toastTitle = document.getElementById('toast-title');
     const toastContent = document.getElementById('toast-content');
 
@@ -25,12 +26,32 @@ function showToastEventHandler(type, title, content, errorMessages) {
             : content + errorMessages;
 
     if (type === 'success') {
+        toastIcon.innerHTML = `
+            <svg class="icon icon-check-circle icon-header" style="fill: #fff">
+                <use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-check-circle"></use>
+            </svg>
+        `;
         toast.classList.add('bg-success');
     } else if (type === 'error') {
+        toastIcon.innerHTML = `
+            <svg class="icon icon-warning icon-header" style="fill: #fff">
+                <use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-warning"></use>
+            </svg>
+        `;
         toast.classList.add('bg-error');
     } else if (type === 'warning') {
+        toastIcon.innerHTML = `
+            <svg class="icon icon-warning icon-header" style="fill: #fff">
+                <use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-warning"></use>
+            </svg>
+        `;
         toast.classList.add('bg-warning');
     } else {
+        toastIcon.innerHTML = `
+            <svg class="icon icon-bell icon-header" style="fill: #fff">
+                <use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-bell"></use>
+            </svg>
+        `;
         toast.classList.add('bg-info');
     }
     toast.classList.add('show');

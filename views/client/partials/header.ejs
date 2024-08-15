@@ -38,7 +38,6 @@
                 </div>
             </div>
             <div class="user-cart">
-                <% console.log(currentUser); %>
                 <% if (currentUser) { %>
                     <div class="current-user">
                         <div class="dropdown">
@@ -52,10 +51,18 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="cart">
+                        <div class="number" id="number-item"><%= total_items_in_cart %></div>
+                        <a href="/cart">
+                            <svg class="icon icon-cart"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-cart"></use></svg>
+                        </a>
+                    </div>
+
                 <% } else { %>
                     <a href="/signin" class="login-link">
                         <svg class="icon icon-user-circle"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-user-circle"></use></svg>
-                        Đăng Nhập
+                        Đăng Nhập / Đăng Ký
                     </a>
                 <% } %>
             </div>

@@ -88,6 +88,12 @@ body {
 
 .text-align-center {
     text-align: center;
+    text-align: -webkit-center;
+}
+
+.text-align-right {
+    text-align: right;
+    text-align: -webkit-right;
 }
 
 .flex {
@@ -96,6 +102,12 @@ body {
 
 .align-item-center {
     align-items: center;
+}
+
+.col-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
 }
 
 .gap {
@@ -113,6 +125,42 @@ body {
 
 .m-auto {
     margin: auto;
+}
+
+.outline-button {
+    width: fit-content;
+    display: block;
+    padding: 8px 16px;
+    background: #fff;
+    border: 1px solid #008cc0;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: #008cc0;
+    &:hover {
+        background: #fff;
+        color: #008cc0;
+        opacity: 0.8;
+    }
+}
+
+.background-button {
+    width: fit-content;
+    display: block;
+    padding: 8px 16px;
+    background: #008cc0;
+    border: 1px solid #008cc0;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: #fff;
+    &:hover {
+        background: #008cc0;
+        color: #fff;
+        opacity: 0.8;
+    }
 }
 
 hr {

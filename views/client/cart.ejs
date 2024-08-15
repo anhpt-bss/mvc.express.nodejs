@@ -1,0 +1,82 @@
+<div class="container cart-container">
+    <div class="row">
+        <div class="col-12">
+            <div class="session-title">
+                <h3>Giỏ Hàng</h3>
+            </div>
+
+            <% if (response.cart) { %>
+                <div>
+                    <% response.cart.forEach(function(item) { %>
+                        <div class="row cart-item">
+                            <div class="col-lg-5 col-md-5 col-sm-12 col-content">
+                                <a class="product-item" href="product/<%= item.product.slug %>">
+                                    <% if(item.product.product_gallery && item.product.product_gallery.length > 0) { %>
+                                        <div class="product-img">
+                                            <img src="../<%= item.product.product_gallery[0].path %>" alt="" title="<%= item.product.product_gallery[0].filename %>" />
+                                        </div>
+                                    <% } %>
+                                    <div>
+                                        <div class="product-name"><%= item.product.product_name %></div>
+                                        <div class="product-code"><%= item.product.product_code %></div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-lg-2 col-md-2 col-sm-12 col-content">
+                                <div class="col-label">Đơn giá:</div>
+                                <div class="product-price">
+                                    <% if(item.product.product_price) { %>
+                                        <div class="price"><%= item.product.product_price %></div> 
+                                    <% } else { %> 
+                                        <div class="price">Liên Hệ</div>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-2 col-sm-12 col-content">
+                                <div class="col-label">Số lượng:</div>
+                                <div class="quantity">
+                                    <div class="btn-group">
+                                        <a href="cart/minus/<%= item._id %>">-</a>
+                                        <a><%= item.quantity %></a>
+                                        <a href="cart/add/<%= item._id %>">+</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-2 col-sm-12 col-content">
+                                <div class="col-label">Thành tiền:</div>
+                                <div class="product-price">
+                                    <% if(item.product.product_price) { %>
+                                        <div class="price"><%= item.product.product_price %></div> 
+                                    <% } else { %> 
+                                        <div class="price">Liên Hệ</div>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <div class="col-lg-1 col-md-1 col-sm-12 col-content actions">
+                                <a href="cart/delete/<%= item._id %>">
+                                    <svg class="icon icon-bin" style="fill: #f86262;"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-bin"></use></svg>
+                                </a>
+                            </div>
+                        </div>
+                    <% }); %>
+
+                    <div class="row">
+                        <div class="col-12 text-align-right">
+                            <div class="bill-card">
+                                <div class="total-price">Tổng cộng: <span>Liên Hệ</span></div>
+                                <div class="actions">
+                                    <a href="/" class="outline-button">Mua Thêm</a>
+                                    <a href="/checkout" class="background-button">Thanh Toán</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+
+            <% if (!response.cart || response.cart.length <= 0) { %>
+                <%- include('../components/empty') %>
+            <% } %>
+        </div>
+    </div>
+</div>

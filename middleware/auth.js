@@ -1,15 +1,16 @@
 const HttpResponse = require('@services/httpResponse');
 const { verifyToken } = require('@config/jwt');
-const User = require('@models/user');
 const { pushNotification } = require('@services/helper');
+const User = require('@models/user');
+const Cart = require('@models/cart');
 
 // For api
-exports.verifyAPIToken = (req, res, next) => {
+exports.verifyAPIToken = async (req, res, next) => {
     const authHeader = req.headers['authorization'];
     let accessToken = authHeader && authHeader.split(' ')[1];
 
     if (!accessToken) {
-        accessToken = req.cookies['admin_access_token'];
+        accessToken = req.cookies['admin_access_token'] || req.cookies['client_access_token'];
     }
 
     if (!accessToken) {
@@ -22,10 +23,13 @@ exports.verifyAPIToken = (req, res, next) => {
 
     try {
         const decoded = verifyToken(accessToken);
-        req.user = decoded;
-        next();
+        const user = await User.findById(decoded.id);
+
+        req.user = user;
+        
+        return next();
     } catch (error) {
-        console.log(error);
+        console.log('[---Log---][---verifyAPIToken---]: ', error);
         return HttpResponse.unauthorized(
             res,
             [],
@@ -56,9 +60,9 @@ exports.checkAdminToken = async (req, res, next) => {
         }
 
         req.user = user;
-        next();
+        return next();
     } catch (error) {
-        console.log(error);
+        console.log('[---Log---][---checkAdminToken---]: ', error);
         // Push notification
         pushNotification(res, 'info', {
             title: 'Phiên đăng nhập hết hạn',
@@ -85,7 +89,7 @@ exports.checkAdminTokenForLogin = async (req, res, next) => {
             return next();
         }
     } catch (error) {
-        console.log(error);
+        console.log('[---Log---][---checkAdminTokenForLogin---]: ', error);
         return next();
     }
 };
@@ -103,22 +107,27 @@ exports.checkClientToken = async (req, res, next) => {
         const user = await User.findById(decoded.id);
 
         if (!user || user.is_admin) {
-            // Push notification
-            pushNotification(res, 'info', {
-                title: 'Phiên đăng nhập hết hạn',
-                content: 'Vui lòng đăng nhập lại!',
-            });
+            return next();
         }
 
         req.user = user;
-        next();
+        
+        // Calculate the total quantity of all items in the cart
+        const totalQuantity = await Cart.aggregate([
+            { $match: { user: req.user._id } },
+            { $group: { _id: null, total: { $sum: '$quantity' } } }
+        ]);
+        const totalItemsInCart = totalQuantity.length > 0 ? totalQuantity[0].total : 0;
+        
+        res.locals.total_items_in_cart = totalItemsInCart;
+
+        return next();
     } catch (error) {
-        console.log(error);
-        // Push notification
-        pushNotification(res, 'info', {
-            title: 'Phiên đăng nhập hết hạn',
-            content: 'Vui lòng đăng nhập lại!',
-        });
+        console.log('[---Log---][---checkClientToken---]: ', error);
+        
+        res.locals.total_items_in_cart = 0;
+
+        return next();
     }
 };
 
@@ -135,11 +144,48 @@ exports.checkClientTokenForLogin = async (req, res, next) => {
 
         if (user && !user.is_admin) {
             return res.redirect('/');
-        } else {
-            return next();
         }
-    } catch (error) {
-        console.log(error);
+
         return next();
+    } catch (error) {
+        console.log('[---Log---][---checkClientTokenForLogin---]: ', error);
+        return next();
+    }
+};
+
+exports.checkClientTokenForAccess = async (req, res, next) => {
+    const accessToken = req.cookies.client_access_token;
+
+    if (!accessToken) {
+        // Push notification
+        pushNotification(res, 'info', {
+            title: 'Chưa đăng nhập ứng dụng',
+            content: 'Vui lòng đăng nhập để sử dụng tính năng này!',
+        });
+        res.redirect('/signin');
+    }
+
+    try {
+        const decoded = verifyToken(accessToken);
+        const user = await User.findById(decoded.id);
+
+        if (!user || user.is_admin) {
+            // Push notification
+            pushNotification(res, 'info', {
+                title: 'Người dùng không hợp lệ',
+                content: 'Vui lòng đăng nhập lại!',
+            });
+            res.redirect('/signin');
+        }
+
+        return next();
+    } catch (error) {
+        console.log('[---Log---][---checkClientTokenForAccess---]: ', error);
+        // Push notification
+        pushNotification(res, 'info', {
+            title: 'Phiên đăng nhập hết hạn',
+            content: 'Vui lòng đăng nhập lại!',
+        });
+        res.redirect('/signin');
     }
 };

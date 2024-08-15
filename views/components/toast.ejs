@@ -1,23 +1,6 @@
-<% if (notification) { %>
 <div class="com-toast" id="com-toast">
   <div class="toast-header">
-    <% if (notification.type === 'success') { %>
-      <svg class="icon icon-check-circle icon-header" style="fill: #fff">
-        <use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-check-circle"></use>
-      </svg>
-    <% } else if (notification.type === 'error') { %>
-      <svg class="icon icon-warning icon-header" style="fill: #fff">
-        <use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-warning"></use>
-      </svg>
-    <% } else if (notification.type === 'warning') { %>
-    <svg class="icon icon-warning icon-header" style="fill: #fff">
-      <use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-warning"></use>
-    </svg>
-    <% } else { %>
-    <svg class="icon icon-bell icon-header" style="fill: #fff">
-      <use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-bell"></use>
-    </svg>
-    <% }%>
+    <div class="toast-icon" id="toast-icon"></div>
 
     <div class="toast-title" id="toast-title"></div>
 
@@ -37,15 +20,16 @@
     *content: null|string
     *errors: null|[]
   -->
-  <div id="toast-data" 
-    data-type="<%= JSON.stringify(notification.type || 'info') %>" 
-    data-title="<%= JSON.stringify(notification.title || '') %>" 
-    data-content="<%= JSON.stringify(notification.content || '') %>" 
-    data-errors="<%= JSON.stringify(notification.errors || []) %>"
-    style="display:none;"
-  >
+  <% if (notification) { %>
+    <div id="toast-data" 
+      data-type="<%= JSON.stringify(notification.type || 'info') %>" 
+      data-title="<%= JSON.stringify(notification.title || '') %>" 
+      data-content="<%= JSON.stringify(notification.content || '') %>" 
+      data-errors="<%= JSON.stringify(notification.errors || []) %>"
+      style="display:none;"
+    >
+  <% } %>
   </div>
 </div>
 
 <script src="/assets/js/toast.js"></script>
-<% } %>

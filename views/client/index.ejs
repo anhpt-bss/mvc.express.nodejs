@@ -73,6 +73,12 @@
                             <% } %>
                             <div class="product-name"><%= product.product_name %></div>
                         </a>
+                        <div class="cart-actions">
+                            <button class="add-to-cart" data-product="<%= product._id %>">
+                                <svg class="icon icon-cart"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-cart"></use></svg>
+                                Liên Hệ
+                            </button>
+                        </div>
                     </div>
                 </div>
             <% }); %>
@@ -124,3 +130,5 @@
         </div>
     </div>
 </div>
+
+<script src="/assets/js/cart.js"></script>

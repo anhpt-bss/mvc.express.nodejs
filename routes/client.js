@@ -8,6 +8,7 @@ const { pushNotification } = require('@services/helper');
 const {
     checkClientToken,
     checkClientTokenForLogin,
+    checkClientTokenForAccess
 } = require('@middleware/auth');
 const {
     loginValidationRules,
@@ -16,10 +17,12 @@ const {
 
 const authController = require('@controllers/auth');
 const userController = require('@controllers/user');
+const cartController = require('@controllers/cart');
 
 const Category = require('@models/category');
 const Blog = require('@models/blog');
 const Product = require('@models/product');
+const Cart = require('@models/cart');
 
 // Signin
 router.get('/signin', checkClientTokenForLogin, async (req, res) => {
@@ -103,6 +106,110 @@ router.post(
 
 // Verify token
 router.use(checkClientToken);
+
+// Cart & Checkout
+router.get('/cart', checkClientTokenForAccess, async (req, res) => {
+    const cart = await Cart.aggregate([
+        { $match: { user: req.user._id } },
+        { $sort: { 'created_time': -1 } },
+        {
+            // populate product
+            $lookup:
+            {
+                from: 'products',
+                localField: 'product',
+                foreignField: '_id',
+                as: 'product'
+            }
+        },
+        { $unwind: { path: '$product', preserveNullAndEmptyArrays: true } },
+        {
+            // populate created by
+            $lookup:
+            {
+                from: 'users',
+                localField: 'user',
+                foreignField: '_id',
+                as: 'user'
+            }
+        },
+        { $unwind: { path: '$user', preserveNullAndEmptyArrays: true } },
+        {
+            // populate product_gallery
+            $lookup:
+            {
+                from: 'resources',
+                localField: 'product.product_gallery',
+                foreignField: '_id',
+                as: 'product.product_gallery'
+            }
+        },
+    ]);
+    
+    const response = { cart };
+    
+    res.render('client/cart', { response }, (error, html) => {
+        if (error) {
+            console.log('[---Log---][---client/cart---]: ', error);
+            return res.status(500).send(error.message);
+        }
+
+        // Pass the rendered content to the layout
+        res.render('client/layout', {
+            body: html,
+            title: 'Giỏ Hàng',
+            currentUser: req.user,
+        });
+    });
+});
+
+router.get('/cart/add/:id', cartController.addQuantity, (req, res) => {
+    const controllerResponse = res.locals.response;
+
+    if (controllerResponse.error) {
+        // Push notification
+        pushNotification(res, 'error', controllerResponse);
+
+        return res.redirect('/cart');
+    } else {
+        // Push notification
+        pushNotification(res, 'success', controllerResponse);
+
+        return res.redirect('/cart');
+    }
+});
+
+router.get('/cart/minus/:id', cartController.minusQuantity, (req, res) => {
+    const controllerResponse = res.locals.response;
+
+    if (controllerResponse.error) {
+        // Push notification
+        pushNotification(res, 'error', controllerResponse);
+
+        return res.redirect('/cart');
+    } else {
+        // Push notification
+        pushNotification(res, 'success', controllerResponse);
+
+        return res.redirect('/cart');
+    }
+});
+
+router.get('/cart/delete/:id', cartController.removeFromCart, (req, res) => {
+    const controllerResponse = res.locals.response;
+
+    if (controllerResponse.error) {
+        // Push notification
+        pushNotification(res, 'error', controllerResponse);
+
+        return res.redirect('/cart');
+    } else {
+        // Push notification
+        pushNotification(res, 'success', controllerResponse);
+
+        return res.redirect('/cart');
+    }
+});
 
 // Logout client
 router.get('/logout', authController.logout, (req, res) => {
