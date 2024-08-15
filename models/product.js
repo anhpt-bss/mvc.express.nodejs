@@ -19,18 +19,22 @@ const productSchema = new mongoose.Schema({
     product_price: {
         type: Number,
         required: false,
+        default: 0,
     },
     product_discount: {
         type: Number,
         required: false,
+        default: 0,
     },
     product_quantity: {
         type: Number,
         required: false,
+        default: 0,
     },
     shipping_fee: {
         type: Number,
         required: false,
+        default: 0,
     },
     product_gallery: [
         {

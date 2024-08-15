@@ -104,6 +104,19 @@ body {
     align-items: center;
 }
 
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flex-wrap {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
 .col-right {
     display: flex;
     align-items: center;

@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 const HttpResponse = require('@services/httpResponse');
-const { pushNotification } = require('@services/helper');
+const { pushNotification, helper } = require('@services/helper');
 
 const {
     checkClientToken,
@@ -18,11 +18,13 @@ const {
 const authController = require('@controllers/auth');
 const userController = require('@controllers/user');
 const cartController = require('@controllers/cart');
+const orderController = require('@controllers/order');
 
 const Category = require('@models/category');
 const Blog = require('@models/blog');
 const Product = require('@models/product');
 const Cart = require('@models/cart');
+const Order = require('@models/order');
 
 // Signin
 router.get('/signin', checkClientTokenForLogin, async (req, res) => {
@@ -146,7 +148,11 @@ router.get('/cart', checkClientTokenForAccess, async (req, res) => {
         },
     ]);
     
-    const response = { cart };
+    const totalProduct = cart.length;
+    const totalQuantity = res.locals.total_items_in_cart;
+    const totalPrice = cart.reduce((sum, item) => sum + helper.calcPrice(item.product.product_price, item.product.product_discount) * item.quantity, 0);
+
+    const response = { helper, cart, currentUser: req.user, totalProduct, totalQuantity, totalPrice };
     
     res.render('client/cart', { response }, (error, html) => {
         if (error) {
@@ -208,6 +214,24 @@ router.get('/cart/delete/:id', cartController.removeFromCart, (req, res) => {
         pushNotification(res, 'success', controllerResponse);
 
         return res.redirect('/cart');
+    }
+});
+
+router.post('/checkout', orderController.placeOrder, (req, res) => {
+    const controllerResponse = res.locals.response;
+
+    console.log(controllerResponse);
+    
+    if (controllerResponse.error) {
+        // Push notification
+        pushNotification(res, 'error', controllerResponse);
+
+        return res.redirect('/profile');
+    } else {
+        // Push notification
+        pushNotification(res, 'success', controllerResponse);
+
+        return res.redirect('/profile');
     }
 });
 

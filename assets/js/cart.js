@@ -11,7 +11,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Source': 'client'
                 },
                 body: JSON.stringify({ product_id: productId })
             })

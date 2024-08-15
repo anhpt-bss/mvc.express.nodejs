@@ -10,7 +10,11 @@ exports.verifyAPIToken = async (req, res, next) => {
     let accessToken = authHeader && authHeader.split(' ')[1];
 
     if (!accessToken) {
-        accessToken = req.cookies['admin_access_token'] || req.cookies['client_access_token'];
+        if(req.headers['source'] === 'client') {
+            accessToken = req.cookies['client_access_token'];
+        } else {
+            accessToken = req.cookies['admin_access_token'];
+        }
     }
 
     if (!accessToken) {

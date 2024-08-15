@@ -1533,7 +1533,8 @@ footer {
         }
 
         .product-price {
-            color: #fd5c5c;
+            font-weight: 500;
+            color: #202020;
         }
 
         .quantity {
@@ -1609,19 +1610,72 @@ footer {
 
     }
 
-    .bill-card {
-        border-top: 1px solid #ccc;
-        padding-top: 16px;
-        .total-price {
+    .checkout-form {
+        border: 1px solid #008cc0;
+        box-shadow: 0 2px 7px #dfdfdf;
+        padding: 16px;
+        background: #fff;
+        border-radius: 8px;
+        margin-bottom: 16px;
+
+        .form-group {
             margin-bottom: 16px;
-            span {
-                color: #fd5c5c;
+            label {
+                display: block;
+                margin-bottom: 5px;
+            }
+
+            .form-required {
+                color: red;
+            }
+
+            input,
+            textarea,
+            select {
+                width: 100%;
+                padding: 4px 8px;
+                box-sizing: border-box;
+                border: 1px solid #ccc;
+                border-radius: 5px;
             }
         }
+
+        .bill-card {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: flex-end;
+            .bill-title {
+                font-size: 16px;
+                margin-bottom: 8px;
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                .title {
+                    width: 70%;
+                    color: #696969;
+                }
+                .value {
+                    width: 30%;
+                    font-weight: 500;
+                    color: #202020;
+                    text-align: right;
+                    &.price {
+                        color: #fd5c5c;
+                    }
+                }
+            }
+        }
+
         .actions {
             display: flex;
             align-items: center;
             justify-content: flex-end;
+            margin-top: 16px;
+
             .background-button {
                 margin-left: 16px;
             }
@@ -1638,10 +1692,12 @@ footer {
                 justify-content: flex-start;
                 align-items: center;
                 margin: 8px 0;
+
                 .col-label {
                     margin-bottom: 0;
                     margin-right: 16px;
                 }
+
                 &.actions {
                     justify-content: flex-end;
                 }
