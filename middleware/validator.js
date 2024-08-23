@@ -43,6 +43,13 @@ exports.userValidationRules = () => {
     ];
 };
 
+exports.profileValidationRules = () => {
+    return [
+        body('name').notEmpty().withMessage('validation.name_required'),
+        body('email').isEmail().withMessage('validation.valid_email'),
+    ];
+};
+
 exports.resourceValidationRules = () => {
     return [
         body('filename').notEmpty().withMessage('resource.filename_required'),

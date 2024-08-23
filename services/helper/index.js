@@ -68,7 +68,7 @@ const helper = {
         number > 0
             ? number?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
             : number;
-  
+
         return convertNumber + '₫';
     },
     formatDateTime: function (dateString) {
@@ -76,6 +76,11 @@ const helper = {
     },
     getDaysFromNow: function (dateString) {
         return dateString ? moment(dateString).fromNow() : '';
+    },
+    renderDatetime: function (dateString) {
+        return  moment(new Date()).diff(moment(dateString), 'days') > 10
+            ? moment(dateString).format('DD/MM/YYYY • HH:mm:ss')
+            : moment(dateString).fromNow();
     },
     removeAccents: function (str) {
         const AccentsMap = [
@@ -103,6 +108,26 @@ const helper = {
     },
     getAvatar: function (avatar) {
         return avatar ? avatar : '/images/default-avatar.jpg';
+    },
+    getPaymentMethod: (method) => {
+        if(method === 'cash') {
+            return 'Tiền mặt';
+        } else if(method === 'cards') {
+            return 'Thẻ ngân hàng/Thẻ tín dụng';
+        } else if(method === 'bank_transfer') {
+            return 'Chuyển Khoản ngân hàng';
+        } else {
+            return method;
+        }
+    },
+    getPaymentStatus: (status) => {
+        if(status === 'unpaid') {
+            return 'Chưa thanh toán';
+        } else if(status === 'paid') {
+            return 'Đã thanh toán';
+        } else {
+            return status;
+        }
     }
 };
 

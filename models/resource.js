@@ -22,6 +22,14 @@ const resourceSchema = new mongoose.Schema({
         required: false,
         default: 'Hệ Thống',
     },
+    created_by: {
+        type: String,
+        default: 'Admin',
+    },
+    created_time: {
+        type: Date,
+        default: Date.now,
+    },
 });
 
 module.exports = mongoose.model('Resource', resourceSchema);

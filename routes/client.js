@@ -13,6 +13,7 @@ const {
 const {
     loginValidationRules,
     userValidationRules,
+    profileValidationRules
 } = require('@middleware/validator');
 
 const authController = require('@controllers/auth');
@@ -25,6 +26,7 @@ const Blog = require('@models/blog');
 const Product = require('@models/product');
 const Cart = require('@models/cart');
 const Order = require('@models/order');
+const User = require('@models/user');
 
 // Signin
 router.get('/signin', checkClientTokenForLogin, async (req, res) => {
@@ -219,23 +221,129 @@ router.get('/cart/delete/:id', cartController.removeFromCart, (req, res) => {
 
 router.post('/checkout', orderController.placeOrder, (req, res) => {
     const controllerResponse = res.locals.response;
-
-    console.log(controllerResponse);
     
     if (controllerResponse.error) {
         // Push notification
         pushNotification(res, 'error', controllerResponse);
 
-        return res.redirect('/profile');
+        return res.redirect('/account/orders');
     } else {
         // Push notification
         pushNotification(res, 'success', controllerResponse);
 
-        return res.redirect('/profile');
+        return res.redirect('/account/orders');
     }
 });
 
-// Logout client
+router.get('/account/:page', checkClientTokenForAccess, async (req, res) => {
+    const { page } = req.params;
+
+    let response = {
+        title: '',
+        currentUser: req.user
+    };
+
+    
+    switch (page) {
+    case 'profile':
+        const user = await User.findById(req.user._id);
+        
+        response.currentUser = user;
+        response.title = 'Hồ Sơ';
+        break;
+    
+    case 'purchase':
+
+        const orders = await Order.aggregate([
+            {
+                $match: { 'owner.user': req.user._id }
+            },
+            {
+                $unwind: '$items'
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'items.product',
+                    foreignField: '_id',
+                    as: 'items.product'
+                }
+            },
+            {
+                $unwind: '$items.product'
+            },
+            {
+                $lookup: {
+                    from: 'resources',
+                    localField: 'items.product.product_gallery',
+                    foreignField: '_id',
+                    as: 'items.product.product_gallery'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'categories',
+                    localField: 'items.product.category',
+                    foreignField: '_id',
+                    as: 'items.product.category'
+                }
+            },
+            {
+                $unwind: '$items.product.category'
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'owner.user',
+                    foreignField: '_id',
+                    as: 'owner.user'
+                }
+            },
+            {
+                $unwind: '$owner.user'
+            },
+            {
+                $group: {
+                    _id: '$_id',
+                    items: { $push: '$items' },
+                    owner: { $first: '$owner' },
+                    total_price: { $first: '$total_price' },
+                    payment_method: { $first: '$payment_method' },
+                    payment_status: { $first: '$payment_status' },
+                    order_status: { $first: '$order_status' },
+                    created_time: { $first: '$created_time' }
+                }
+            }
+        ]);        
+
+        console.log(orders);
+        
+        response.orders = orders;
+        response.helper = helper;
+        response.title = 'Đơn Mua';
+        break;
+
+    default:
+        break;
+    }
+    
+
+    res.render('client/account', { page, response }, (error, html) => {
+        if (error) {
+            console.log('[---Log---][---client/account---]: ', error);
+            return res.status(500).send(error.message);
+        }
+
+        // Pass the rendered content to the layout
+        res.render('client/layout', {
+            body: html,
+            title: response.title,
+            currentUser: req.user,
+        });
+    });
+});
+
+// User and Authentication
 router.get('/logout', authController.logout, (req, res) => {
     const controllerResponse = res.locals.response;
 
@@ -249,6 +357,22 @@ router.get('/logout', authController.logout, (req, res) => {
         pushNotification(res, 'success', controllerResponse);
 
         return res.redirect('/signin');
+    }
+});
+
+router.post('/account/profile', profileValidationRules(), userController.updateUser, (req, res) => {
+    const controllerResponse = res.locals.response;
+
+    if (controllerResponse.error) {
+        // Push notification
+        pushNotification(res, 'error', controllerResponse);
+
+        return res.redirect('/account/profile');
+    } else {
+        // Push notification
+        pushNotification(res, 'success', controllerResponse);
+
+        return res.redirect('/account/profile');
     }
 });
 

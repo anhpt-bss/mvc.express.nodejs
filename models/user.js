@@ -2,6 +2,11 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
+    avatar: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Resource',
+        required: false,
+    },
     name: {
         type: String,
         required: true,
@@ -26,6 +31,27 @@ const userSchema = new mongoose.Schema({
     address: {
         type: String,
         required: false,
+    },
+    gender: {
+        type: String,
+        enum: [
+            'male',
+            'female',
+            'other'
+        ],
+        required: false,
+    },
+    birthday: {
+        type: String,
+        required: false,
+    },
+    created_by: {
+        type: String,
+        default: 'Admin',
+    },
+    created_time: {
+        type: Date,
+        default: Date.now,
     },
 });
 

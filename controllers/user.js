@@ -1,3 +1,4 @@
+const moment = require('moment');
 const User = require('@models/user');
 const { validationResult } = require('express-validator');
 const HttpResponse = require('@services/httpResponse');
@@ -203,6 +204,7 @@ exports.createUser = async (req, res, next) => {
             email: email,
             password: password,
             is_admin: is_admin ? true : false,
+            created_by: req.user ? req.user.email : email
         });
 
         await user.save();
@@ -364,8 +366,14 @@ exports.updateUser = async (req, res, next) => {
             }
         }
 
-        const { name, email, password, is_admin } = req.body;
-        const user = await User.findById(req.params.id);
+        const { name, email, password, is_admin, phone_number, address, gender, birthday } = req.body;
+
+        let user = null;
+        if(req.params.id) {
+            user = await User.findById(req.params.id);
+        } else if(email) {
+            user = await User.findOne({email: email});
+        }
 
         if (!user) {
             if (
@@ -386,11 +394,31 @@ exports.updateUser = async (req, res, next) => {
             }
         }
 
-        user.name = name;
-        user.email = email;
-        user.password = password;
+        if (name) {
+            user.name = name;
+        }
+        if (email) {
+            user.email = email;
+        }
+        if (password) {
+            user.password = password;
+        }
+        if (phone_number) {
+            user.phone_number = phone_number;
+        }
+        if (address) {
+            user.address = address;
+        }
+        if (gender) {
+            user.gender = gender;
+        }
+        if (birthday) {
+            user.birthday = moment(birthday).format('YYYY-MM-DD');
+        }
+        
         user.is_admin = is_admin ? true : false;
-
+        user.created_by = req.user ? req.user.email : email;
+        
         await user.save();
 
         if (
