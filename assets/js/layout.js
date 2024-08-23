@@ -27,8 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const currentPath = window.location.pathname;
     menuItems.forEach(function (item) {
         if (
-            (item.getAttribute('data-link') === '/admin' &&
-                item.getAttribute('data-link') === currentPath) ||
+            (item.getAttribute('data-link') === '/admin' && item.getAttribute('data-link') === currentPath) ||
             (item.getAttribute('data-link') !== '/admin' &&
                 (item.getAttribute('data-link') === currentPath ||
                     currentPath.includes(item.getAttribute('data-link'))))

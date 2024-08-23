@@ -17,6 +17,8 @@ module.exports = [
             quotes: ['error', 'single'],
             // Require semicolons at the end of statements
             semi: ['error', 'always'],
+            'max-len': ['error', { code: 120 }],
         },
+        extends: ['prettier'],
     },
 ];

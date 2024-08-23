@@ -2,72 +2,69 @@ var moment = require('moment');
 
 const pushNotification = (res, type, response) => {
     switch (type) {
-    case 'success':
-        res.cookie(
-            'notification',
-            {
-                type: 'success',
-                title: response.message,
-                content: null,
-                errors: null,
-            },
-            { httpOnly: true },
-        );
-        break;
+        case 'success':
+            res.cookie(
+                'notification',
+                {
+                    type: 'success',
+                    title: response.message,
+                    content: null,
+                    errors: null,
+                },
+                { httpOnly: true },
+            );
+            break;
 
-    case 'error':
-        res.cookie(
-            'notification',
-            {
-                type: 'error',
-                title: response.message,
-                content: null,
-                errors: response.errors,
-            },
-            { httpOnly: true },
-        );
-        break;
+        case 'error':
+            res.cookie(
+                'notification',
+                {
+                    type: 'error',
+                    title: response.message,
+                    content: null,
+                    errors: response.errors,
+                },
+                { httpOnly: true },
+            );
+            break;
 
-    case 'warning':
-        res.cookie(
-            'notification',
-            {
-                type: 'warning',
-                title: response.message,
-                content: null,
-                errors: response.errors,
-            },
-            { httpOnly: true },
-        );
-        break;
+        case 'warning':
+            res.cookie(
+                'notification',
+                {
+                    type: 'warning',
+                    title: response.message,
+                    content: null,
+                    errors: response.errors,
+                },
+                { httpOnly: true },
+            );
+            break;
 
-    case 'info':
-        res.cookie(
-            'notification',
-            {
-                type: 'info',
-                title: response.title || null,
-                content: response.content || null,
-                errors: null,
-            },
-            { httpOnly: true },
-        );
-        break;
+        case 'info':
+            res.cookie(
+                'notification',
+                {
+                    type: 'info',
+                    title: response.title || null,
+                    content: response.content || null,
+                    errors: null,
+                },
+                { httpOnly: true },
+            );
+            break;
 
-    default:
-        break;
+        default:
+            break;
     }
 };
 
 const helper = {
     calcPrice: function (price, discount) {
-        return (price - (price * (discount / 100)));
+        return price - price * (discount / 100);
     },
     addCommasToNumber: function (number) {
-        const convertNumber =
-        number > 0
-            ? number?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-            : number;
+        const convertNumber = number > 0 ? number?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : number;
 
         return convertNumber + '₫';
     },
@@ -78,7 +75,7 @@ const helper = {
         return dateString ? moment(dateString).fromNow() : '';
     },
     renderDatetime: function (dateString) {
-        return  moment(new Date()).diff(moment(dateString), 'days') > 10
+        return moment(new Date()).diff(moment(dateString), 'days') > 10
             ? moment(dateString).format('DD/MM/YYYY • HH:mm:ss')
             : moment(dateString).fromNow();
     },
@@ -110,25 +107,25 @@ const helper = {
         return avatar ? avatar : '/images/default-avatar.jpg';
     },
     getPaymentMethod: (method) => {
-        if(method === 'cash') {
+        if (method === 'cash') {
             return 'Tiền mặt';
-        } else if(method === 'cards') {
+        } else if (method === 'cards') {
             return 'Thẻ ngân hàng/Thẻ tín dụng';
-        } else if(method === 'bank_transfer') {
+        } else if (method === 'bank_transfer') {
             return 'Chuyển Khoản ngân hàng';
         } else {
             return method;
         }
     },
     getPaymentStatus: (status) => {
-        if(status === 'unpaid') {
+        if (status === 'unpaid') {
             return 'Chưa thanh toán';
-        } else if(status === 'paid') {
+        } else if (status === 'paid') {
             return 'Đã thanh toán';
         } else {
             return status;
         }
-    }
+    },
 };
 
 module.exports = { pushNotification, helper };

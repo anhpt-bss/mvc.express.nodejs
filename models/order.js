@@ -7,7 +7,7 @@ const orderSchema = new mongoose.Schema({
             quantity: Number,
             price: Number,
             discount: Number,
-        }
+        },
     ],
     owner: {
         user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
@@ -19,21 +19,14 @@ const orderSchema = new mongoose.Schema({
     total_price: Number,
     payment_method: {
         type: String,
-        enum: [
-            'cash',
-            'cards',
-            'bank_transfer'
-        ],
+        enum: ['cash', 'cards', 'bank_transfer'],
         required: true,
-        default: 'cash'
+        default: 'cash',
     },
     payment_status: {
         type: String,
-        enum: [
-            'unpaid',
-            'paid',
-        ],
-        default: 'unpaid'
+        enum: ['unpaid', 'paid'],
+        default: 'unpaid',
     },
     order_status: {
         type: String,
@@ -47,53 +40,53 @@ const orderSchema = new mongoose.Schema({
             'delivered',
             'returning',
             'returned',
-            'cancelled'
+            'cancelled',
         ],
-        default: 'awaiting_confirmation'
+        default: 'awaiting_confirmation',
     },
-    created_time: { type: Date, default: Date.now }
+    created_time: { type: Date, default: Date.now },
 });
 
 const status = [
     {
         label: 'Chờ xác nhận',
-        value: 'awaiting_confirmation'
+        value: 'awaiting_confirmation',
     },
     {
         label: 'Đang xử lý',
-        value: 'processing'
+        value: 'processing',
     },
     {
         label: 'Đã xử lý',
-        value: 'processed'
+        value: 'processed',
     },
     {
         label: 'Chờ lấy hàng',
-        value: 'waiting_for_pickup'
+        value: 'waiting_for_pickup',
     },
     {
         label: 'Đã lấy hàng',
-        value: 'picked_up'
+        value: 'picked_up',
     },
     {
         label: 'Đang giao hàng',
-        value: 'in_transit'
+        value: 'in_transit',
     },
     {
         label: 'Đã giao hàng',
-        value: 'delivered'
+        value: 'delivered',
     },
     {
         label: 'Đang trả hàng',
-        value: 'returning'
+        value: 'returning',
     },
     {
         label: 'Đã trả hàng',
-        value: 'returned'
+        value: 'returned',
     },
     {
         label: 'Đã hủy',
-        value: 'cancelled'
+        value: 'cancelled',
     },
 ];
 

@@ -128,12 +128,7 @@ const ResourceService = require('@services/resource');
  */
 exports.getAllProducts = async (req, res, next) => {
     try {
-        const {
-            page = 1,
-            limit = 10,
-            sort = 'created_time',
-            order = 'asc',
-        } = req.query;
+        const { page = 1, limit = 10, sort = 'created_time', order = 'asc' } = req.query;
 
         const products = await Product.find()
             .sort({ [sort]: order === 'asc' ? 1 : -1 })
@@ -152,10 +147,7 @@ exports.getAllProducts = async (req, res, next) => {
             order,
         };
 
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.success(res, response);
         } else {
             res.locals.response = HttpResponse.successResponse(response);
@@ -163,10 +155,7 @@ exports.getAllProducts = async (req, res, next) => {
         }
     } catch (error) {
         console.log('[---Log---][---getAllProducts---]: ', error);
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.internalServerError(res);
         } else {
             res.locals.response = HttpResponse.internalServerErrorResponse();
@@ -216,20 +205,10 @@ exports.createProduct = async (req, res, next) => {
                 msg: req.t(error.msg),
             }));
 
-            if (
-                req.headers.accept &&
-                req.headers.accept.includes('application/json')
-            ) {
-                return HttpResponse.badRequest(
-                    res,
-                    translatedErrors,
-                    req.t('validation.errors'),
-                );
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, translatedErrors, req.t('validation.errors'));
             } else {
-                res.locals.response = HttpResponse.badRequestResponse(
-                    translatedErrors,
-                    req.t('validation.errors'),
-                );
+                res.locals.response = HttpResponse.badRequestResponse(translatedErrors, req.t('validation.errors'));
                 return next();
             }
         }
@@ -273,10 +252,7 @@ exports.createProduct = async (req, res, next) => {
 
         await product.save();
 
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.success(res, product);
         } else {
             res.locals.response = HttpResponse.successResponse(product);
@@ -284,10 +260,7 @@ exports.createProduct = async (req, res, next) => {
         }
     } catch (error) {
         console.log('[---Log---][---createProduct---]: ', error);
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.internalServerError(res);
         } else {
             res.locals.response = HttpResponse.internalServerErrorResponse();
@@ -331,20 +304,10 @@ exports.getProductById = async (req, res, next) => {
     try {
         const product = await Product.findById(req.params.id);
         if (!product) {
-            if (
-                req.headers.accept &&
-                req.headers.accept.includes('application/json')
-            ) {
-                return HttpResponse.badRequest(
-                    res,
-                    [],
-                    req.t('product.product_not_found'),
-                );
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, [], req.t('product.product_not_found'));
             } else {
-                res.locals.response = HttpResponse.badRequestResponse(
-                    [],
-                    req.t('product.product_not_found'),
-                );
+                res.locals.response = HttpResponse.badRequestResponse([], req.t('product.product_not_found'));
                 return next();
             }
         }
@@ -352,10 +315,7 @@ exports.getProductById = async (req, res, next) => {
         return HttpResponse.success(res, product);
     } catch (error) {
         console.log('[---Log---][---getProductById---]: ', error);
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.internalServerError(res);
         } else {
             res.locals.response = HttpResponse.internalServerErrorResponse();
@@ -412,20 +372,10 @@ exports.updateProduct = async (req, res, next) => {
                 msg: req.t(error.msg),
             }));
 
-            if (
-                req.headers.accept &&
-                req.headers.accept.includes('application/json')
-            ) {
-                return HttpResponse.badRequest(
-                    res,
-                    translatedErrors,
-                    req.t('validation.errors'),
-                );
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, translatedErrors, req.t('validation.errors'));
             } else {
-                res.locals.response = HttpResponse.badRequestResponse(
-                    translatedErrors,
-                    req.t('validation.errors'),
-                );
+                res.locals.response = HttpResponse.badRequestResponse(translatedErrors, req.t('validation.errors'));
                 return next();
             }
         }
@@ -449,20 +399,10 @@ exports.updateProduct = async (req, res, next) => {
         const product = await Product.findById(req.params.id);
 
         if (!product) {
-            if (
-                req.headers.accept &&
-                req.headers.accept.includes('application/json')
-            ) {
-                return HttpResponse.badRequest(
-                    res,
-                    [],
-                    req.t('product.product_not_found'),
-                );
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, [], req.t('product.product_not_found'));
             } else {
-                res.locals.response = HttpResponse.badRequestResponse(
-                    [],
-                    req.t('product.product_not_found'),
-                );
+                res.locals.response = HttpResponse.badRequestResponse([], req.t('product.product_not_found'));
                 return next();
             }
         }
@@ -492,10 +432,7 @@ exports.updateProduct = async (req, res, next) => {
 
         await product.save();
 
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.success(res, product);
         } else {
             res.locals.response = HttpResponse.successResponse(product);
@@ -503,10 +440,7 @@ exports.updateProduct = async (req, res, next) => {
         }
     } catch (error) {
         console.log('[---Log---][---updateProduct---]: ', error);
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.internalServerError(res);
         } else {
             res.locals.response = HttpResponse.internalServerErrorResponse();
@@ -548,30 +482,17 @@ exports.deleteProduct = async (req, res, next) => {
     try {
         const product = await Product.findById(req.params.id);
         if (!product) {
-            if (
-                req.headers.accept &&
-                req.headers.accept.includes('application/json')
-            ) {
-                return HttpResponse.badRequest(
-                    res,
-                    [],
-                    req.t('product.product_not_found'),
-                );
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, [], req.t('product.product_not_found'));
             } else {
-                res.locals.response = HttpResponse.badRequestResponse(
-                    [],
-                    req.t('product.product_not_found'),
-                );
+                res.locals.response = HttpResponse.badRequestResponse([], req.t('product.product_not_found'));
                 return next();
             }
         }
 
         await Product.deleteOne({ _id: req.params.id });
 
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.success(res, { id: req.params.id });
         } else {
             res.locals.response = HttpResponse.successResponse({
@@ -581,10 +502,7 @@ exports.deleteProduct = async (req, res, next) => {
         }
     } catch (error) {
         console.log('[---Log---][---deleteProduct---]: ', error);
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.internalServerError(res);
         } else {
             res.locals.response = HttpResponse.internalServerErrorResponse();

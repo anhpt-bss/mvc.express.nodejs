@@ -5,9 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const htmlTextarea = document.getElementById('htmlTextarea');
     const urlsTextarea = document.getElementById('urlsTextarea');
     const changeUrlsTextarea = document.getElementById('changeUrlsTextarea');
-    const responseHtmlTextarea = document.getElementById(
-        'responseHtmlTextarea',
-    );
+    const responseHtmlTextarea = document.getElementById('responseHtmlTextarea');
 
     detectLinksButton.addEventListener('click', () => {
         const htmlContent = htmlTextarea.value;
@@ -23,10 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
         let updatedHtmlContent = htmlContent;
         mappings.forEach((mapping) => {
             const regex = new RegExp(mapping.old_path, 'g');
-            updatedHtmlContent = updatedHtmlContent.replace(
-                regex,
-                mapping.new_path,
-            );
+            updatedHtmlContent = updatedHtmlContent.replace(regex, mapping.new_path);
         });
 
         responseHtmlTextarea.value = updatedHtmlContent;

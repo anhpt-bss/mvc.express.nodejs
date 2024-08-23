@@ -84,12 +84,7 @@ const HttpResponse = require('@services/httpResponse');
  */
 exports.getAllBlogs = async (req, res, next) => {
     try {
-        const {
-            page = 1,
-            limit = 10,
-            sort = 'created_time',
-            order = 'desc',
-        } = req.query;
+        const { page = 1, limit = 10, sort = 'created_time', order = 'desc' } = req.query;
 
         const blogs = await Blog.find()
             .sort({ [sort]: order === 'asc' ? 1 : -1 })
@@ -109,10 +104,7 @@ exports.getAllBlogs = async (req, res, next) => {
             order,
         };
 
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.success(res, response);
         } else {
             res.locals.response = HttpResponse.successResponse(response);
@@ -120,10 +112,7 @@ exports.getAllBlogs = async (req, res, next) => {
         }
     } catch (error) {
         console.log('[---Log---][---getAllBlogs---]: ', error);
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.internalServerError(res);
         } else {
             res.locals.response = HttpResponse.internalServerErrorResponse();
@@ -171,20 +160,10 @@ exports.createBlog = async (req, res, next) => {
                 msg: req.t(error.msg),
             }));
 
-            if (
-                req.headers.accept &&
-                req.headers.accept.includes('application/json')
-            ) {
-                return HttpResponse.badRequest(
-                    res,
-                    translatedErrors,
-                    req.t('validation.errors'),
-                );
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, translatedErrors, req.t('validation.errors'));
             } else {
-                res.locals.response = HttpResponse.badRequestResponse(
-                    translatedErrors,
-                    req.t('validation.errors'),
-                );
+                res.locals.response = HttpResponse.badRequestResponse(translatedErrors, req.t('validation.errors'));
                 return next();
             }
         }
@@ -200,18 +179,14 @@ exports.createBlog = async (req, res, next) => {
         const blog = new Blog({
             title,
             summary,
-            banner:
-                bannerFile && bannerFile?.length > 0 ? bannerFile[0]._id : null,
+            banner: bannerFile && bannerFile?.length > 0 ? bannerFile[0]._id : null,
             content,
             category,
         });
 
         await blog.save();
 
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.success(res, blog);
         } else {
             res.locals.response = HttpResponse.successResponse(blog);
@@ -219,10 +194,7 @@ exports.createBlog = async (req, res, next) => {
         }
     } catch (error) {
         console.log('[---Log---][---createBlog---]: ', error);
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.internalServerError(res);
         } else {
             res.locals.response = HttpResponse.internalServerErrorResponse();
@@ -266,20 +238,10 @@ exports.getBlogById = async (req, res, next) => {
     try {
         const blog = await Blog.findById(req.params.id).populate('banner');
         if (!blog) {
-            if (
-                req.headers.accept &&
-                req.headers.accept.includes('application/json')
-            ) {
-                return HttpResponse.badRequest(
-                    res,
-                    [],
-                    req.t('blog.blog_not_found'),
-                );
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, [], req.t('blog.blog_not_found'));
             } else {
-                res.locals.response = HttpResponse.badRequestResponse(
-                    [],
-                    req.t('blog.blog_not_found'),
-                );
+                res.locals.response = HttpResponse.badRequestResponse([], req.t('blog.blog_not_found'));
                 return next();
             }
         }
@@ -287,10 +249,7 @@ exports.getBlogById = async (req, res, next) => {
         return HttpResponse.success(res, blog);
     } catch (error) {
         console.log('[---Log---][---getBlogById---]: ', error);
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.internalServerError(res);
         } else {
             res.locals.response = HttpResponse.internalServerErrorResponse();
@@ -345,20 +304,10 @@ exports.updateBlog = async (req, res, next) => {
                 msg: req.t(error.msg),
             }));
 
-            if (
-                req.headers.accept &&
-                req.headers.accept.includes('application/json')
-            ) {
-                return HttpResponse.badRequest(
-                    res,
-                    translatedErrors,
-                    req.t('validation.errors'),
-                );
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, translatedErrors, req.t('validation.errors'));
             } else {
-                res.locals.response = HttpResponse.badRequestResponse(
-                    translatedErrors,
-                    req.t('validation.errors'),
-                );
+                res.locals.response = HttpResponse.badRequestResponse(translatedErrors, req.t('validation.errors'));
                 return next();
             }
         }
@@ -367,20 +316,10 @@ exports.updateBlog = async (req, res, next) => {
         const blog = await Blog.findById(req.params.id);
 
         if (!blog) {
-            if (
-                req.headers.accept &&
-                req.headers.accept.includes('application/json')
-            ) {
-                return HttpResponse.badRequest(
-                    res,
-                    [],
-                    req.t('blog.blog_not_found'),
-                );
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, [], req.t('blog.blog_not_found'));
             } else {
-                res.locals.response = HttpResponse.badRequestResponse(
-                    [],
-                    req.t('blog.blog_not_found'),
-                );
+                res.locals.response = HttpResponse.badRequestResponse([], req.t('blog.blog_not_found'));
                 return next();
             }
         }
@@ -394,18 +333,12 @@ exports.updateBlog = async (req, res, next) => {
         if (req.files) {
             req.body.resource_category = 'Blog';
             bannerFile = await ResourceService.uploadFiles(req, res);
-            blog.banner =
-                bannerFile && bannerFile?.length > 0
-                    ? bannerFile[0]._id
-                    : blog.banner;
+            blog.banner = bannerFile && bannerFile?.length > 0 ? bannerFile[0]._id : blog.banner;
         }
 
         await blog.save();
 
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.success(res, blog);
         } else {
             res.locals.response = HttpResponse.successResponse(blog);
@@ -413,10 +346,7 @@ exports.updateBlog = async (req, res, next) => {
         }
     } catch (error) {
         console.log('[---Log---][---updateBlog---]: ', error);
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.internalServerError(res);
         } else {
             res.locals.response = HttpResponse.internalServerErrorResponse();
@@ -456,30 +386,17 @@ exports.deleteBlog = async (req, res, next) => {
     try {
         const blog = await Blog.findById(req.params.id);
         if (!blog) {
-            if (
-                req.headers.accept &&
-                req.headers.accept.includes('application/json')
-            ) {
-                return HttpResponse.badRequest(
-                    res,
-                    [],
-                    req.t('blog.blog_not_found'),
-                );
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, [], req.t('blog.blog_not_found'));
             } else {
-                res.locals.response = HttpResponse.badRequestResponse(
-                    [],
-                    req.t('blog.blog_not_found'),
-                );
+                res.locals.response = HttpResponse.badRequestResponse([], req.t('blog.blog_not_found'));
                 return next();
             }
         }
 
         await Blog.deleteOne({ _id: req.params.id });
 
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.success(res, { id: req.params.id });
         } else {
             res.locals.response = HttpResponse.successResponse({
@@ -489,10 +406,7 @@ exports.deleteBlog = async (req, res, next) => {
         }
     } catch (error) {
         console.log('[---Log---][---deleteBlog---]: ', error);
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.internalServerError(res);
         } else {
             res.locals.response = HttpResponse.internalServerErrorResponse();

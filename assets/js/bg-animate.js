@@ -61,30 +61,8 @@
 
         var drawCircle = function (x, y, radius, color, alpha) {
             var gradient = fctx1.createRadialGradient(x, y, radius, x, y, 0);
-            gradient.addColorStop(
-                0,
-                'rgba(' +
-                    color[0] +
-                    ',' +
-                    color[1] +
-                    ',' +
-                    color[2] +
-                    ',' +
-                    alpha +
-                    ')',
-            );
-            gradient.addColorStop(
-                1,
-                'rgba(' +
-                    color[0] +
-                    ',' +
-                    color[1] +
-                    ',' +
-                    color[2] +
-                    ',' +
-                    (alpha - 0.1) +
-                    ')',
-            );
+            gradient.addColorStop(0, 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',' + alpha + ')');
+            gradient.addColorStop(1, 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',' + (alpha - 0.1) + ')');
 
             fctx1.beginPath();
             fctx1.arc(x, y, radius, 0, M.PI * 2, true);
@@ -96,30 +74,8 @@
             var endX = x + M.sin(degree) * width,
                 endY = y - M.cos(degree) * width,
                 gradient = fctx2.createLinearGradient(x, y, endX, endY);
-            gradient.addColorStop(
-                0,
-                'rgba(' +
-                    color[0] +
-                    ',' +
-                    color[1] +
-                    ',' +
-                    color[2] +
-                    ',' +
-                    alpha +
-                    ')',
-            );
-            gradient.addColorStop(
-                1,
-                'rgba(' +
-                    color[0] +
-                    ',' +
-                    color[1] +
-                    ',' +
-                    color[2] +
-                    ',' +
-                    (alpha - 0.1) +
-                    ')',
-            );
+            gradient.addColorStop(0, 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',' + alpha + ')');
+            gradient.addColorStop(1, 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',' + (alpha - 0.1) + ')');
 
             fctx2.beginPath();
             fctx2.moveTo(x, y);
@@ -259,20 +215,14 @@
             lines = [];
 
             if (config.circle.amount > 0 && config.circle.layer > 0) {
-                for (
-                    var i = 0;
-                    i < config.circle.amount / config.circle.layer;
-                    i++
-                ) {
+                for (var i = 0; i < config.circle.amount / config.circle.layer; i++) {
                     for (var j = 0; j < config.circle.layer; j++) {
                         circles.push({
                             x: M.random() * wWidth,
                             y: M.random() * wHeight,
                             radius: M.random() * (20 + j * 5) + (20 + j * 5),
                             color: config.circle.color,
-                            alpha:
-                                M.random() * 0.2 +
-                                (config.circle.alpha - j * 0.1),
+                            alpha: M.random() * 0.2 + (config.circle.alpha - j * 0.1),
                             speed: config.speed * (1 + j * 0.5),
                         });
                     }
@@ -280,20 +230,14 @@
             }
 
             if (config.line.amount > 0 && config.line.layer > 0) {
-                for (
-                    var m = 0;
-                    m < config.line.amount / config.line.layer;
-                    m++
-                ) {
+                for (var m = 0; m < config.line.amount / config.line.layer; m++) {
                     for (var n = 0; n < config.line.layer; n++) {
                         lines.push({
                             x: M.random() * wWidth,
                             y: M.random() * wHeight,
                             width: M.random() * (20 + n * 5) + (20 + n * 5),
                             color: config.line.color,
-                            alpha:
-                                M.random() * 0.2 +
-                                (config.line.alpha - n * 0.1),
+                            alpha: M.random() * 0.2 + (config.line.alpha - n * 0.1),
                             speed: config.speed * (1 + n * 0.5),
                         });
                     }

@@ -80,20 +80,10 @@ exports.login = async (req, res, next) => {
                 msg: req.t(error.msg),
             }));
 
-            if (
-                req.headers.accept &&
-                req.headers.accept.includes('application/json')
-            ) {
-                return HttpResponse.badRequest(
-                    res,
-                    translatedErrors,
-                    req.t('validation.errors'),
-                );
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, translatedErrors, req.t('validation.errors'));
             } else {
-                res.locals.response = HttpResponse.badRequestResponse(
-                    translatedErrors,
-                    req.t('validation.errors'),
-                );
+                res.locals.response = HttpResponse.badRequestResponse(translatedErrors, req.t('validation.errors'));
                 return next();
             }
         }
@@ -104,16 +94,10 @@ exports.login = async (req, res, next) => {
 
         if (!user) {
             const errorMessage = req.t('auth.invalid_email_password');
-            if (
-                req.headers.accept &&
-                req.headers.accept.includes('application/json')
-            ) {
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
                 return HttpResponse.badRequest(res, [], errorMessage);
             } else {
-                res.locals.response = HttpResponse.badRequestResponse(
-                    [],
-                    errorMessage,
-                );
+                res.locals.response = HttpResponse.badRequestResponse([], errorMessage);
                 return next();
             }
         }
@@ -122,16 +106,10 @@ exports.login = async (req, res, next) => {
 
         if (!isMatch) {
             const errorMessage = req.t('auth.invalid_email_password');
-            if (
-                req.headers.accept &&
-                req.headers.accept.includes('application/json')
-            ) {
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
                 return HttpResponse.badRequest(res, [], errorMessage);
             } else {
-                res.locals.response = HttpResponse.badRequestResponse(
-                    [],
-                    errorMessage,
-                );
+                res.locals.response = HttpResponse.badRequestResponse([], errorMessage);
                 return next();
             }
         }
@@ -144,31 +122,18 @@ exports.login = async (req, res, next) => {
         }
 
         if (errorMessage) {
-            if (
-                req.headers.accept &&
-                req.headers.accept.includes('application/json')
-            ) {
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
                 return HttpResponse.badRequest(res, [], errorMessage);
             } else {
-                res.locals.response = HttpResponse.badRequestResponse(
-                    [],
-                    errorMessage,
-                );
+                res.locals.response = HttpResponse.badRequestResponse([], errorMessage);
                 return next();
             }
         }
 
         const token = generateToken(user);
 
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
-            return HttpResponse.success(
-                res,
-                { token },
-                req.t('auth.login_successful'),
-            );
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
+            return HttpResponse.success(res, { token }, req.t('auth.login_successful'));
         } else {
             if (source === 'client') {
                 res.cookie('client_access_token', token, {
@@ -184,18 +149,12 @@ exports.login = async (req, res, next) => {
                 });
             }
 
-            res.locals.response = HttpResponse.successResponse(
-                { token },
-                req.t('auth.login_successful'),
-            );
+            res.locals.response = HttpResponse.successResponse({ token }, req.t('auth.login_successful'));
             return next();
         }
     } catch (error) {
         console.log('[---Log---][---login---]: ', error);
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.internalServerError(res);
         } else {
             res.locals.response = HttpResponse.internalServerErrorResponse();
@@ -228,33 +187,20 @@ exports.login = async (req, res, next) => {
  */
 exports.logout = (req, res, next) => {
     try {
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
-            return HttpResponse.success(
-                res,
-                null,
-                req.t('auth.logout_successful'),
-            );
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
+            return HttpResponse.success(res, null, req.t('auth.logout_successful'));
         } else {
             if (req.user.is_admin) {
                 res.clearCookie('admin_access_token');
             } else {
                 res.clearCookie('client_access_token');
             }
-            res.locals.response = HttpResponse.successResponse(
-                null,
-                req.t('auth.logout_successful'),
-            );
+            res.locals.response = HttpResponse.successResponse(null, req.t('auth.logout_successful'));
             return next();
         }
     } catch (error) {
         console.log('[---Log---][---logout---]: ', error);
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.internalServerError(res);
         } else {
             res.locals.response = HttpResponse.internalServerErrorResponse();

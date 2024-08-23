@@ -21,9 +21,7 @@ function showToastEventHandler(type, title, content, errorMessages) {
 
     toastTitle.innerHTML = title;
     toastContent.innerHTML =
-        content !== '' && errorMessages !== ''
-            ? content + '<br>' + errorMessages
-            : content + errorMessages;
+        content !== '' && errorMessages !== '' ? content + '<br>' + errorMessages : content + errorMessages;
 
     if (type === 'success') {
         toastIcon.innerHTML = `

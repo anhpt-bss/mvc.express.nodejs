@@ -13,16 +13,9 @@ exports.validate = (req, res, next) => {
     }));
 
     if (req.headers.accept && req.headers.accept.includes('application/json')) {
-        return HttpResponse.badRequest(
-            res,
-            translatedErrors,
-            req.t('validation.errors'),
-        );
+        return HttpResponse.badRequest(res, translatedErrors, req.t('validation.errors'));
     } else {
-        res.locals.response = HttpResponse.badRequestResponse(
-            translatedErrors,
-            req.t('validation.errors'),
-        );
+        res.locals.response = HttpResponse.badRequestResponse(translatedErrors, req.t('validation.errors'));
         return next();
     }
 };
@@ -56,10 +49,7 @@ exports.resourceValidationRules = () => {
         body('size').isNumeric().withMessage('resource.size_required'),
         body('mimetype').notEmpty().withMessage('resource.mimetype_required'),
         body('path').notEmpty().withMessage('resource.path_required'),
-        body('category')
-            .optional()
-            .isString()
-            .withMessage('resource.category_required'),
+        body('category').optional().isString().withMessage('resource.category_required'),
     ];
 };
 
@@ -83,10 +73,7 @@ exports.blogValidationRules = () => {
         body('title').notEmpty().withMessage('blog.title_required'),
         body('summary').notEmpty().withMessage('blog.summary_required'),
         body('content').notEmpty().withMessage('blog.content_required'),
-        body('banner')
-            .optional()
-            .isMongoId()
-            .withMessage('blog.banner_required'),
+        body('banner').optional().isMongoId().withMessage('blog.banner_required'),
     ];
 };
 
@@ -98,25 +85,16 @@ exports.categoryValidationRules = () => {
             .isNumeric()
             .withMessage('category.position_must_be_numeric'),
         body('name').notEmpty().withMessage('category.name_required'),
-        body('description')
-            .optional()
-            .isString()
-            .withMessage('category.description_must_be_string'),
+        body('description').optional().isString().withMessage('category.description_must_be_string'),
         body('parent_cate').optional(),
     ];
 };
 
 exports.productValidationRules = () => {
     return [
-        body('product_code')
-            .notEmpty()
-            .withMessage('product.product_code_required'),
-        body('product_name')
-            .notEmpty()
-            .withMessage('product.product_name_required'),
-        body('product_summary')
-            .notEmpty()
-            .withMessage('product.product_summary_required'),
+        body('product_code').notEmpty().withMessage('product.product_code_required'),
+        body('product_name').notEmpty().withMessage('product.product_name_required'),
+        body('product_summary').notEmpty().withMessage('product.product_summary_required'),
         body('product_price').optional(),
         body('product_discount').optional(),
         body('product_quantity').optional(),
@@ -125,9 +103,7 @@ exports.productValidationRules = () => {
             .optional()
             .isArray()
             .withMessage('product.product_gallery_valid')
-            .custom((value) =>
-                value.every((id) => mongoose.Types.ObjectId.isValid(id)),
-            )
+            .custom((value) => value.every((id) => mongoose.Types.ObjectId.isValid(id)))
             .withMessage('product.product_gallery_ids_valid'),
         body('product_specifications').optional(),
         body('product_description').optional(),

@@ -5,16 +5,8 @@ const router = express.Router();
 const HttpResponse = require('@services/httpResponse');
 const { pushNotification, helper } = require('@services/helper');
 
-const {
-    checkClientToken,
-    checkClientTokenForLogin,
-    checkClientTokenForAccess
-} = require('@middleware/auth');
-const {
-    loginValidationRules,
-    userValidationRules,
-    profileValidationRules
-} = require('@middleware/validator');
+const { checkClientToken, checkClientTokenForLogin, checkClientTokenForAccess } = require('@middleware/auth');
+const { loginValidationRules, userValidationRules, profileValidationRules } = require('@middleware/validator');
 
 const authController = require('@controllers/auth');
 const userController = require('@controllers/user');
@@ -47,26 +39,21 @@ router.get('/signin', checkClientTokenForLogin, async (req, res) => {
     });
 });
 
-router.post(
-    '/signin',
-    loginValidationRules(),
-    authController.login,
-    (req, res) => {
-        const controllerResponse = res.locals.response;
+router.post('/signin', loginValidationRules(), authController.login, (req, res) => {
+    const controllerResponse = res.locals.response;
 
-        if (controllerResponse.error) {
-            // Push notification
-            pushNotification(res, 'error', controllerResponse);
+    if (controllerResponse.error) {
+        // Push notification
+        pushNotification(res, 'error', controllerResponse);
 
-            return res.redirect('/signin');
-        } else {
-            // Push notification
-            pushNotification(res, 'success', controllerResponse);
+        return res.redirect('/signin');
+    } else {
+        // Push notification
+        pushNotification(res, 'success', controllerResponse);
 
-            return res.redirect('/');
-        }
-    },
-);
+        return res.redirect('/');
+    }
+});
 
 // Signup
 router.get('/signup', checkClientTokenForLogin, async (req, res) => {
@@ -87,26 +74,21 @@ router.get('/signup', checkClientTokenForLogin, async (req, res) => {
     });
 });
 
-router.post(
-    '/signup',
-    userValidationRules(),
-    userController.createUser,
-    (req, res) => {
-        const controllerResponse = res.locals.response;
+router.post('/signup', userValidationRules(), userController.createUser, (req, res) => {
+    const controllerResponse = res.locals.response;
 
-        if (controllerResponse.error) {
-            // Push notification
-            pushNotification(res, 'error', controllerResponse);
+    if (controllerResponse.error) {
+        // Push notification
+        pushNotification(res, 'error', controllerResponse);
 
-            return res.redirect('/signup');
-        } else {
-            // Push notification
-            pushNotification(res, 'success', controllerResponse);
+        return res.redirect('/signup');
+    } else {
+        // Push notification
+        pushNotification(res, 'success', controllerResponse);
 
-            return res.redirect('/signin');
-        }
-    },
-);
+        return res.redirect('/signin');
+    }
+});
 
 // Verify token
 router.use(checkClientToken);
@@ -115,47 +97,55 @@ router.use(checkClientToken);
 router.get('/cart', checkClientTokenForAccess, async (req, res) => {
     const cart = await Cart.aggregate([
         { $match: { user: req.user._id } },
-        { $sort: { 'created_time': -1 } },
+        { $sort: { created_time: -1 } },
         {
             // populate product
-            $lookup:
-            {
+            $lookup: {
                 from: 'products',
                 localField: 'product',
                 foreignField: '_id',
-                as: 'product'
-            }
+                as: 'product',
+            },
         },
         { $unwind: { path: '$product', preserveNullAndEmptyArrays: true } },
         {
             // populate created by
-            $lookup:
-            {
+            $lookup: {
                 from: 'users',
                 localField: 'user',
                 foreignField: '_id',
-                as: 'user'
-            }
+                as: 'user',
+            },
         },
         { $unwind: { path: '$user', preserveNullAndEmptyArrays: true } },
         {
             // populate product_gallery
-            $lookup:
-            {
+            $lookup: {
                 from: 'resources',
                 localField: 'product.product_gallery',
                 foreignField: '_id',
-                as: 'product.product_gallery'
-            }
+                as: 'product.product_gallery',
+            },
         },
     ]);
-    
+
     const totalProduct = cart.length;
     const totalQuantity = res.locals.total_items_in_cart;
-    const totalPrice = cart.reduce((sum, item) => sum + helper.calcPrice(item.product.product_price, item.product.product_discount) * item.quantity, 0);
+    const totalPrice = cart.reduce(
+        (sum, item) =>
+            sum + helper.calcPrice(item.product.product_price, item.product.product_discount) * item.quantity,
+        0,
+    );
 
-    const response = { helper, cart, currentUser: req.user, totalProduct, totalQuantity, totalPrice };
-    
+    const response = {
+        helper,
+        cart,
+        currentUser: req.user,
+        totalProduct,
+        totalQuantity,
+        totalPrice,
+    };
+
     res.render('client/cart', { response }, (error, html) => {
         if (error) {
             console.log('[---Log---][---client/cart---]: ', error);
@@ -221,7 +211,7 @@ router.get('/cart/delete/:id', cartController.removeFromCart, (req, res) => {
 
 router.post('/checkout', orderController.placeOrder, (req, res) => {
     const controllerResponse = res.locals.response;
-    
+
     if (controllerResponse.error) {
         // Push notification
         pushNotification(res, 'error', controllerResponse);
@@ -240,93 +230,90 @@ router.get('/account/:page', checkClientTokenForAccess, async (req, res) => {
 
     let response = {
         title: '',
-        currentUser: req.user
+        currentUser: req.user,
     };
 
-    
     switch (page) {
-    case 'profile':
-        const user = await User.findById(req.user._id);
-        
-        response.currentUser = user;
-        response.title = 'Hồ Sơ';
-        break;
-    
-    case 'purchase':
+        case 'profile':
+            const user = await User.findById(req.user._id);
 
-        const orders = await Order.aggregate([
-            {
-                $match: { 'owner.user': req.user._id }
-            },
-            {
-                $unwind: '$items'
-            },
-            {
-                $lookup: {
-                    from: 'products',
-                    localField: 'items.product',
-                    foreignField: '_id',
-                    as: 'items.product'
-                }
-            },
-            {
-                $unwind: '$items.product'
-            },
-            {
-                $lookup: {
-                    from: 'resources',
-                    localField: 'items.product.product_gallery',
-                    foreignField: '_id',
-                    as: 'items.product.product_gallery'
-                }
-            },
-            {
-                $lookup: {
-                    from: 'categories',
-                    localField: 'items.product.category',
-                    foreignField: '_id',
-                    as: 'items.product.category'
-                }
-            },
-            {
-                $unwind: '$items.product.category'
-            },
-            {
-                $lookup: {
-                    from: 'users',
-                    localField: 'owner.user',
-                    foreignField: '_id',
-                    as: 'owner.user'
-                }
-            },
-            {
-                $unwind: '$owner.user'
-            },
-            {
-                $group: {
-                    _id: '$_id',
-                    items: { $push: '$items' },
-                    owner: { $first: '$owner' },
-                    total_price: { $first: '$total_price' },
-                    payment_method: { $first: '$payment_method' },
-                    payment_status: { $first: '$payment_status' },
-                    order_status: { $first: '$order_status' },
-                    created_time: { $first: '$created_time' }
-                }
-            }
-        ]);        
+            response.currentUser = user;
+            response.title = 'Hồ Sơ';
+            break;
 
-        console.log(orders);
-        
-        response.orders = orders;
-        response.helper = helper;
-        response.title = 'Đơn Mua';
-        break;
+        case 'purchase':
+            const orders = await Order.aggregate([
+                {
+                    $match: { 'owner.user': req.user._id },
+                },
+                {
+                    $unwind: '$items',
+                },
+                {
+                    $lookup: {
+                        from: 'products',
+                        localField: 'items.product',
+                        foreignField: '_id',
+                        as: 'items.product',
+                    },
+                },
+                {
+                    $unwind: '$items.product',
+                },
+                {
+                    $lookup: {
+                        from: 'resources',
+                        localField: 'items.product.product_gallery',
+                        foreignField: '_id',
+                        as: 'items.product.product_gallery',
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'categories',
+                        localField: 'items.product.category',
+                        foreignField: '_id',
+                        as: 'items.product.category',
+                    },
+                },
+                {
+                    $unwind: '$items.product.category',
+                },
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'owner.user',
+                        foreignField: '_id',
+                        as: 'owner.user',
+                    },
+                },
+                {
+                    $unwind: '$owner.user',
+                },
+                {
+                    $group: {
+                        _id: '$_id',
+                        items: { $push: '$items' },
+                        owner: { $first: '$owner' },
+                        total_price: { $first: '$total_price' },
+                        payment_method: { $first: '$payment_method' },
+                        payment_status: { $first: '$payment_status' },
+                        order_status: { $first: '$order_status' },
+                        created_time: { $first: '$created_time' },
+                    },
+                },
+            ]);
 
-    default:
-        break;
+            console.log(orders);
+
+            response.orders = orders;
+            response.helper = helper;
+            response.title = 'Đơn Mua';
+            break;
+
+        default:
+            break;
     }
-    
 
     res.render('client/account', { page, response }, (error, html) => {
         if (error) {
@@ -385,12 +372,7 @@ router.get('/', async (req, res) => {
         .populate('product_gallery')
         .populate('category');
 
-    const blogs = await Blog.find()
-        .sort({ created_time: 1 })
-        .skip(0)
-        .limit(6)
-        .populate('category')
-        .populate('banner');
+    const blogs = await Blog.find().sort({ created_time: 1 }).skip(0).limit(6).populate('category').populate('banner');
 
     const response = { products, blogs };
 
@@ -432,23 +414,19 @@ router.get('/about', async (req, res) => {
 router.get('/contact', async (req, res) => {
     const response = {};
 
-    res.render(
-        'client/contact',
-        { title: 'Liên Hệ', response },
-        (error, html) => {
-            if (error) {
-                console.log('[---Log---][---client/contact---]: ', error);
-                return res.status(500).send(error.message);
-            }
+    res.render('client/contact', { title: 'Liên Hệ', response }, (error, html) => {
+        if (error) {
+            console.log('[---Log---][---client/contact---]: ', error);
+            return res.status(500).send(error.message);
+        }
 
-            // Pass the rendered content to the layout
-            res.render('client/layout', {
-                body: html,
-                title: 'Liên Hệ',
-                currentUser: req.user,
-            });
-        },
-    );
+        // Pass the rendered content to the layout
+        res.render('client/layout', {
+            body: html,
+            title: 'Liên Hệ',
+            currentUser: req.user,
+        });
+    });
 });
 
 // Category
@@ -491,9 +469,7 @@ router.get('/:slug', async (req, res) => {
     let products = [];
 
     const findBlogsBySubCategories = async (categoryItem) => {
-        const blogFound = await Blog.find({ category: categoryItem._id })
-            .populate('category')
-            .populate('banner');
+        const blogFound = await Blog.find({ category: categoryItem._id }).populate('category').populate('banner');
 
         blogs = [...blogs, ...blogFound];
 
@@ -543,9 +519,7 @@ router.get('/:slug', async (req, res) => {
 router.get('/product/:slug', async (req, res) => {
     const { slug } = req.params;
 
-    const product = await Product.findOne({ slug })
-        .populate('product_gallery')
-        .populate('category');
+    const product = await Product.findOne({ slug }).populate('product_gallery').populate('category');
 
     if (!product) {
         return res.status(404).send('Product not found');
@@ -572,9 +546,7 @@ router.get('/product/:slug', async (req, res) => {
 router.get('/blog/:slug', async (req, res) => {
     const { slug } = req.params;
 
-    const blog = await Blog.findOne({ slug })
-        .populate('category')
-        .populate('banner');
+    const blog = await Blog.findOne({ slug }).populate('category').populate('banner');
 
     if (!blog) {
         return res.status(404).send('Blog not found');

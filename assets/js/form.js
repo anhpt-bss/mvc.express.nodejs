@@ -9,9 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function previewFiles(input) {
-    const previewContainer = document.getElementById(
-        input.getAttribute('data-preview-target'),
-    );
+    const previewContainer = document.getElementById(input.getAttribute('data-preview-target'));
     previewContainer.innerHTML = ''; // Clear existing previews
 
     const files = input.files;
@@ -38,9 +36,7 @@ function previewFiles(input) {
         previewContainer.appendChild(previewWrapper);
 
         removeButton.addEventListener('click', function () {
-            const updatedFiles = Array.from(input.files).filter(
-                (_, i) => i !== index,
-            );
+            const updatedFiles = Array.from(input.files).filter((_, i) => i !== index);
             const dataTransfer = new DataTransfer();
             updatedFiles.forEach((file) => dataTransfer.items.add(file));
             input.files = dataTransfer.files;

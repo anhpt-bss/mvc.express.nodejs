@@ -8,21 +8,11 @@ exports.placeOrder = async (req, res, next) => {
     try {
         const carts = await Cart.find({ user: req.user._id }).populate('product');
 
-        if(!carts) {
-            if (
-                req.headers.accept &&
-                req.headers.accept.includes('application/json')
-            ) {
-                return HttpResponse.badRequest(
-                    res,
-                    [],
-                    req.t('cart.cart_not_found'),
-                );
+        if (!carts) {
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, [], req.t('cart.cart_not_found'));
             } else {
-                res.locals.response = HttpResponse.badRequestResponse(
-                    [],
-                    req.t('cart.cart_not_found'),
-                );
+                res.locals.response = HttpResponse.badRequestResponse([], req.t('cart.cart_not_found'));
                 return next();
             }
         }
@@ -30,7 +20,7 @@ exports.placeOrder = async (req, res, next) => {
         const { name, email, phone_number, address, note, payment_method } = req.body;
 
         console.log(req.body);
-        
+
         // Save user info
         const user = await User.findById(req.user._id);
 
@@ -40,14 +30,18 @@ exports.placeOrder = async (req, res, next) => {
         await user.save();
 
         // Save order
-        const totalPrice = carts.reduce((sum, item) => sum + helper.calcPrice(item.product.product_price, item.product.product_discount) * item.quantity, 0);
+        const totalPrice = carts.reduce(
+            (sum, item) =>
+                sum + helper.calcPrice(item.product.product_price, item.product.product_discount) * item.quantity,
+            0,
+        );
 
         const order = await Order.create({
-            items: carts.map(item => ({
+            items: carts.map((item) => ({
                 product: item.product._id,
                 quantity: item.quantity,
                 price: item.product.product_price,
-                discount: item.product.product_discount
+                discount: item.product.product_discount,
             })),
             owner: {
                 user: req.user._id,
@@ -58,27 +52,20 @@ exports.placeOrder = async (req, res, next) => {
             },
             payment_method,
             total_price: totalPrice,
-            note
+            note,
         });
 
         await Cart.deleteMany({ user: req.user._id });
 
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.success(res, order);
         } else {
             res.locals.response = HttpResponse.successResponse(order);
             return next();
         }
-
     } catch (error) {
         console.log('[---Log---][---removeFromCart---]: ', error);
-        if (
-            req.headers.accept &&
-        req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.internalServerError(res);
         } else {
             res.locals.response = HttpResponse.internalServerErrorResponse();

@@ -13,12 +13,7 @@ router.get('/:id', userController.getUserById);
 router.use(verifyAPIToken);
 
 // Routes privated
-router.post(
-    '/create',
-    userValidationRules(),
-    validate,
-    userController.createUser,
-);
+router.post('/create', userValidationRules(), validate, userController.createUser);
 router.put('/:id', userValidationRules(), validate, userController.updateUser);
 router.delete('/:id', userController.deleteUser);
 

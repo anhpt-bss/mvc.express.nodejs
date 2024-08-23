@@ -6,10 +6,7 @@ const { DEFAULT_RESPONSE } = require('@services/httpResponse/constants');
 const { pushNotification } = require('@services/helper');
 const { readLogFile, deleteLogFile } = require('@services/logger');
 
-const {
-    checkAdminToken,
-    checkAdminTokenForLogin,
-} = require('@middleware/auth');
+const { checkAdminToken, checkAdminTokenForLogin } = require('@middleware/auth');
 const {
     loginValidationRules,
     userValidationRules,
@@ -37,28 +34,23 @@ router.get('/auth/login', checkAdminTokenForLogin, (req, res) => {
     res.render('admin/signin', { ...DEFAULT_RESPONSE });
 });
 
-router.post(
-    '/auth/login',
-    loginValidationRules(),
-    authController.login,
-    (req, res) => {
-        const controllerResponse = res.locals.response;
+router.post('/auth/login', loginValidationRules(), authController.login, (req, res) => {
+    const controllerResponse = res.locals.response;
 
-        if (controllerResponse.error) {
-            // Push notification
-            pushNotification(res, 'error', controllerResponse);
+    if (controllerResponse.error) {
+        // Push notification
+        pushNotification(res, 'error', controllerResponse);
 
-            return res.redirect('/admin/auth/login');
-        } else {
-            // Push notification
-            pushNotification(res, 'success', controllerResponse);
+        return res.redirect('/admin/auth/login');
+    } else {
+        // Push notification
+        pushNotification(res, 'success', controllerResponse);
 
-            logger.info(`[${new Date()}][---Login---]: ${req.body.email}`);
+        logger.info(`[${new Date()}][---Login---]: ${req.body.email}`);
 
-            return res.redirect('/admin');
-        }
-    },
-);
+        return res.redirect('/admin');
+    }
+});
 
 // Verify token
 router.use(checkAdminToken);
@@ -196,31 +188,24 @@ router.get('/users/create', (req, res) => {
     });
 });
 
-router.post(
-    '/users/create',
-    userValidationRules(),
-    userController.createUser,
-    (req, res) => {
-        const controllerResponse = res.locals.response;
+router.post('/users/create', userValidationRules(), userController.createUser, (req, res) => {
+    const controllerResponse = res.locals.response;
 
-        if (controllerResponse.error) {
-            // Push notification
-            pushNotification(res, 'error', controllerResponse);
+    if (controllerResponse.error) {
+        // Push notification
+        pushNotification(res, 'error', controllerResponse);
 
-            return res.redirect('/admin/users/create');
-        } else {
-            // Push notification
-            pushNotification(res, 'success', controllerResponse);
+        return res.redirect('/admin/users/create');
+    } else {
+        // Push notification
+        pushNotification(res, 'success', controllerResponse);
 
-            return res.redirect('/admin/users');
-        }
-    },
-);
+        return res.redirect('/admin/users');
+    }
+});
 
 router.get('/users/edit/:id', async (req, res) => {
-    const userItem = await User.findById(req.params.id)
-        .select('-password')
-        .lean();
+    const userItem = await User.findById(req.params.id).select('-password').lean();
 
     const response = {
         ...DEFAULT_RESPONSE,
@@ -245,36 +230,27 @@ router.get('/users/edit/:id', async (req, res) => {
     });
 });
 
-router.post(
-    '/users/edit/:id',
-    userValidationRules(),
-    userController.updateUser,
-    async (req, res) => {
-        const controllerResponse = res.locals.response;
+router.post('/users/edit/:id', userValidationRules(), userController.updateUser, async (req, res) => {
+    const controllerResponse = res.locals.response;
 
-        if (controllerResponse.error) {
-            // Push notification
-            pushNotification(res, 'error', controllerResponse);
+    if (controllerResponse.error) {
+        // Push notification
+        pushNotification(res, 'error', controllerResponse);
 
-            return res.redirect(`/admin/users/edit/${req.params.id}`);
-        } else {
-            // Push notification
-            pushNotification(res, 'success', controllerResponse);
+        return res.redirect(`/admin/users/edit/${req.params.id}`);
+    } else {
+        // Push notification
+        pushNotification(res, 'success', controllerResponse);
 
-            return res.redirect('/admin/users');
-        }
-    },
-);
+        return res.redirect('/admin/users');
+    }
+});
 
 router.get('/users/delete/:id', userController.deleteUser, (req, res) => {
     const controllerResponse = res.locals.response;
 
     // Push notification
-    pushNotification(
-        res,
-        controllerResponse.error ? 'error' : 'success',
-        controllerResponse,
-    );
+    pushNotification(res, controllerResponse.error ? 'error' : 'success', controllerResponse);
 
     return res.redirect('/admin/users');
 });
@@ -370,26 +346,21 @@ router.get('/resources/create', (req, res) => {
     });
 });
 
-router.post(
-    '/resources/create',
-    resourceValidationRules(),
-    resourceController.createResource,
-    (req, res) => {
-        const controllerResponse = res.locals.response;
+router.post('/resources/create', resourceValidationRules(), resourceController.createResource, (req, res) => {
+    const controllerResponse = res.locals.response;
 
-        if (controllerResponse.error) {
-            // Push notification
-            pushNotification(res, 'error', controllerResponse);
+    if (controllerResponse.error) {
+        // Push notification
+        pushNotification(res, 'error', controllerResponse);
 
-            return res.redirect('/admin/resources/create');
-        } else {
-            // Push notification
-            pushNotification(res, 'success', controllerResponse);
+        return res.redirect('/admin/resources/create');
+    } else {
+        // Push notification
+        pushNotification(res, 'success', controllerResponse);
 
-            return res.redirect('/admin/resources');
-        }
-    },
-);
+        return res.redirect('/admin/resources');
+    }
+});
 
 router.get('/resources/edit/:id', async (req, res) => {
     const resourceItem = await Resource.findById(req.params.id).lean();
@@ -417,43 +388,30 @@ router.get('/resources/edit/:id', async (req, res) => {
     });
 });
 
-router.post(
-    '/resources/edit/:id',
-    resourceValidationRules(),
-    resourceController.updateResource,
-    async (req, res) => {
-        const controllerResponse = res.locals.response;
+router.post('/resources/edit/:id', resourceValidationRules(), resourceController.updateResource, async (req, res) => {
+    const controllerResponse = res.locals.response;
 
-        if (controllerResponse.error) {
-            // Push notification
-            pushNotification(res, 'error', controllerResponse);
-
-            return res.redirect(`/admin/resources/edit/${req.params.id}`);
-        } else {
-            // Push notification
-            pushNotification(res, 'success', controllerResponse);
-
-            return res.redirect('/admin/resources');
-        }
-    },
-);
-
-router.get(
-    '/resources/delete/:id',
-    resourceController.deleteResource,
-    (req, res) => {
-        const controllerResponse = res.locals.response;
-
+    if (controllerResponse.error) {
         // Push notification
-        pushNotification(
-            res,
-            controllerResponse.error ? 'error' : 'success',
-            controllerResponse,
-        );
+        pushNotification(res, 'error', controllerResponse);
+
+        return res.redirect(`/admin/resources/edit/${req.params.id}`);
+    } else {
+        // Push notification
+        pushNotification(res, 'success', controllerResponse);
 
         return res.redirect('/admin/resources');
-    },
-);
+    }
+});
+
+router.get('/resources/delete/:id', resourceController.deleteResource, (req, res) => {
+    const controllerResponse = res.locals.response;
+
+    // Push notification
+    pushNotification(res, controllerResponse.error ? 'error' : 'success', controllerResponse);
+
+    return res.redirect('/admin/resources');
+});
 
 // Logout admin route
 router.get('/auth/logout', authController.logout, (req, res) => {
@@ -607,31 +565,24 @@ router.get('/blogs/create', async (req, res) => {
     });
 });
 
-router.post(
-    '/blogs/create',
-    blogValidationRules(),
-    blogController.createBlog,
-    (req, res) => {
-        const controllerResponse = res.locals.response;
+router.post('/blogs/create', blogValidationRules(), blogController.createBlog, (req, res) => {
+    const controllerResponse = res.locals.response;
 
-        if (controllerResponse.error) {
-            // Push notification
-            pushNotification(res, 'error', controllerResponse);
+    if (controllerResponse.error) {
+        // Push notification
+        pushNotification(res, 'error', controllerResponse);
 
-            return res.redirect('/admin/blogs/create');
-        } else {
-            // Push notification
-            pushNotification(res, 'success', controllerResponse);
+        return res.redirect('/admin/blogs/create');
+    } else {
+        // Push notification
+        pushNotification(res, 'success', controllerResponse);
 
-            return res.redirect('/admin/blogs');
-        }
-    },
-);
+        return res.redirect('/admin/blogs');
+    }
+});
 
 router.get('/blogs/edit/:id', async (req, res) => {
-    const blogItem = await Blog.findById(req.params.id)
-        .populate('banner')
-        .lean();
+    const blogItem = await Blog.findById(req.params.id).populate('banner').lean();
     const categoryList = await Category.find().lean();
 
     const response = {
@@ -664,36 +615,27 @@ router.get('/blogs/edit/:id', async (req, res) => {
     });
 });
 
-router.post(
-    '/blogs/edit/:id',
-    blogValidationRules(),
-    blogController.updateBlog,
-    async (req, res) => {
-        const controllerResponse = res.locals.response;
+router.post('/blogs/edit/:id', blogValidationRules(), blogController.updateBlog, async (req, res) => {
+    const controllerResponse = res.locals.response;
 
-        if (controllerResponse.error) {
-            // Push notification
-            pushNotification(res, 'error', controllerResponse);
+    if (controllerResponse.error) {
+        // Push notification
+        pushNotification(res, 'error', controllerResponse);
 
-            return res.redirect(`/admin/blogs/edit/${req.params.id}`);
-        } else {
-            // Push notification
-            pushNotification(res, 'success', controllerResponse);
+        return res.redirect(`/admin/blogs/edit/${req.params.id}`);
+    } else {
+        // Push notification
+        pushNotification(res, 'success', controllerResponse);
 
-            return res.redirect('/admin/blogs');
-        }
-    },
-);
+        return res.redirect('/admin/blogs');
+    }
+});
 
 router.get('/blogs/delete/:id', blogController.deleteBlog, (req, res) => {
     const controllerResponse = res.locals.response;
 
     // Push notification
-    pushNotification(
-        res,
-        controllerResponse.error ? 'error' : 'success',
-        controllerResponse,
-    );
+    pushNotification(res, controllerResponse.error ? 'error' : 'success', controllerResponse);
 
     return res.redirect('/admin/blogs');
 });
@@ -786,22 +728,17 @@ router.get('/categories/create', async (req, res) => {
     });
 });
 
-router.post(
-    '/categories/create',
-    categoryValidationRules(),
-    categoryController.createCategory,
-    (req, res) => {
-        const controllerResponse = res.locals.response;
+router.post('/categories/create', categoryValidationRules(), categoryController.createCategory, (req, res) => {
+    const controllerResponse = res.locals.response;
 
-        if (controllerResponse.error) {
-            pushNotification(res, 'error', controllerResponse);
-            return res.redirect('/admin/categories/create');
-        } else {
-            pushNotification(res, 'success', controllerResponse);
-            return res.redirect('/admin/categories');
-        }
-    },
-);
+    if (controllerResponse.error) {
+        pushNotification(res, 'error', controllerResponse);
+        return res.redirect('/admin/categories/create');
+    } else {
+        pushNotification(res, 'success', controllerResponse);
+        return res.redirect('/admin/categories');
+    }
+});
 
 router.get('/categories/edit/:id', async (req, res) => {
     const categoryItem = await Category.findById(req.params.id).lean();
@@ -836,38 +773,25 @@ router.get('/categories/edit/:id', async (req, res) => {
     });
 });
 
-router.post(
-    '/categories/edit/:id',
-    categoryValidationRules(),
-    categoryController.updateCategory,
-    async (req, res) => {
-        const controllerResponse = res.locals.response;
+router.post('/categories/edit/:id', categoryValidationRules(), categoryController.updateCategory, async (req, res) => {
+    const controllerResponse = res.locals.response;
 
-        if (controllerResponse.error) {
-            pushNotification(res, 'error', controllerResponse);
-            return res.redirect(`/admin/categories/edit/${req.params.id}`);
-        } else {
-            pushNotification(res, 'success', controllerResponse);
-            return res.redirect('/admin/categories');
-        }
-    },
-);
-
-router.get(
-    '/categories/delete/:id',
-    categoryController.deleteCategory,
-    (req, res) => {
-        const controllerResponse = res.locals.response;
-
-        pushNotification(
-            res,
-            controllerResponse.error ? 'error' : 'success',
-            controllerResponse,
-        );
-
+    if (controllerResponse.error) {
+        pushNotification(res, 'error', controllerResponse);
+        return res.redirect(`/admin/categories/edit/${req.params.id}`);
+    } else {
+        pushNotification(res, 'success', controllerResponse);
         return res.redirect('/admin/categories');
-    },
-);
+    }
+});
+
+router.get('/categories/delete/:id', categoryController.deleteCategory, (req, res) => {
+    const controllerResponse = res.locals.response;
+
+    pushNotification(res, controllerResponse.error ? 'error' : 'success', controllerResponse);
+
+    return res.redirect('/admin/categories');
+});
 
 // Product fields configuration
 const productFields = [
@@ -1019,32 +943,25 @@ router.get('/products/create', async (req, res) => {
 });
 
 // POST create product
-router.post(
-    '/products/create',
-    productValidationRules(),
-    productController.createProduct,
-    (req, res) => {
-        const controllerResponse = res.locals.response;
+router.post('/products/create', productValidationRules(), productController.createProduct, (req, res) => {
+    const controllerResponse = res.locals.response;
 
-        if (controllerResponse.error) {
-            // Push notification
-            pushNotification(res, 'error', controllerResponse);
+    if (controllerResponse.error) {
+        // Push notification
+        pushNotification(res, 'error', controllerResponse);
 
-            return res.redirect('/admin/products/create');
-        } else {
-            // Push notification
-            pushNotification(res, 'success', controllerResponse);
+        return res.redirect('/admin/products/create');
+    } else {
+        // Push notification
+        pushNotification(res, 'success', controllerResponse);
 
-            return res.redirect('/admin/products');
-        }
-    },
-);
+        return res.redirect('/admin/products');
+    }
+});
 
 // GET edit product page
 router.get('/products/edit/:id', async (req, res) => {
-    const productItem = await Product.findById(req.params.id)
-        .populate('product_gallery')
-        .lean();
+    const productItem = await Product.findById(req.params.id).populate('product_gallery').lean();
     const categoryList = await Category.find().lean();
 
     const response = {
@@ -1077,43 +994,30 @@ router.get('/products/edit/:id', async (req, res) => {
 });
 
 // POST edit product
-router.post(
-    '/products/edit/:id',
-    productValidationRules(),
-    productController.updateProduct,
-    async (req, res) => {
-        const controllerResponse = res.locals.response;
+router.post('/products/edit/:id', productValidationRules(), productController.updateProduct, async (req, res) => {
+    const controllerResponse = res.locals.response;
 
-        if (controllerResponse.error) {
-            // Push notification
-            pushNotification(res, 'error', controllerResponse);
-
-            return res.redirect(`/admin/products/edit/${req.params.id}`);
-        } else {
-            // Push notification
-            pushNotification(res, 'success', controllerResponse);
-
-            return res.redirect('/admin/products');
-        }
-    },
-);
-
-// GET delete product
-router.get(
-    '/products/delete/:id',
-    productController.deleteProduct,
-    (req, res) => {
-        const controllerResponse = res.locals.response;
-
+    if (controllerResponse.error) {
         // Push notification
-        pushNotification(
-            res,
-            controllerResponse.error ? 'error' : 'success',
-            controllerResponse,
-        );
+        pushNotification(res, 'error', controllerResponse);
+
+        return res.redirect(`/admin/products/edit/${req.params.id}`);
+    } else {
+        // Push notification
+        pushNotification(res, 'success', controllerResponse);
 
         return res.redirect('/admin/products');
-    },
-);
+    }
+});
+
+// GET delete product
+router.get('/products/delete/:id', productController.deleteProduct, (req, res) => {
+    const controllerResponse = res.locals.response;
+
+    // Push notification
+    pushNotification(res, controllerResponse.error ? 'error' : 'success', controllerResponse);
+
+    return res.redirect('/admin/products');
+});
 
 module.exports = router;

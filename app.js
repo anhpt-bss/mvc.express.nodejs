@@ -34,8 +34,8 @@ app.set('view engine', 'ejs');
 
 // Middleware
 const cspDirectives = {
-    frameSrc: ['\'self\'', 'https://www.google.com'], // Allow framing of Google
-    imgSrc: ['\'self\'', 'data:', '*'],
+    frameSrc: ["'self'", 'https://www.google.com'], // Allow framing of Google
+    imgSrc: ["'self'", 'data:', '*'],
 };
 app.use(
     helmet.contentSecurityPolicy({
@@ -53,10 +53,7 @@ app.use(express.json());
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
 // Resource static files
-app.use(
-    `/${constants.UPLOADS_BASE_PATH}`,
-    express.static(path.join(__dirname, constants.UPLOADS_BASE_PATH)),
-);
+app.use(`/${constants.UPLOADS_BASE_PATH}`, express.static(path.join(__dirname, constants.UPLOADS_BASE_PATH)));
 
 // Rate limiter
 const rateLimiter = new RateLimiterMemory({
@@ -133,9 +130,7 @@ app.use(async (req, res, next) => {
             if (category.parent_cate) {
                 const parent = categoryMap.get(category.parent_cate.toString());
                 if (parent) {
-                    parent.sub_category.push(
-                        categoryMap.get(category._id.toString()),
-                    );
+                    parent.sub_category.push(categoryMap.get(category._id.toString()));
                 }
             } else {
                 rootCategories.push(categoryMap.get(category._id.toString()));
@@ -165,24 +160,16 @@ app.use('/', clientRouter);
 // Error handling middleware
 app.use((error, req, res, next) => {
     console.log('[---Log---][---App---]: ', error);
-    logger.error(
-        `[${new Date()}][---App---]: ${error.message || 'Something Broke...'}`,
-    );
+    logger.error(`[${new Date()}][---App---]: ${error.message || 'Something Broke...'}`);
 
     if (req.headers.accept && req.headers.accept.includes('application/json')) {
         return HttpResponse.internalServerError(res, [], error.message);
     } else {
-        res.locals.response = HttpResponse.internalServerErrorResponse(
-            [],
-            error.message,
-        );
+        res.locals.response = HttpResponse.internalServerErrorResponse([], error.message);
         return next();
     }
 });
 
 app.listen(constants.PORT, () => {
-    console.log(
-        '[---Log---][---App---]: ',
-        `Server is running on port ${constants.PORT}`,
-    );
+    console.log('[---Log---][---App---]: ', `Server is running on port ${constants.PORT}`);
 });

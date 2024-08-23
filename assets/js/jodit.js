@@ -11,9 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const initializeEditors = (languageData) => {
         const editors = document.querySelectorAll('.jodit-editor');
         editors.forEach((editorDiv) => {
-            const hiddenInput = document.getElementById(
-                editorDiv.id + '-input',
-            );
+            const hiddenInput = document.getElementById(editorDiv.id + '-input');
             const config = {
                 readonly: false,
                 placeholder: 'Nhập nội dung...',
@@ -69,9 +67,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         console.log(e);
                         const j = this.j || this;
                         if (j) {
-                            j.message.error(
-                                'Đã xảy ra lỗi, vui lòng thử lại sau',
-                            );
+                            j.message.error('Đã xảy ra lỗi, vui lòng thử lại sau');
                         }
                     },
                     defaultHandlerSuccess: function (response) {
@@ -82,9 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         if (response?.success === false) {
                             const j = this.j || this;
                             if (!j) return;
-                            j.message.error(
-                                'Đã xảy ra lỗi, vui lòng thử lại sau',
-                            );
+                            j.message.error('Đã xảy ra lỗi, vui lòng thử lại sau');
                             return;
                         }
 
@@ -92,11 +86,8 @@ document.addEventListener('DOMContentLoaded', function () {
                             return;
                         }
 
-                        const configData =
-                            document.getElementById('config-data');
-                        const serverUrl = configData
-                            ? configData.dataset.serverurl
-                            : '';
+                        const configData = document.getElementById('config-data');
+                        const serverUrl = configData ? configData.dataset.serverurl : '';
 
                         response?.forEach((item) => {
                             const url = `${serverUrl}/${item?.path}`;
@@ -107,17 +98,12 @@ document.addEventListener('DOMContentLoaded', function () {
                                 element.setAttribute('src', url);
                                 element.setAttribute('alt', item.filename);
                                 element.setAttribute('title', item.filename);
-                                j.s.insertImage(
-                                    element,
-                                    null,
-                                    j.o.imageDefaultWidth,
-                                );
+                                j.s.insertImage(element, null, j.o.imageDefaultWidth);
                             } else if (item.mimetype.includes('video')) {
                                 element = j.createInside.element('video');
                                 element.setAttribute('controls', '');
                                 element.setAttribute('style', 'width: 100%;');
-                                const videoSource =
-                                    j.createInside.element('source');
+                                const videoSource = j.createInside.element('source');
                                 videoSource.setAttribute('src', url);
                                 videoSource.setAttribute('type', item.mimetype);
                                 element.appendChild(videoSource);
@@ -125,8 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             } else if (item.mimetype.includes('audio')) {
                                 element = j.createInside.element('audio');
                                 element.setAttribute('controls', '');
-                                const audioSource =
-                                    j.createInside.element('source');
+                                const audioSource = j.createInside.element('source');
                                 audioSource.setAttribute('src', url);
                                 audioSource.setAttribute('type', item.mimetype);
                                 element.appendChild(audioSource);
@@ -143,10 +128,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 const icon = j.createInside.element('span');
                                 icon.className = 'file-icon';
                                 icon.textContent = '📄';
-                                icon.setAttribute(
-                                    'style',
-                                    'margin-right: 8px; font-size: 1.2em;',
-                                );
+                                icon.setAttribute('style', 'margin-right: 8px; font-size: 1.2em;');
 
                                 const fileInfo = j.createInside.element('span');
                                 fileInfo.textContent = ` ${item.filename} (${item.size})`;
@@ -165,9 +147,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         console.log(e);
                         const j = this.j || this;
                         if (j) {
-                            j.message.error(
-                                'Đã xảy ra lỗi, vui lòng thử lại sau',
-                            );
+                            j.message.error('Đã xảy ra lỗi, vui lòng thử lại sau');
                         }
                     },
                 },

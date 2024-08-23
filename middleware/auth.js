@@ -10,7 +10,7 @@ exports.verifyAPIToken = async (req, res, next) => {
     let accessToken = authHeader && authHeader.split(' ')[1];
 
     if (!accessToken) {
-        if(req.headers['source'] === 'client') {
+        if (req.headers['source'] === 'client') {
             accessToken = req.cookies['client_access_token'];
         } else {
             accessToken = req.cookies['admin_access_token'];
@@ -18,11 +18,7 @@ exports.verifyAPIToken = async (req, res, next) => {
     }
 
     if (!accessToken) {
-        return HttpResponse.unauthorized(
-            res,
-            [],
-            'Unauthorized: No token provided',
-        );
+        return HttpResponse.unauthorized(res, [], 'Unauthorized: No token provided');
     }
 
     try {
@@ -30,15 +26,11 @@ exports.verifyAPIToken = async (req, res, next) => {
         const user = await User.findById(decoded.id);
 
         req.user = user;
-        
+
         return next();
     } catch (error) {
         console.log('[---Log---][---verifyAPIToken---]: ', error);
-        return HttpResponse.unauthorized(
-            res,
-            [],
-            'Unauthorized: Invalid token',
-        );
+        return HttpResponse.unauthorized(res, [], 'Unauthorized: Invalid token');
     }
 };
 
@@ -115,20 +107,20 @@ exports.checkClientToken = async (req, res, next) => {
         }
 
         req.user = user;
-        
+
         // Calculate the total quantity of all items in the cart
         const totalQuantity = await Cart.aggregate([
             { $match: { user: req.user._id } },
-            { $group: { _id: null, total: { $sum: '$quantity' } } }
+            { $group: { _id: null, total: { $sum: '$quantity' } } },
         ]);
         const totalItemsInCart = totalQuantity.length > 0 ? totalQuantity[0].total : 0;
-        
+
         res.locals.total_items_in_cart = totalItemsInCart;
 
         return next();
     } catch (error) {
         console.log('[---Log---][---checkClientToken---]: ', error);
-        
+
         res.locals.total_items_in_cart = 0;
 
         return next();

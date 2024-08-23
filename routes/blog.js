@@ -13,12 +13,7 @@ router.get('/:id', blogController.getBlogById);
 router.use(verifyAPIToken);
 
 // Routes privated
-router.post(
-    '/create',
-    blogValidationRules(),
-    validate,
-    blogController.createBlog,
-);
+router.post('/create', blogValidationRules(), validate, blogController.createBlog);
 router.put('/:id', blogValidationRules(), validate, blogController.updateBlog);
 router.delete('/:id', blogController.deleteBlog);
 

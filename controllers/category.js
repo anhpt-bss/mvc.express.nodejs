@@ -82,12 +82,7 @@ const HttpResponse = require('@services/httpResponse');
  */
 exports.getAllCategories = async (req, res, next) => {
     try {
-        const {
-            page = 1,
-            limit = 10,
-            sort = 'position',
-            order = 'asc',
-        } = req.query;
+        const { page = 1, limit = 10, sort = 'position', order = 'asc' } = req.query;
 
         const categories = await Category.find()
             .sort({ [sort]: order === 'asc' ? 1 : -1 })
@@ -106,10 +101,7 @@ exports.getAllCategories = async (req, res, next) => {
             order,
         };
 
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.success(res, response);
         } else {
             res.locals.response = HttpResponse.successResponse(response);
@@ -117,10 +109,7 @@ exports.getAllCategories = async (req, res, next) => {
         }
     } catch (error) {
         console.log('[---Log---][---getAllCategories---]: ', error);
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.internalServerError(res);
         } else {
             res.locals.response = HttpResponse.internalServerErrorResponse();
@@ -170,20 +159,10 @@ exports.createCategory = async (req, res, next) => {
                 msg: req.t(error.msg),
             }));
 
-            if (
-                req.headers.accept &&
-                req.headers.accept.includes('application/json')
-            ) {
-                return HttpResponse.badRequest(
-                    res,
-                    translatedErrors,
-                    req.t('validation.errors'),
-                );
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, translatedErrors, req.t('validation.errors'));
             } else {
-                res.locals.response = HttpResponse.badRequestResponse(
-                    translatedErrors,
-                    req.t('validation.errors'),
-                );
+                res.locals.response = HttpResponse.badRequestResponse(translatedErrors, req.t('validation.errors'));
                 return next();
             }
         }
@@ -193,20 +172,10 @@ exports.createCategory = async (req, res, next) => {
         const existingCategory = await Category.findOne({ name });
 
         if (existingCategory) {
-            if (
-                req.headers.accept &&
-                req.headers.accept.includes('application/json')
-            ) {
-                return HttpResponse.badRequest(
-                    res,
-                    [],
-                    req.t('category.name_already_exists'),
-                );
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, [], req.t('category.name_already_exists'));
             } else {
-                res.locals.response = HttpResponse.badRequestResponse(
-                    [],
-                    req.t('category.name_already_exists'),
-                );
+                res.locals.response = HttpResponse.badRequestResponse([], req.t('category.name_already_exists'));
                 return next();
             }
         }
@@ -220,10 +189,7 @@ exports.createCategory = async (req, res, next) => {
 
         await category.save();
 
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.success(res, category);
         } else {
             res.locals.response = HttpResponse.successResponse(category);
@@ -231,10 +197,7 @@ exports.createCategory = async (req, res, next) => {
         }
     } catch (error) {
         console.log('[---Log---][---createCategory---]: ', error);
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.internalServerError(res);
         } else {
             res.locals.response = HttpResponse.internalServerErrorResponse();
@@ -278,20 +241,10 @@ exports.getCategoryById = async (req, res, next) => {
     try {
         const category = await Category.findById(req.params.id);
         if (!category) {
-            if (
-                req.headers.accept &&
-                req.headers.accept.includes('application/json')
-            ) {
-                return HttpResponse.badRequest(
-                    res,
-                    [],
-                    req.t('category.category_not_found'),
-                );
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, [], req.t('category.category_not_found'));
             } else {
-                res.locals.response = HttpResponse.badRequestResponse(
-                    [],
-                    req.t('category.category_not_found'),
-                );
+                res.locals.response = HttpResponse.badRequestResponse([], req.t('category.category_not_found'));
                 return next();
             }
         }
@@ -299,10 +252,7 @@ exports.getCategoryById = async (req, res, next) => {
         return HttpResponse.success(res, category);
     } catch (error) {
         console.log('[---Log---][---getCategoryById---]: ', error);
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.internalServerError(res);
         } else {
             res.locals.response = HttpResponse.internalServerErrorResponse();
@@ -359,20 +309,10 @@ exports.updateCategory = async (req, res, next) => {
                 msg: req.t(error.msg),
             }));
 
-            if (
-                req.headers.accept &&
-                req.headers.accept.includes('application/json')
-            ) {
-                return HttpResponse.badRequest(
-                    res,
-                    translatedErrors,
-                    req.t('validation.errors'),
-                );
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, translatedErrors, req.t('validation.errors'));
             } else {
-                res.locals.response = HttpResponse.badRequestResponse(
-                    translatedErrors,
-                    req.t('validation.errors'),
-                );
+                res.locals.response = HttpResponse.badRequestResponse(translatedErrors, req.t('validation.errors'));
                 return next();
             }
         }
@@ -381,20 +321,10 @@ exports.updateCategory = async (req, res, next) => {
         const category = await Category.findById(req.params.id);
 
         if (!category) {
-            if (
-                req.headers.accept &&
-                req.headers.accept.includes('application/json')
-            ) {
-                return HttpResponse.badRequest(
-                    res,
-                    [],
-                    req.t('category.category_not_found'),
-                );
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, [], req.t('category.category_not_found'));
             } else {
-                res.locals.response = HttpResponse.badRequestResponse(
-                    [],
-                    req.t('category.category_not_found'),
-                );
+                res.locals.response = HttpResponse.badRequestResponse([], req.t('category.category_not_found'));
                 return next();
             }
         }
@@ -406,10 +336,7 @@ exports.updateCategory = async (req, res, next) => {
 
         await category.save();
 
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.success(res, category);
         } else {
             res.locals.response = HttpResponse.successResponse(category);
@@ -417,10 +344,7 @@ exports.updateCategory = async (req, res, next) => {
         }
     } catch (error) {
         console.log('[---Log---][---updateCategory---]: ', error);
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.internalServerError(res);
         } else {
             res.locals.response = HttpResponse.internalServerErrorResponse();
@@ -462,30 +386,17 @@ exports.deleteCategory = async (req, res, next) => {
     try {
         const category = await Category.findById(req.params.id);
         if (!category) {
-            if (
-                req.headers.accept &&
-                req.headers.accept.includes('application/json')
-            ) {
-                return HttpResponse.badRequest(
-                    res,
-                    [],
-                    req.t('category.category_not_found'),
-                );
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, [], req.t('category.category_not_found'));
             } else {
-                res.locals.response = HttpResponse.badRequestResponse(
-                    [],
-                    req.t('category.category_not_found'),
-                );
+                res.locals.response = HttpResponse.badRequestResponse([], req.t('category.category_not_found'));
                 return next();
             }
         }
 
         await Category.deleteOne({ _id: req.params.id });
 
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.success(res, { id: req.params.id });
         } else {
             res.locals.response = HttpResponse.successResponse({
@@ -495,10 +406,7 @@ exports.deleteCategory = async (req, res, next) => {
         }
     } catch (error) {
         console.log('[---Log---][---deleteCategory---]: ', error);
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.internalServerError(res);
         } else {
             res.locals.response = HttpResponse.internalServerErrorResponse();

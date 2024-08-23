@@ -78,12 +78,7 @@ const Product = require('@models/product');
  */
 exports.getAllResources = async (req, res, next) => {
     try {
-        const {
-            page = 1,
-            limit = 10,
-            sort = 'filename',
-            order = 'asc',
-        } = req.query;
+        const { page = 1, limit = 10, sort = 'filename', order = 'asc' } = req.query;
 
         const resources = await Resource.find()
             .sort({ [sort]: order === 'asc' ? 1 : -1 })
@@ -101,10 +96,7 @@ exports.getAllResources = async (req, res, next) => {
             order,
         };
 
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.success(res, response);
         } else {
             res.locals.response = HttpResponse.successResponse(response);
@@ -112,10 +104,7 @@ exports.getAllResources = async (req, res, next) => {
         }
     } catch (error) {
         console.log('[---Log---][---getAllResources---]: ', error);
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.internalServerError(res);
         } else {
             res.locals.response = HttpResponse.internalServerErrorResponse();
@@ -163,20 +152,10 @@ exports.createResource = async (req, res, next) => {
                 msg: req.t(error.msg),
             }));
 
-            if (
-                req.headers.accept &&
-                req.headers.accept.includes('application/json')
-            ) {
-                return HttpResponse.badRequest(
-                    res,
-                    translatedErrors,
-                    req.t('validation.errors'),
-                );
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, translatedErrors, req.t('validation.errors'));
             } else {
-                res.locals.response = HttpResponse.badRequestResponse(
-                    translatedErrors,
-                    req.t('validation.errors'),
-                );
+                res.locals.response = HttpResponse.badRequestResponse(translatedErrors, req.t('validation.errors'));
                 return next();
             }
         }
@@ -193,10 +172,7 @@ exports.createResource = async (req, res, next) => {
 
         await resource.save();
 
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.success(res, resource);
         } else {
             res.locals.response = HttpResponse.successResponse(resource);
@@ -204,10 +180,7 @@ exports.createResource = async (req, res, next) => {
         }
     } catch (error) {
         console.log('[---Log---][---createResource---]: ', error);
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.internalServerError(res);
         } else {
             res.locals.response = HttpResponse.internalServerErrorResponse();
@@ -251,20 +224,10 @@ exports.getResourceById = async (req, res, next) => {
     try {
         const resource = await Resource.findById(req.params.id);
         if (!resource) {
-            if (
-                req.headers.accept &&
-                req.headers.accept.includes('application/json')
-            ) {
-                return HttpResponse.badRequest(
-                    res,
-                    [],
-                    req.t('resource.resource_not_found'),
-                );
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, [], req.t('resource.resource_not_found'));
             } else {
-                res.locals.response = HttpResponse.badRequestResponse(
-                    [],
-                    req.t('resource.resource_not_found'),
-                );
+                res.locals.response = HttpResponse.badRequestResponse([], req.t('resource.resource_not_found'));
                 return next();
             }
         }
@@ -272,10 +235,7 @@ exports.getResourceById = async (req, res, next) => {
         return HttpResponse.success(res, resource);
     } catch (error) {
         console.log('[---Log---][---getResourceById---]: ', error);
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.internalServerError(res);
         } else {
             res.locals.response = HttpResponse.internalServerErrorResponse();
@@ -330,20 +290,10 @@ exports.updateResource = async (req, res, next) => {
                 msg: req.t(error.msg),
             }));
 
-            if (
-                req.headers.accept &&
-                req.headers.accept.includes('application/json')
-            ) {
-                return HttpResponse.badRequest(
-                    res,
-                    translatedErrors,
-                    req.t('validation.errors'),
-                );
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, translatedErrors, req.t('validation.errors'));
             } else {
-                res.locals.response = HttpResponse.badRequestResponse(
-                    translatedErrors,
-                    req.t('validation.errors'),
-                );
+                res.locals.response = HttpResponse.badRequestResponse(translatedErrors, req.t('validation.errors'));
                 return next();
             }
         }
@@ -352,20 +302,10 @@ exports.updateResource = async (req, res, next) => {
         const resource = await Resource.findById(req.params.id);
 
         if (!resource) {
-            if (
-                req.headers.accept &&
-                req.headers.accept.includes('application/json')
-            ) {
-                return HttpResponse.badRequest(
-                    res,
-                    [],
-                    req.t('resource.resource_not_found'),
-                );
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, [], req.t('resource.resource_not_found'));
             } else {
-                res.locals.response = HttpResponse.badRequestResponse(
-                    [],
-                    req.t('resource.resource_not_found'),
-                );
+                res.locals.response = HttpResponse.badRequestResponse([], req.t('resource.resource_not_found'));
                 return next();
             }
         }
@@ -378,10 +318,7 @@ exports.updateResource = async (req, res, next) => {
 
         await resource.save();
 
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.success(res, resource);
         } else {
             res.locals.response = HttpResponse.successResponse(resource);
@@ -389,10 +326,7 @@ exports.updateResource = async (req, res, next) => {
         }
     } catch (error) {
         console.log('[---Log---][---updateResource---]: ', error);
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.internalServerError(res);
         } else {
             res.locals.response = HttpResponse.internalServerErrorResponse();
@@ -432,20 +366,10 @@ exports.deleteResource = async (req, res, next) => {
     try {
         const resource = await Resource.findById(req.params.id);
         if (!resource) {
-            if (
-                req.headers.accept &&
-                req.headers.accept.includes('application/json')
-            ) {
-                return HttpResponse.badRequest(
-                    res,
-                    [],
-                    req.t('resource.resource_not_found'),
-                );
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, [], req.t('resource.resource_not_found'));
             } else {
-                res.locals.response = HttpResponse.badRequestResponse(
-                    [],
-                    req.t('resource.resource_not_found'),
-                );
+                res.locals.response = HttpResponse.badRequestResponse([], req.t('resource.resource_not_found'));
                 return next();
             }
         }
@@ -453,20 +377,10 @@ exports.deleteResource = async (req, res, next) => {
         // Check if the resource is being used in a blog as a banner
         const blogUsingResource = await Blog.findOne({ banner: req.params.id });
         if (blogUsingResource) {
-            if (
-                req.headers.accept &&
-                req.headers.accept.includes('application/json')
-            ) {
-                return HttpResponse.badRequest(
-                    res,
-                    [],
-                    req.t('resource.resource_in_use_blog'),
-                );
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, [], req.t('resource.resource_in_use_blog'));
             } else {
-                res.locals.response = HttpResponse.badRequestResponse(
-                    [],
-                    req.t('resource.resource_in_use_blog'),
-                );
+                res.locals.response = HttpResponse.badRequestResponse([], req.t('resource.resource_in_use_blog'));
                 return next();
             }
         }
@@ -476,30 +390,17 @@ exports.deleteResource = async (req, res, next) => {
             product_gallery: req.params.id,
         });
         if (productUsingResource) {
-            if (
-                req.headers.accept &&
-                req.headers.accept.includes('application/json')
-            ) {
-                return HttpResponse.badRequest(
-                    res,
-                    [],
-                    req.t('resource.resource_in_use_product'),
-                );
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, [], req.t('resource.resource_in_use_product'));
             } else {
-                res.locals.response = HttpResponse.badRequestResponse(
-                    [],
-                    req.t('resource.resource_in_use_product'),
-                );
+                res.locals.response = HttpResponse.badRequestResponse([], req.t('resource.resource_in_use_product'));
                 return next();
             }
         }
 
         await Resource.deleteOne({ _id: req.params.id });
 
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.success(res, { id: req.params.id });
         } else {
             res.locals.response = HttpResponse.successResponse({
@@ -509,10 +410,7 @@ exports.deleteResource = async (req, res, next) => {
         }
     } catch (error) {
         console.log('[---Log---][---deleteResource---]: ', error);
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.internalServerError(res);
         } else {
             res.locals.response = HttpResponse.internalServerErrorResponse();
@@ -569,35 +467,18 @@ exports.deleteResource = async (req, res, next) => {
 exports.uploadFiles = async (req, res, next) => {
     try {
         if (!req.files) {
-            if (
-                req.headers.accept &&
-                req.headers.accept.includes('application/json')
-            ) {
-                return HttpResponse.badRequest(
-                    res,
-                    [],
-                    req.t('resource.no_files_selected'),
-                );
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, [], req.t('resource.no_files_selected'));
             } else {
-                res.locals.response = HttpResponse.badRequestResponse(
-                    [],
-                    req.t('resource.no_files_selected'),
-                );
+                res.locals.response = HttpResponse.badRequestResponse([], req.t('resource.no_files_selected'));
                 return next();
             }
         }
 
         const uploadedFiles = await ResourceService.uploadFiles(req, res);
 
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
-            return HttpResponse.success(
-                res,
-                uploadedFiles,
-                req.t('resource.files_uploaded_successfully'),
-            );
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
+            return HttpResponse.success(res, uploadedFiles, req.t('resource.files_uploaded_successfully'));
         } else {
             res.locals.response = HttpResponse.successResponse(
                 uploadedFiles,
@@ -607,10 +488,7 @@ exports.uploadFiles = async (req, res, next) => {
         }
     } catch (error) {
         console.log('[---Log---][---uploadFiles---]: ', error);
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.internalServerError(res);
         } else {
             res.locals.response = HttpResponse.internalServerErrorResponse();
@@ -659,28 +537,15 @@ exports.deleteFile = async (req, res, next) => {
     try {
         await ResourceService.deleteFile(req.params.id);
 
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
-            return HttpResponse.success(
-                res,
-                {},
-                req.t('resource.file_deleted_successfully'),
-            );
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
+            return HttpResponse.success(res, {}, req.t('resource.file_deleted_successfully'));
         } else {
-            res.locals.response = HttpResponse.successResponse(
-                {},
-                req.t('resource.file_deleted_successfully'),
-            );
+            res.locals.response = HttpResponse.successResponse({}, req.t('resource.file_deleted_successfully'));
             return next();
         }
     } catch (error) {
         console.log('[---Log---][---deleteFile---]: ', error);
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.internalServerError(res);
         } else {
             res.locals.response = HttpResponse.internalServerErrorResponse();
@@ -721,10 +586,7 @@ exports.getStaticFiles = async (req, res, next) => {
     try {
         const files = await ResourceService.getStaticFiles();
 
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.success(res, files);
         } else {
             res.locals.response = HttpResponse.successResponse(files);
@@ -732,10 +594,7 @@ exports.getStaticFiles = async (req, res, next) => {
         }
     } catch (error) {
         console.log('[---Log---][---getStaticFiles---]: ', error);
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.internalServerError(res);
         } else {
             res.locals.response = HttpResponse.internalServerErrorResponse();
@@ -789,28 +648,15 @@ exports.deleteStaticFiles = async (req, res, next) => {
 
         await ResourceService.deleteStaticFiles(filePath);
 
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
-            return HttpResponse.success(
-                res,
-                {},
-                req.t('resource.static_files_deleted_successfully'),
-            );
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
+            return HttpResponse.success(res, {}, req.t('resource.static_files_deleted_successfully'));
         } else {
-            res.locals.response = HttpResponse.successResponse(
-                {},
-                req.t('resource.static_files_deleted_successfully'),
-            );
+            res.locals.response = HttpResponse.successResponse({}, req.t('resource.static_files_deleted_successfully'));
             return next();
         }
     } catch (error) {
         console.log('[---Log---][---deleteStaticFiles---]: ', error);
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.internalServerError(res);
         } else {
             res.locals.response = HttpResponse.internalServerErrorResponse();
@@ -866,38 +712,18 @@ exports.downloadFilesFromUrls = async (req, res, next) => {
         const { server_path, urls } = req.body;
 
         if (!Array.isArray(urls)) {
-            if (
-                req.headers.accept &&
-                req.headers.accept.includes('application/json')
-            ) {
-                return HttpResponse.badRequest(
-                    res,
-                    [],
-                    'URLs should be an array',
-                );
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, [], 'URLs should be an array');
             } else {
-                res.locals.response = HttpResponse.badRequestResponse(
-                    [],
-                    'URLs should be an array',
-                );
+                res.locals.response = HttpResponse.badRequestResponse([], 'URLs should be an array');
                 return next();
             }
         }
 
-        const downloadedFiles = await ResourceService.downloadFilesFromUrls(
-            server_path,
-            urls,
-        );
+        const downloadedFiles = await ResourceService.downloadFilesFromUrls(server_path, urls);
 
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
-            return HttpResponse.success(
-                res,
-                { files: downloadedFiles },
-                'Files downloaded successfully',
-            );
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
+            return HttpResponse.success(res, { files: downloadedFiles }, 'Files downloaded successfully');
         } else {
             res.locals.response = HttpResponse.successResponse(
                 { files: downloadedFiles },
@@ -907,10 +733,7 @@ exports.downloadFilesFromUrls = async (req, res, next) => {
         }
     } catch (error) {
         console.log('[---Log---][---downloadFilesFromUrls---]: ', error);
-        if (
-            req.headers.accept &&
-            req.headers.accept.includes('application/json')
-        ) {
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.internalServerError(res);
         } else {
             res.locals.response = HttpResponse.internalServerErrorResponse();

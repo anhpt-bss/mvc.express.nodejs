@@ -55,10 +55,7 @@ class ResourceService {
 
     static getStaticFiles() {
         return new Promise((resolve, reject) => {
-            const uploadDir = path.join(
-                __dirname,
-                `../../${constants.UPLOADS_BASE_PATH}`,
-            );
+            const uploadDir = path.join(__dirname, `../../${constants.UPLOADS_BASE_PATH}`);
             fs.readdir(uploadDir, (err, files) => {
                 if (err) {
                     return reject(err);
@@ -70,10 +67,7 @@ class ResourceService {
 
     static deleteStaticFiles(filePath) {
         return new Promise((resolve, reject) => {
-            const uploadDir = path.join(
-                __dirname,
-                `../../${constants.UPLOADS_BASE_PATH}`,
-            );
+            const uploadDir = path.join(__dirname, `../../${constants.UPLOADS_BASE_PATH}`);
 
             if (!filePath) {
                 // If no file path is provided, delete all files
@@ -88,10 +82,7 @@ class ResourceService {
                 });
             } else {
                 // Delete specific file
-                const fileToDelete = path.join(
-                    uploadDir,
-                    path.basename(filePath),
-                );
+                const fileToDelete = path.join(uploadDir, path.basename(filePath));
                 fs.unlink(fileToDelete, (err) => {
                     if (err) {
                         return reject(err);
@@ -103,25 +94,19 @@ class ResourceService {
     }
 
     static generateRandomString(length) {
-        const characters =
-            'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         let result = '';
         const charactersLength = characters.length;
 
         for (let i = 0; i < length; i++) {
-            result += characters.charAt(
-                Math.floor(Math.random() * charactersLength),
-            );
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
         }
 
         return result;
     }
 
     static async downloadFilesFromUrls(serverPath, urls) {
-        const downloadDir = path.join(
-            __dirname,
-            `../../${constants.UPLOADS_BASE_PATH}`,
-        );
+        const downloadDir = path.join(__dirname, `../../${constants.UPLOADS_BASE_PATH}`);
 
         if (!fs.existsSync(downloadDir)) {
             fs.mkdirSync(downloadDir, { recursive: true });
