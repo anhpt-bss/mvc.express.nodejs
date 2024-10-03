@@ -1,4 +1,6 @@
+const moment = require('moment');
 const User = require('@models/user');
+const { validationResult } = require('express-validator');
 const HttpResponse = require('@services/httpResponse');
 
 /**
@@ -67,17 +69,40 @@ const HttpResponse = require('@services/httpResponse');
  *       500:
  *         description: Internal server error.
  */
-exports.getAllUsers = async (req, res) => {
+exports.getAllUsers = async (req, res, next) => {
     try {
-        const users = await User.find();
+        const { page = 1, limit = 10, sort = 'name', order = 'asc' } = req.query;
 
-        return HttpResponse.success(res, users);
+        const users = await User.find()
+            .sort({ [sort]: order === 'asc' ? 1 : -1 })
+            .skip((page - 1) * limit)
+            .limit(parseInt(limit));
+
+        const total = await User.countDocuments();
+
+        const response = {
+            data_list: users,
+            total,
+            page: parseInt(page),
+            limit: parseInt(limit),
+            sort,
+            order,
+        };
+
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
+            return HttpResponse.success(res, response);
+        } else {
+            res.locals.response = HttpResponse.successResponse(response);
+            return next();
+        }
     } catch (error) {
-        return HttpResponse.internalServerError(
-            res,
-            [],
-            req.t('auth.internal_server_error'),
-        );
+        console.log('[---Log---][---getAllUsers---]: ', error);
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
+            return HttpResponse.internalServerError(res);
+        } else {
+            res.locals.response = HttpResponse.internalServerErrorResponse();
+            return next();
+        }
     }
 };
 
@@ -113,37 +138,60 @@ exports.getAllUsers = async (req, res) => {
  *       500:
  *         description: Internal server error.
  */
-exports.createUser = async (req, res) => {
+exports.createUser = async (req, res, next) => {
     try {
-        const existingUser = await User.findOne({ email: req.body.email });
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            const translatedErrors = errors.array().map((error) => ({
+                ...error,
+                msg: req.t(error.msg),
+            }));
+
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, translatedErrors, req.t('validation.errors'));
+            } else {
+                res.locals.response = HttpResponse.badRequestResponse(translatedErrors, req.t('validation.errors'));
+                return next();
+            }
+        }
+
+        const { name, email, password, is_admin } = req.body;
+
+        const existingUser = await User.findOne({ email: email });
+
         if (existingUser) {
-            return HttpResponse.badRequest(
-                res,
-                [],
-                req.t('user.email_already_exists'),
-            );
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, [], req.t('user.email_already_exists'));
+            } else {
+                res.locals.response = HttpResponse.badRequestResponse([], req.t('user.email_already_exists'));
+                return next();
+            }
         }
 
         const user = new User({
-            name: req.body.name,
-            email: req.body.email,
-            password: req.body.password,
-            is_admin: req.body.is_admin,
+            name: name,
+            email: email,
+            password: password,
+            is_admin: is_admin ? true : false,
+            created_by: req.user ? req.user.email : email,
         });
 
         await user.save();
 
-        return HttpResponse.success(
-            res,
-            user,
-            req.t('user.user_created_successfully'),
-        );
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
+            return HttpResponse.success(res, user);
+        } else {
+            res.locals.response = HttpResponse.successResponse(user);
+            return next();
+        }
     } catch (error) {
-        return HttpResponse.internalServerError(
-            res,
-            [],
-            req.t('auth.internal_server_error'),
-        );
+        console.log('[---Log---][---createUser---]: ', error);
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
+            return HttpResponse.internalServerError(res);
+        } else {
+            res.locals.response = HttpResponse.internalServerErrorResponse();
+            return next();
+        }
     }
 };
 
@@ -178,24 +226,27 @@ exports.createUser = async (req, res) => {
  *       500:
  *         description: Internal server error.
  */
-exports.getUserById = async (req, res) => {
+exports.getUserById = async (req, res, next) => {
     try {
         const user = await User.findById(req.params.id);
         if (!user) {
-            return HttpResponse.badRequest(
-                res,
-                [],
-                req.t('user.user_not_found'),
-            );
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, [], req.t('user.user_not_found'));
+            } else {
+                res.locals.response = HttpResponse.badRequestResponse([], req.t('user.user_not_found'));
+                return next();
+            }
         }
 
         return HttpResponse.success(res, user);
     } catch (error) {
-        return HttpResponse.internalServerError(
-            res,
-            [],
-            req.t('auth.internal_server_error'),
-        );
+        console.log('[---Log---][---getUserById---]: ', error);
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
+            return HttpResponse.internalServerError(res);
+        } else {
+            res.locals.response = HttpResponse.internalServerErrorResponse();
+            return next();
+        }
     }
 };
 
@@ -238,37 +289,82 @@ exports.getUserById = async (req, res) => {
  *       500:
  *         description: Internal server error.
  */
-exports.updateUser = async (req, res) => {
+exports.updateUser = async (req, res, next) => {
     try {
-        const { name, email, password, is_admin } = req.body;
-        const user = await User.findById(req.params.id);
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            const translatedErrors = errors.array().map((error) => ({
+                ...error,
+                msg: req.t(error.msg),
+            }));
 
-        if (!user) {
-            return HttpResponse.badRequest(
-                res,
-                [],
-                req.t('user.user_not_found'),
-            );
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, translatedErrors, req.t('validation.errors'));
+            } else {
+                res.locals.response = HttpResponse.badRequestResponse(translatedErrors, req.t('validation.errors'));
+                return next();
+            }
         }
 
-        if (name) user.name = name;
-        if (email) user.email = email;
-        if (password) user.password = password;
-        if (typeof is_admin !== 'undefined') user.is_admin = is_admin;
+        const { name, email, password, is_admin, phone_number, address, gender, birthday } = req.body;
+
+        let user = null;
+        if (req.params.id) {
+            user = await User.findById(req.params.id);
+        } else if (email) {
+            user = await User.findOne({ email: email });
+        }
+
+        if (!user) {
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, [], req.t('user.user_not_found'));
+            } else {
+                res.locals.response = HttpResponse.badRequestResponse([], req.t('user.user_not_found'));
+                return next();
+            }
+        }
+
+        if (name) {
+            user.name = name;
+        }
+        if (email) {
+            user.email = email;
+        }
+        if (password) {
+            user.password = password;
+        }
+        if (phone_number) {
+            user.phone_number = phone_number;
+        }
+        if (address) {
+            user.address = address;
+        }
+        if (gender) {
+            user.gender = gender;
+        }
+        if (birthday) {
+            user.birthday = moment(birthday).format('YYYY-MM-DD');
+        }
+
+        user.is_admin = is_admin ? true : false;
+        user.created_by = req.user ? req.user.email : email;
 
         await user.save();
 
-        return HttpResponse.success(
-            res,
-            user,
-            req.t('user.user_updated_successfully'),
-        );
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
+            return HttpResponse.success(res, user);
+        } else {
+            res.locals.response = HttpResponse.successResponse(user);
+            return next();
+        }
     } catch (error) {
-        return HttpResponse.internalServerError(
-            res,
-            [],
-            req.t('auth.internal_server_error'),
-        );
+        console.log('[---Log---][---updateUser---]: ', error);
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
+            return HttpResponse.internalServerError(res);
+        } else {
+            res.locals.response = HttpResponse.internalServerErrorResponse();
+            return next();
+        }
     }
 };
 
@@ -301,28 +397,35 @@ exports.updateUser = async (req, res) => {
  *       500:
  *         description: Internal server error.
  */
-exports.deleteUser = async (req, res) => {
+exports.deleteUser = async (req, res, next) => {
     try {
         const user = await User.findById(req.params.id);
         if (!user) {
-            return HttpResponse.badRequest(
-                res,
-                [],
-                req.t('user.user_not_found'),
-            );
+            if (req.headers.accept && req.headers.accept.includes('application/json')) {
+                return HttpResponse.badRequest(res, [], req.t('user.user_not_found'));
+            } else {
+                res.locals.response = HttpResponse.badRequestResponse([], req.t('user.user_not_found'));
+                return next();
+            }
         }
-        await user.remove();
 
-        return HttpResponse.success(
-            res,
-            { id: req.params.id },
-            req.t('user.user_deleted_successfully'),
-        );
+        await User.deleteOne({ _id: req.params.id });
+
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
+            return HttpResponse.success(res, { id: req.params.id });
+        } else {
+            res.locals.response = HttpResponse.successResponse({
+                id: req.params.id,
+            });
+            return next();
+        }
     } catch (error) {
-        return HttpResponse.internalServerError(
-            res,
-            [],
-            req.t('auth.internal_server_error'),
-        );
+        console.log('[---Log---][---deleteUser---]: ', error);
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
+            return HttpResponse.internalServerError(res);
+        } else {
+            res.locals.response = HttpResponse.internalServerErrorResponse();
+            return next();
+        }
     }
 };

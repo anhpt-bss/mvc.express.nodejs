@@ -1,7 +1,7 @@
 module.exports = [
     // Ignore files in the node_modules directory
     {
-        ignores: ['node_modules/**'],
+        ignores: ['node_modules/**', 'assets/libraries/**'],
     },
     // Configuration for JavaScript, ECMAScript modules, and CommonJS modules
     {
@@ -17,6 +17,8 @@ module.exports = [
             quotes: ['error', 'single'],
             // Require semicolons at the end of statements
             semi: ['error', 'always'],
+            'max-len': ['error', { code: 120 }],
         },
+        extends: ['prettier'],
     },
 ];

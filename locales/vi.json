@@ -1,4 +1,12 @@
 {
+    "common": {
+        "request_successfully": "Yêu cầu được xử lý thành công",
+        "bad_request": "Yêu cầu không hợp lệ",
+        "unauthorized_access": "Truy cập trái phép",
+        "access_forbidden": "Truy cập bị cấm",
+        "resource_not_found": "Không tìm thấy tài nguyên",
+        "internal_server_error": "Lỗi máy chủ nội bộ"
+    },
     "validation": {
         "name_required": "Tên là bắt buộc",
         "valid_email": "Vui lòng nhập email hợp lệ",
@@ -6,19 +14,73 @@
         "password_number": "Mật khẩu phải chứa một số",
         "password_letter": "Mật khẩu phải chứa một chữ cái",
         "password_special_character": "Mật khẩu phải chứa một ký tự đặc biệt",
-        "errors": "Lỗi xác thực"
+        "errors": "Lỗi xác thực",
+        "field_required": "Trường này bắt buộc",
+        "valid_id": "Vui lòng cung cấp một ID hợp lệ"
     },
     "auth": {
         "invalid_email_password": "Email hoặc mật khẩu không hợp lệ",
         "invalid_admin_user": "Người dùng quản trị không hợp lệ",
+        "invalid_client_user": "Người dùng không hợp lệ",
         "login_successful": "Đăng nhập thành công",
-        "internal_server_error": "Lỗi máy chủ nội bộ",
         "logout_successful": "Đăng xuất thành công"
     },
     "resource": {
         "no_files_selected": "Không có tệp nào được chọn",
         "files_uploaded_successfully": "Tệp đã tải lên thành công",
         "file_deleted_successfully": "Tệp đã được xóa thành công",
-        "static_files_deleted_successfully": "Các tệp tĩnh đã được xóa thành công"
+        "static_files_deleted_successfully": "Các tệp tĩnh đã được xóa thành công",
+        "filename_required": "Tên tệp tin là bắt buộc",
+        "size_required": "Kích thước phải là một số",
+        "mimetype_required": "Loại MIME là bắt buộc",
+        "path_required": "Đường dẫn là bắt buộc",
+        "category_required": "Thể loại phải là một chuỗi",
+        "resource_not_found": "Không tìm thấy tài nguyên",
+        "resource_in_use_blog": "Tài nguyên đang được sử dụng bởi banner blog và không thể xóa",
+        "resource_in_use_product": "Tài nguyên đang được sử dụng bởi thư viện sản phẩm và không thể xóa"
+    },
+    "user": {
+        "email_already_exists": "Email đã tồn tại",
+        "user_not_found": "Không tìm thấy người dùng"
+    },
+    "blog": {
+        "title": "Tiêu đề",
+        "summary": "Tóm tắt",
+        "slug": "Slug",
+        "content": "Nội dung",
+        "banner": "Ảnh tiêu đề",
+        "create_blog": "Tạo Blog",
+        "edit_blog": "Chỉnh sửa Blog",
+        "delete_blog": "Xóa Blog",
+        "blog_list": "Danh sách Blog",
+        "no_blogs_found": "Không tìm thấy blog",
+        "title_required": "Tiêu đề là bắt buộc",
+        "summary_required": "Tóm tắt là bắt buộc",
+        "content_required": "Nội dung là bắt buộc",
+        "banner_required": "Ảnh tiêu đề là bắt buộc"
+    },
+    "category": {
+        "position_required": "Vị trí là bắt buộc",
+        "position_must_be_numeric": "Vị trí phải là một giá trị số",
+        "name_required": "Tên là bắt buộc",
+        "description_must_be_string": "Mô tả phải là một chuỗi",
+        "parent_cate_must_be_mongoid": "Danh mục cha phải là một ID MongoDB hợp lệ"
+    },
+    "product": {
+        "product_code_required": "Mã sản phẩm là bắt buộc.",
+        "product_name_required": "Tên sản phẩm là bắt buộc.",
+        "product_summary_required": "Mô tả ngắn là bắt buộc.",
+        "product_price_valid": "Giá sản phẩm phải là một số hợp lệ.",
+        "product_discount_valid": "Giảm giá phải là một số hợp lệ.",
+        "product_quantity_valid": "Số lượng sản phẩm phải là một số nguyên hợp lệ.",
+        "shipping_fee_valid": "Phí vận chuyển phải là một số hợp lệ.",
+        "product_gallery_valid": "Bộ sưu tập phải là một mảng hợp lệ.",
+        "product_gallery_ids_valid": "Mỗi mục trong bộ sưu tập phải là một ID hợp lệ.",
+        "product_code_valid": "Mã sản phẩm không hợp lệ.",
+        "product_specifications_valid": "Thông số kỹ thuật không hợp lệ.",
+        "product_description_valid": "Mô tả chi tiết không hợp lệ.",
+        "manufacturer_valid": "Nhà sản xuất không hợp lệ.",
+        "banner_valid": "Banner phải là một ID hợp lệ.",
+        "category_valid": "Danh mục phải là một ID hợp lệ."
     }
 }

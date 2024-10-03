@@ -1,12 +1,41 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <title><%= page_title %></title>
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
-</head>
-<body>
-    <h1><%= page_title %></h1>
-    <h1>Welcome, Admin</h1>
-    <a href="/admin/auth/logout">Logout</a>
-</body>
-</html>
+<div class="admin-dashboard-container">
+    <div id="bg">
+        <canvas></canvas>
+        <canvas></canvas>
+        <canvas></canvas>
+    </div>
+    <div class="banner-container">
+        <h2>Chào Mừng Đến Trang Quản Trị</h2>
+        <h6>Bạn có thể quản trị website tại đây</h6>
+        <div class="db-user-info">
+            <img src="/assets/images/default-avatar.jpg" alt="Avatar" class="avatar">
+            <h1><%= response.current_user.name %></h1>
+            <h6><%= response.current_user.email %></h1>
+        </div>
+    </div>
+    
+    <div class="row">
+        <% if (response.dashboard_summary) { %>
+            <% response.dashboard_summary.forEach(function(item) { %>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <div class="dashboard-info">
+                        <h6><%= item.name %></h6>
+                        <h1><%= item.total %></h1>
+                        <a href="<%= item.href %>">Xem chi tiết</a>
+                    </div>
+                </div>
+            <% }); %>
+        <% } %>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="dashboard-info">
+                <a href="admin/logs">Xem nhật ký hệ thống</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/assets/libraries/jquery/2.1.3/jquery.min.js"></script>
+<script src="/assets/js/bg-animate.js"></script>

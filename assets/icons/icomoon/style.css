@@ -1,10 +1,10 @@
 .icon {
-    display: inline-block;
-    width: 1em;
-    height: 1em;
-    stroke-width: 0;
-    stroke: currentColor;
-    fill: currentColor;
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  stroke-width: 0;
+  stroke: currentColor;
+  fill: currentColor;
 }
 
 /* ==========================================
@@ -14,3 +14,31 @@ Single-colored icons can be modified like so:
   color: red;
 }
 ========================================== */
+
+.icon-profile {
+  width: 0.857421875em;
+}
+
+.icon-cart {
+  width: 0.9287109375em;
+}
+
+.icon-undo {
+  width: 0.857421875em;
+}
+
+.icon-rocket {
+  width: 0.9443359375em;
+}
+
+.icon-resources {
+  width: 1.048828125em;
+}
+
+.icon-bin {
+  width: 0.7861328125em;
+}
+
+.icon-edit {
+  width: 1.0009765625em;
+}

@@ -1,0 +1,143 @@
+<div class="container cart-container">
+    <div class="row">
+        <div class="col-12">
+            <div class="session-title">
+                <h3>Giỏ Hàng</h3>
+            </div>
+
+            <% if (response.cart) { %>
+                <div>
+                    <% response.cart.forEach(function(item) { %>
+                        <div class="row cart-item">
+                            <div class="col-lg-5 col-md-5 col-sm-12 col-content">
+                                <a class="product-item" href="/product/<%= item.product.slug %>">
+                                    <% if(item.product.product_gallery && item.product.product_gallery.length > 0) { %>
+                                        <div class="product-img">
+                                            <img src="../<%= item.product.product_gallery[0].path %>" alt="" title="<%= item.product.product_gallery[0].filename %>" />
+                                        </div>
+                                    <% } %>
+                                    <div>
+                                        <div class="product-name"><%= item.product.product_name %></div>
+                                        <div class="product-code"><%= item.product.product_code %></div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-lg-2 col-md-2 col-sm-12 col-content">
+                                <div class="col-label">Đơn giá:</div>
+                                <div class="product-price">
+                                    <% if(item.product.product_price) { %>
+                                        <div class="price">
+                                            <%= response.helper.addCommasToNumber(response.helper.calcPrice(item.product.product_price, item.product.product_discount)) %>
+                                            <%= item.product.product_discount > 0 ? `(-${item.product.product_discount}%)` : '' %>
+                                        </div> 
+                                    <% } else { %> 
+                                        <div class="price">Liên Hệ</div>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-2 col-sm-12 col-content">
+                                <div class="col-label">Số lượng:</div>
+                                <div class="quantity">
+                                    <div class="btn-group">
+                                        <a href="/cart/minus/<%= item._id %>">-</a>
+                                        <a><%= item.quantity %></a>
+                                        <a href="/cart/add/<%= item._id %>">+</a>
+                                    </div>
+                                    <div>Còn <%= item.product.product_quantity %></div>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-2 col-sm-12 col-content">
+                                <div class="col-label">Thành tiền:</div>
+                                <div class="product-price">
+                                    <% if(item.product.product_price) { %>
+                                        <div class="price"><%= response.helper.addCommasToNumber((response.helper.calcPrice(item.product.product_price, item.product.product_discount) * item.quantity)) %></div> 
+                                    <% } else { %> 
+                                        <div class="price">Liên Hệ</div>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <div class="col-lg-1 col-md-1 col-sm-12 col-content actions">
+                                <a href="/cart/delete/<%= item._id %>">
+                                    <svg class="icon icon-bin" style="fill: #f86262;"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-bin"></use></svg>
+                                </a>
+                            </div>
+                        </div>
+                    <% }); %>
+
+                    <% if (response.cart.length > 0) { %>
+                        <form method="POST" action="/checkout" enctype="multipart/form-data" class="form">
+                            <div class="row checkout-form">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="flex-wrap">
+                                        <div class="form-group">
+                                            <label for="username">
+                                                Tên người dùng
+                                                <span class="form-required">*</span>
+                                            </label>
+                                            <input id="username" name="username" required value="<%= response.currentUser.name %>" disabled></input>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="email">
+                                                Địa chỉ email
+                                                <span class="form-required">*</span>
+                                            </label>
+                                            <input id="email" name="email" required value="<%= response.currentUser.email %>" disabled></input>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="phone_number">
+                                                Số điện thoại
+                                                <span class="form-required">*</span>
+                                            </label>
+                                            <input id="phone_number" name="phone_number" required value="<%= response.currentUser.phone_number %>"></input>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="address">
+                                            Địa Chỉ
+                                            <span class="form-required">*</span>
+                                        </label>
+                                        <textarea id="address" name="address" required><%= response.currentUser.address %></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="note">
+                                            Ghi chú cho người bán
+                                        </label>
+                                        <textarea id="note" name="note"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6 col-md-6 col-sm-12 text-align-right">
+                                    <div class="bill-card">
+                                        <div class="bill-title">
+                                            <div class="title">Số sản phẩm:</div>
+                                            <div class="value"><%= response.totalProduct %></div>
+                                        </div>
+                                        <div class="bill-title">
+                                            <div class="title">Tổng số lượng:</div>
+                                            <div class="value"><%= response.totalQuantity %></div>
+                                        </div>
+                                        <div class="bill-title">
+                                            <div class="title">Tổng thanh toán:</div>
+                                            <div class="value price"><%= response.helper.addCommasToNumber(response.totalPrice) %></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 text-align-right">
+                                    <div class="actions">
+                                        <a href="/" class="outline-button">Mua Thêm</a>
+                                        <button type="submit" class="background-button">Thanh Toán</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    <% } %>
+                </div>
+            <% } %>
+
+            <% if (!response.cart || response.cart.length <= 0) { %>
+                <%- include('../components/empty') %>
+            <% } %>
+        </div>
+    </div>
+</div>

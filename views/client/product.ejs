@@ -1,0 +1,47 @@
+<div class="container product-detail-container">
+    <div class="row session-row">
+        <div class="row-title">
+            <svg class="icon icon-info"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-info"></use></svg>
+            Thông Tin Mô Tả
+        </div>
+
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div>
+                <%- include('../components/thumbCarousel', {
+                    slides: response.product.product_gallery || []
+                }) %>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div>
+                <div class="product-info">
+                    <div class="name"><%= response.product.product_name %></div>
+                </div>
+                <div class="product-info">
+                    <div class="tag"><%= response.product.product_code %></div>
+                    <div class="tag"><a href="/<%= response.product.category.slug %>"><%= response.product.category.name %></a></div>
+                </div>
+                <div class="product-info">
+                    <div class="price"><%= response.product.product_price || 'Giá Liên Hệ' %></div>
+                </div>
+                <div class="product-info">
+                    <div><%= response.product.product_summary %></div>
+                </div>
+                <div class="product-info">
+                    <div class="html"><%- response.product.product_specifications %></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row session-row">
+        <div class="row-title">
+            <svg class="icon icon-info"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-info"></use></svg>
+            Chi Tiết Sản Phẩm
+        </div>
+
+        <div class="col-12">
+            <div class="html"><%- response.product.product_description %></div>
+        </div>
+    </div>
+</div>

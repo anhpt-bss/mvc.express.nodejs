@@ -1,69 +1,41 @@
-const multer = require('multer');
+const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 const Resource = require('@models/resource');
 const constants = require('@config/constants');
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        const uploadDir = path.join(
-            __dirname,
-            `../../${constants.UPLOADS_BASE_PATH}`,
-        );
-        if (!fs.existsSync(uploadDir)) {
-            fs.mkdirSync(uploadDir, { recursive: true });
-        }
-        cb(null, uploadDir);
-    },
-    filename: (req, file, cb) => {
-        cb(null, `${Date.now()}-${file.originalname}`);
-    },
-});
-
-const upload = multer({
-    storage,
-    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
-    fileFilter: (req, file, cb) => {
-        const allowedMimeTypes = ['image/jpeg', 'image/png', 'application/pdf'];
-        if (allowedMimeTypes.includes(file.mimetype)) {
-            cb(null, true);
-        } else {
-            cb(new Error('Invalid file type'));
-        }
-    },
-}).array('files', 10); // Maximum 10 files
-
 class ResourceService {
     static uploadFiles(req, res, next) {
-        return new Promise((resolve, reject) => {
-            upload(req, res, async (err) => {
-                if (err) {
-                    return reject(err);
-                }
+        return new Promise(async (resolve, reject) => {
+            const { resource_category } = req.body;
+            console.log('resource_category', resource_category);
 
-                const uploadedFiles = [];
-                for (const file of req.files) {
-                    const existingFile = await Resource.findOne({
+            const uploadedFiles = [];
+            for (const file of req.files) {
+                const existingFile = await Resource.findOne({
+                    filename: file.originalname,
+                    size: file.size,
+                    mimetype: file.mimetype,
+                });
+                if (existingFile) {
+                    uploadedFiles.push(existingFile);
+                    if (fs.existsSync(file.path)) {
+                        fs.unlinkSync(file.path);
+                    }
+                } else {
+                    const newResource = new Resource({
                         filename: file.originalname,
                         size: file.size,
                         mimetype: file.mimetype,
+                        path: `${constants.UPLOADS_BASE_PATH}/${file.filename}`,
+                        category: resource_category || null,
                     });
-                    if (existingFile) {
-                        uploadedFiles.push(existingFile);
-                    } else {
-                        const newResource = new Resource({
-                            filename: file.originalname,
-                            size: file.size,
-                            mimetype: file.mimetype,
-                            path: `${constants.UPLOADS_BASE_PATH}/${file.filename}`,
-                        });
-                        await newResource.save();
-                        uploadedFiles.push(newResource);
-                    }
+                    await newResource.save();
+                    uploadedFiles.push(newResource);
                 }
+            }
 
-                resolve(uploadedFiles);
-            });
+            resolve(uploadedFiles);
         });
     }
 
@@ -83,10 +55,7 @@ class ResourceService {
 
     static getStaticFiles() {
         return new Promise((resolve, reject) => {
-            const uploadDir = path.join(
-                __dirname,
-                `../../${constants.UPLOADS_BASE_PATH}`,
-            );
+            const uploadDir = path.join(__dirname, `../../${constants.UPLOADS_BASE_PATH}`);
             fs.readdir(uploadDir, (err, files) => {
                 if (err) {
                     return reject(err);
@@ -98,10 +67,7 @@ class ResourceService {
 
     static deleteStaticFiles(filePath) {
         return new Promise((resolve, reject) => {
-            const uploadDir = path.join(
-                __dirname,
-                `../../${constants.UPLOADS_BASE_PATH}`,
-            );
+            const uploadDir = path.join(__dirname, `../../${constants.UPLOADS_BASE_PATH}`);
 
             if (!filePath) {
                 // If no file path is provided, delete all files
@@ -116,10 +82,7 @@ class ResourceService {
                 });
             } else {
                 // Delete specific file
-                const fileToDelete = path.join(
-                    uploadDir,
-                    path.basename(filePath),
-                );
+                const fileToDelete = path.join(uploadDir, path.basename(filePath));
                 fs.unlink(fileToDelete, (err) => {
                     if (err) {
                         return reject(err);
@@ -128,6 +91,54 @@ class ResourceService {
                 });
             }
         });
+    }
+
+    static generateRandomString(length) {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let result = '';
+        const charactersLength = characters.length;
+
+        for (let i = 0; i < length; i++) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+
+        return result;
+    }
+
+    static async downloadFilesFromUrls(serverPath, urls) {
+        const downloadDir = path.join(__dirname, `../../${constants.UPLOADS_BASE_PATH}`);
+
+        if (!fs.existsSync(downloadDir)) {
+            fs.mkdirSync(downloadDir, { recursive: true });
+        }
+
+        const downloadedFiles = [];
+
+        for (const url of urls) {
+            const response = await axios.get(url, { responseType: 'stream' });
+            const filename = `${this.generateRandomString(10)}-${path.basename(url)}`;
+            const filePath = path.join(downloadDir, filename);
+
+            const writer = fs.createWriteStream(filePath);
+
+            response.data.pipe(writer);
+
+            await new Promise((resolve, reject) => {
+                writer.on('finish', resolve);
+                writer.on('error', reject);
+            });
+
+            downloadedFiles.push({
+                old_path: url,
+                new_path: `${serverPath}/${filename}`,
+                filename,
+                path: filePath,
+                size: fs.statSync(filePath).size,
+                mimetype: response.headers['content-type'],
+            });
+        }
+
+        return downloadedFiles;
     }
 }
 

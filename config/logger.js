@@ -11,14 +11,14 @@ const logger = winston.createLogger({
     level: 'info',
     format: winston.format.json(),
     transports: [
-        // Log errors to error.log file inside the logs directory
+        // Log inside the logs directory
         new winston.transports.File({
-            filename: path.join(logDirectory, 'error.log'),
+            filename: path.join(logDirectory, 'system.log'),
             level: 'error',
         }),
-        // Log all messages to combined.log file inside the logs directory
         new winston.transports.File({
-            filename: path.join(logDirectory, 'combined.log'),
+            filename: path.join(logDirectory, 'system.log'),
+            level: 'info',
         }),
     ],
 });
@@ -33,3 +33,13 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 module.exports = logger;
+
+// Example
+// Logging an informational message
+// logger.info('This is an informational message');
+// Logging an error message
+// logger.error('This is an error message');
+// Logging a warning message
+// logger.warn('This is a warning message');
+// Logging a debug message
+// logger.debug('This is a debug message');

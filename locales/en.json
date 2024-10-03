@@ -1,4 +1,12 @@
 {
+    "common": {
+        "request_successfully": "Request processed successfully",
+        "bad_request": "Bad request",
+        "unauthorized_access": "Unauthorized access",
+        "access_forbidden": "Access forbidden",
+        "resource_not_found": "Resource not found",
+        "internal_server_error": "Internal server error"
+    },
     "validation": {
         "name_required": "Name is required",
         "valid_email": "Please include a valid email",
@@ -6,11 +14,14 @@
         "password_number": "Password must contain a number",
         "password_letter": "Password must contain a letter",
         "password_special_character": "Password must contain a special character",
-        "errors": "Validation errors"
+        "errors": "Validation errors",
+        "field_required": "This field is required",
+        "valid_id": "Please provide a valid ID"
     },
     "auth": {
         "invalid_email_password": "Invalid email or password",
         "invalid_admin_user": "Invalid admin user",
+        "invalid_client_user": "Invalid client user",
         "login_successful": "Login successful",
         "internal_server_error": "Internal server error",
         "logout_successful": "Successfully logged out"
@@ -19,6 +30,58 @@
         "no_files_selected": "No files selected",
         "files_uploaded_successfully": "Files uploaded successfully",
         "file_deleted_successfully": "File deleted successfully",
-        "static_files_deleted_successfully": "Static files deleted successfully"
+        "static_files_deleted_successfully": "Static files deleted successfully",
+        "filename_required": "Filename is required",
+        "size_required": "Size must be a number",
+        "mimetype_required": "MIME type is required",
+        "path_required": "Path is required",
+        "category_required": "Category must be a string",
+        "resource_not_found": "Resource not found",
+        "resource_in_use_blog": "Resource is in use by a blog banner and cannot be deleted",
+        "resource_in_use_product": "Resource is in use by a product gallery and cannot be deleted"
+    },
+    "user": {
+        "email_already_exists": "Email already exists",
+        "user_not_found": "User not found"
+    },
+    "blog": {
+        "title": "Title",
+        "summary": "Summary",
+        "slug": "Slug",
+        "content": "Content",
+        "banner": "Banner",
+        "create_blog": "Create Blog",
+        "edit_blog": "Edit Blog",
+        "delete_blog": "Delete Blog",
+        "blog_list": "Blog List",
+        "no_blogs_found": "No blogs found",
+        "title_required": "Title is required",
+        "summary_required": "Summary is required",
+        "content_required": "Content is required",
+        "banner_required": "Banner is required"
+    },
+    "category": {
+        "position_required": "Position is required",
+        "position_must_be_numeric": "Position must be a numeric value",
+        "name_required": "Name is required",
+        "description_must_be_string": "Description must be a string",
+        "parent_cate_must_be_mongoid": "Parent category must be a valid MongoDB ID"
+    },
+    "product": {
+        "product_code_required": "Product code is required.",
+        "product_name_required": "Product name is required.",
+        "product_summary_required": "Product summary is required.",
+        "product_price_valid": "Product price must be a valid number.",
+        "product_discount_valid": "Product discount must be a valid number.",
+        "product_quantity_valid": "Product quantity must be a valid integer.",
+        "shipping_fee_valid": "Shipping fee must be a valid number.",
+        "product_gallery_valid": "Product gallery must be a valid array.",
+        "product_gallery_ids_valid": "Each item in the product gallery must be a valid ID.",
+        "product_code_valid": "Product code is not valid.",
+        "product_specifications_valid": "Product specifications are not valid.",
+        "product_description_valid": "Product description is not valid.",
+        "manufacturer_valid": "Manufacturer is not valid.",
+        "banner_valid": "Banner must be a valid ID.",
+        "category_valid": "Category must be a valid ID."
     }
 }

@@ -19,9 +19,8 @@ const configureI18n = (app) => {
             },
             (err, t) => {
                 if (err) {
-                    console.error('i18next initialization error:', err);
+                    console.log('[---Log---][---configureI18n---]: ', err);
                 } else {
-                    console.log('i18next initialized successfully!');
                     app.use(i18nextMiddleware.handle(i18next)); // Register i18next middleware
                 }
             },
@@ -33,10 +32,9 @@ const configureI18n = (app) => {
     app.use((req, res, next) => {
         const lang = req.headers['lang'];
         if (lang && i18next.options.preload.includes(lang)) {
-            console.log(`Changing language to ${lang}`);
             req.i18n.changeLanguage(lang, (err) => {
                 if (err) {
-                    console.error('Error changing language:', err);
+                    console.log('[---Log---][---Changing Language---]: ', err);
                 }
                 next();
             });

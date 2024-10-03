@@ -1,0 +1,13 @@
+<div>
+    <%- include('../components/table', {
+        tableData: response.data.data_list || [],
+        tableHeaders: response.table_headers || [],
+        total: response.data.total,
+        page: response.data.page,
+        limit: response.data.limit,
+        sort: response.data.sort,
+        order: response.data.order,
+        totalPages: Math.ceil(response.data.total / response.data.limit),
+        route: response.route,
+    }) %>
+</div>

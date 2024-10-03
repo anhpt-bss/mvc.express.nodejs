@@ -1,4 +1,3 @@
-// models/resourceModel.js
 const mongoose = require('mongoose');
 
 const resourceSchema = new mongoose.Schema({
@@ -17,6 +16,19 @@ const resourceSchema = new mongoose.Schema({
     path: {
         type: String,
         required: true,
+    },
+    category: {
+        type: String,
+        required: false,
+        default: 'Hệ Thống',
+    },
+    created_by: {
+        type: String,
+        default: 'Admin',
+    },
+    created_time: {
+        type: Date,
+        default: Date.now,
     },
 });
 

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nghiện Decor | <%= title %></title>
+    <meta name="description" content="Discover beautiful home decor and accessories at our Nghiện Decor . Shop now for unique and stylish items to enhance your living space.">
+    <meta name="keywords" content="home decor, Nghiện Decor , interior design, home accessories, stylish decor, unique home decor">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://www.yourdecorstore.com/">
+    
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/client-favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/client-favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/client-favicon/favicon-16x16.png">
+    <link rel="manifest" href="/assets/icons/client-favicon/site.webmanifest">
+
+    <!-- Swiper -->
+    <link rel="stylesheet" href="/assets/libraries/swiper/11.1.8/swiper-bundle.min.css" />
+    <script src="/assets/libraries/swiper/11.1.8/swiper-bundle.min.js" async></script>
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="/assets/css/core.css" />
+    <link rel="stylesheet" href="/assets/css/components.css" />
+    <link rel="stylesheet" href="/assets/css/client-style.css" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Nghiện Decor | <%= title %>">
+    <meta property="og:description" content="Discover beautiful home decor and accessories at our Nghiện Decor . Shop now for unique and stylish items to enhance your living space.">
+    <meta property="og:image" content="https://www.yourdecorstore.com/assets/images/og-image.jpg">
+    <meta property="og:url" content="https://www.yourdecorstore.com/">
+    <meta property="og:site_name" content="Nghiện Decor ">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Nghiện Decor | <%= title %>">
+    <meta name="twitter:description" content="Discover beautiful home decor and accessories at our Nghiện Decor . Shop now for unique and stylish items to enhance your living space.">
+    <meta name="twitter:image" content="https://www.yourdecorstore.com/assets/images/twitter-image.jpg">
+    <meta name="twitter:site" content="@yourdecorstore">
+</head>
+
+<body>
+    <!-- Toast -->
+    <%- include('../components/toast') %>
+    <!-- / Toast -->
+
+    <%- include('partials/header') %>
+
+    <main class="main-container">
+        <%- body %>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <script src="/assets/js/script.js"></script>
+</body>
+</html>

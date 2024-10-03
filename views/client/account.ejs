@@ -1,0 +1,176 @@
+<div class="container account-container">
+    <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-12">
+            <div class="sidebar">
+                <div class="user-info">
+                    <img class="avatar" src="/assets/images/default-avatar.jpg" alt="avatar" />
+                    <div>
+                        <div class="username"><%= response.currentUser.name %></div>
+                        <div class="email"><%= response.currentUser.email %></div>
+                    </div>
+                </div>
+
+                <div class="menu">
+                    <a class="menu-item <%= page === 'profile' && 'active' %>" href="/account/profile">
+                        <svg class="icon icon-profile"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-profile"></use></svg>
+                        Hồ sơ
+                    </a>
+
+                    <a class="menu-item <%= page === 'purchase' && 'active' %>" href="/account/purchase">
+                        <svg class="icon icon-purchase"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-purchase"></use></svg>
+                        Đơn mua
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-9 col-md-9 col-sm-12">
+            <div class="page-content">
+                <% if (page === 'profile') { %>
+                    <div class="session profile">
+                        <div class="page-title">
+                            <h5>Hồ sơ của tôi</h5>
+                            <div>Quản lý thông tin hồ sơ để bảo mật tài khoản</div>
+                        </div>
+
+                        <form method="POST" action="/account/profile" enctype="multipart/form-data" class="form">
+                            <div class="profile-form">
+                                <div class="form-group">
+                                    <label for="name">
+                                        Tên người dùng
+                                        <span class="form-required">*</span>
+                                    </label>
+                                    <input id="name" name="name" required value="<%= response.currentUser.name %>"></input>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="email">
+                                        Địa chỉ email
+                                        <span class="form-required">*</span>
+                                    </label>
+                                    <input id="email" name="email" required value="<%= response.currentUser.email %>"></input>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="phone_number">Số điện thoại</label>
+                                    <input id="phone_number" name="phone_number" value="<%= response.currentUser.phone_number %>"></input>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="address">Địa chỉ</label>
+                                    <textarea id="address" name="address"><%= response.currentUser.address %></textarea>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="radio-group">Giới tính</label>
+                                    <div id="radio-group" class="radio-group horizontal">
+                                        <input type="radio" id="male" name="gender" value="male" <%= response.currentUser.gender === 'male' ? 'checked' : '' %>>
+                                        <label for="male">Nam</label>
+                                        <input type="radio" id="female" name="gender" value="female" <%= response.currentUser.gender === 'female' ? 'checked' : '' %>>
+                                        <label for="female">Nữ</label>
+                                        <input type="radio" id="other" name="gender" value="other" <%= response.currentUser.gender === 'other' ? 'checked' : '' %>>
+                                        <label for="other">Khác</label>
+                                    </div>
+                                </div>                                
+
+                                <div class="form-group">
+                                    <label for="birthday">Ngày sinh</label>
+                                    <input type="date" id="birthday" name="birthday" value="<%= response.currentUser.birthday %>">
+                                </div>
+
+                                <button type="submit" class="background-button">Lưu</button>
+                            </div>
+                        </form>
+                    </div>
+                <% } else if (page === 'purchase') { %>
+                    <div class="purchase">
+                        <% if (response.orders) { %>
+                            <% response.orders.forEach(function(order) { %>
+                                <div class="session order-item">
+                                    <div class="order-item-header">
+                                        <div class="time"><%= response.helper.formatDateTime(order.created_time) %></div>
+                                        <%- include('../components/orderStatus', { status: order.order_status }) %>
+                                    </div>
+
+                                    <% order.items.forEach(function(item) { %>
+                                        <div class="row cart-item">
+                                            <div class="col-lg-6 col-md-6 col-sm-12 col-content">
+                                                <a class="product-item" href="/product/<%= item.product.slug %>">
+                                                    <% if(item.product.product_gallery && item.product.product_gallery.length > 0) { %>
+                                                        <div class="product-img">
+                                                            <img src="../<%= item.product.product_gallery[0].path %>" alt="" title="<%= item.product.product_gallery[0].filename %>" />
+                                                        </div>
+                                                    <% } %>
+                                                    <div>
+                                                        <div class="product-name"><%= item.product.product_name %></div>
+                                                        <div class="product-code"><%= item.product.product_code %></div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-lg-2 col-md-2 col-sm-12 col-content">
+                                                <div class="col-label">Đơn giá:</div>
+                                                <div class="product-price">
+                                                    <% if(item.price) { %>
+                                                        <div class="price">
+                                                            <%= response.helper.addCommasToNumber(response.helper.calcPrice(item.price, item.discount)) %>
+                                                            <%= item.discount > 0 ? `(-${item.discount}%)` : '' %>
+                                                        </div> 
+                                                    <% } else { %> 
+                                                        <div class="price">Liên Hệ</div>
+                                                    <% } %>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-2 col-md-2 col-sm-12 col-content">
+                                                <div class="col-label">Số lượng:</div>
+                                                <div class="quantity">
+                                                    <div><%= item.quantity %></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-2 col-md-2 col-sm-12 col-content">
+                                                <div class="col-label">Thành tiền:</div>
+                                                <div class="product-price">
+                                                    <% if(item.price) { %>
+                                                        <div class="price"><%= response.helper.addCommasToNumber((response.helper.calcPrice(item.price, item.discount) * item.quantity)) %></div> 
+                                                    <% } else { %> 
+                                                        <div class="price">Liên Hệ</div>
+                                                    <% } %>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <% }); %>
+
+                                    <div class="order-item-footer">
+                                        <div class="recommend-actions">
+                                            <a href="/" class="outline-button">Mua Lại</a>
+                                            <a href="/contact" class="outline-button">Liên Hệ Người Bán</a>
+                                        </div>
+                                        <div class="order-info">
+                                            <div>
+                                                <span class="title">Phương thức thanh toán:</span>
+                                                <span><%= response.helper.getPaymentMethod(order.payment_method) %> (<span><%= response.helper.getPaymentStatus(order.payment_status) %></span>)</span>
+                                            </div>
+                                            <div>
+                                                <span class="title">Thành tiền:</span>
+                                                <span class="price"><%= response.helper.addCommasToNumber(order.total_price) %></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            <% }); %>
+                        <% } %>
+
+                        <% if (!response.orders || response.orders.length <= 0) { %>
+                            <div class="session">
+                                <%- include('../components/empty') %>
+                            </div>
+                        <% } %>
+                    </div>
+                <% } else { %>
+                    <div><%- include('../components/empty') %></div>
+                <% } %>
+            </div>
+        </div>   
+    </div>
+</div>

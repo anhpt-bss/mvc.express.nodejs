@@ -1,0 +1,21 @@
+<div class="container blog-container">
+    <div class="row">
+        <div class="col-12">
+            <div class="session-title">
+                <h3><%= response.blog.title %></h3>
+            </div>
+
+            <h5><%= response.blog.summary %></h5>
+            <br>
+            <img src="/<%= response.blog.banner.path %>" alt="" />
+            <br>
+            <br>
+            
+            <div class="html"><%- response.blog.content %></div>
+
+            <% if (!response.blog || response.blog.length <= 0) { %>
+                <%- include('../components/empty') %>
+            <% } %>
+        </div>
+    </div>
+</div>
