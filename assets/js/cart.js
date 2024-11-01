@@ -24,13 +24,13 @@ document.addEventListener('DOMContentLoaded', function () {
                             showToastEventHandler(
                                 'warning',
                                 'Chưa đăng nhập hoặc phiên hoạt hộng hết hạn!',
-                                'Vui lòng đăng nhập để sử dụng tính năng này!',
+                                'Vui lòng đăng nhập để tiếp tục!',
                                 '',
                             );
                         } else {
                             showToastEventHandler(
                                 'error',
-                                'Thêm sản phẩm vào giở hàng không thành công!',
+                                'Thêm sản phẩm vào giỏ hàng không thành công!',
                                 'Vui lòng kiểm tra lại',
                                 '',
                             );

@@ -30,8 +30,11 @@
                 <% if (page === 'profile') { %>
                     <div class="session profile">
                         <div class="page-title">
-                            <h5>Hồ sơ của tôi</h5>
-                            <div>Quản lý thông tin hồ sơ để bảo mật tài khoản</div>
+                            <div>
+                                <h5>Hồ sơ của tôi</h5>
+                                <div>Quản lý thông tin hồ sơ để bảo mật tài khoản</div>
+                            </div>
+                            <a class="logout-btn" href="/logout"><svg class="icon icon-log-out"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-log-out"></use></svg>Đăng xuất</a>
                         </div>
 
                         <form method="POST" action="/account/profile" enctype="multipart/form-data" class="form">

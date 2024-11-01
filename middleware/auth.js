@@ -156,7 +156,7 @@ exports.checkClientTokenForAccess = async (req, res, next) => {
         // Push notification
         pushNotification(res, 'info', {
             title: 'Chưa đăng nhập ứng dụng',
-            content: 'Vui lòng đăng nhập để sử dụng tính năng này!',
+            content: 'Vui lòng đăng nhập để tiếp tục!',
         });
         res.redirect('/signin');
     }

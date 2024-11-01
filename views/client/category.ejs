@@ -1,4 +1,4 @@
-<div class="container category-container">
+<div class="container">
     <div class="row">
         <div class="col-12">
             <div class="session-title">
@@ -10,16 +10,42 @@
             <% if (response.products) { %>
                 <div class="row">
                     <% response.products.forEach(function(product) { %>
-                        <div class="col-lg-4 col-md-6 col-sm-12">
-                            <div class="product-item">
-                                <a href="product/<%= product.slug %>">
-                                    <% if(product.product_gallery && product.product_gallery.length > 0) { %>
-                                        <div class="product-img">
-                                            <img src="<%= product.product_gallery[0].path %>" alt="" title="<%= product.product_gallery[0].filename %>" />
+                        <div class="col-lg-3 col-md-4 col-sm-12">
+                            <div class="grid-card-item">
+                                <div class="grid-card-main">
+                                    <div class="grid-card-info">
+                                        <a class="grid-card-img zoom" href="product/<%= product.slug %>">
+                                            <% if(product.product_gallery && product.product_gallery.length > 0) { %>
+                                                <div class="image">
+                                                    <img src="<%= product.product_gallery[0].path %>" alt="" title="<%= product.product_gallery[0].filename %>" />
+                                                </div>
+                                            <% } %>
+
+                                            <% if(product.product_discount > 0) { %>
+                                                <div class="discount"><%= `-${product.product_discount}%` %></div>
+                                            <% } %>
+                                        </a>
+    
+                                        <div class="grid-card-detail">
+                                            <a class="product-name" href="product/<%= product.slug %>">
+                                                <%= product.product_name %>
+                                            </a>
                                         </div>
-                                    <% } %>
-                                    <div class="product-name"><%= product.product_name %></div>
-                                </a>
+                                    </div>
+
+                                    <div class="grid-card-actions">
+                                        <div class="product-price">
+                                            <div class="new-price"><%= response.helper.addCommasToNumber(response.helper.calcPrice(product.product_price, product.product_discount)) %></div>
+                                            <% if(product.product_discount > 0) { %>
+                                                <del class="old-price"><%= response.helper.addCommasToNumber(product.product_price) %></del>
+                                            <% } %>
+                                        </div>
+                                        <!-- Add to cart -->
+                                        <button class="add-to-cart" data-product="<%= product._id %>">
+                                            <svg class="icon icon-cart"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-cart"></use></svg>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     <% }); %>
@@ -30,16 +56,25 @@
                 <div class="row">
                     <% response.blogs.forEach(function(blog) { %>
                         <div class="col-lg-4 col-md-6 col-sm-12">
-                            <div class="blog-item">
-                                <a href="blog/<%= blog.slug %>">
-                                    <% if(blog.banner) { %>
-                                        <div class="blog-img">
-                                            <img src="<%= blog.banner.path %>" alt="" title="<%= blog.banner.filename %>" />
+                            <div class="grid-card-item">
+                                <div class="grid-card-main">
+                                    <div class="grid-card-info">
+                                        <a class="grid-card-img zoom" href="blog/<%= blog.slug %>">
+                                            <% if(blog.banner) { %>
+                                                <div class="image">
+                                                    <img src="<%= blog.banner.path %>" alt="" title="<%= blog.banner.filename %>" />
+                                                </div>
+                                            <% } %>
+                                        </a>
+    
+                                        <div class="grid-card-detail">
+                                            <a href="blog/<%= blog.slug %>">
+                                                <div class="blog-name"><%= blog.title %></div>
+                                            </a>
+                                            <div class="blog-summary"><%= blog.summary %></div>
                                         </div>
-                                    <% } %>
-                                    <div class="blog-name"><%= blog.title %></div>
-                                    <div class="blog-summary"><%= blog.summary %></div>
-                                </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     <% }); %>
@@ -52,3 +87,6 @@
         </div>
     </div>
 </div>
+
+<!-- Add to cart -->
+<script src="/assets/js/cart.js"></script>

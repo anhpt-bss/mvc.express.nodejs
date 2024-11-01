@@ -1,6 +1,7 @@
 @charset "UTF-8";
 
 :root {
+    --main-color: #008cc0;
     --bs-blue: #007bff;
     --bs-indigo: #6610f2;
     --bs-purple: #696cff;
@@ -139,15 +140,15 @@ body {
     display: block;
     padding: 8px 16px;
     background: #fff;
-    border: 1px solid #008cc0;
+    border: 1px solid var(--main-color);
     border-radius: 5px;
     font-size: 16px;
     font-weight: 500;
     line-height: 1.2;
-    color: #008cc0;
+    color: var(--main-color);
     &:hover {
         background: #fff;
-        color: #008cc0;
+        color: var(--main-color);
         opacity: 0.8;
     }
 }
@@ -156,15 +157,15 @@ body {
     width: fit-content;
     display: block;
     padding: 8px 16px;
-    background: #008cc0;
-    border: 1px solid #008cc0;
+    background: var(--main-color);
+    border: 1px solid var(--main-color);
     border-radius: 5px;
     font-size: 16px;
     font-weight: 500;
     line-height: 1.2;
     color: #fff;
     &:hover {
-        background: #008cc0;
+        background: var(--main-color);
         color: #fff;
         opacity: 0.8;
     }
@@ -344,12 +345,12 @@ sup {
 }
 
 a {
-    color: #696cff;
+    color: var(--main-color);
     text-decoration: none;
 }
 
 a:hover {
-    color: #5f61e6;
+    color: var(--main-color);
 }
 
 a:not([href]):not([class]),
