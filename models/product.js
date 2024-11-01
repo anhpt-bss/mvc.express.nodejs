@@ -80,4 +80,12 @@ const productSchema = new mongoose.Schema({
     },
 });
 
+// Index for global search
+productSchema.index({
+    product_code: 'text',
+    product_name: 'text',
+    product_summary: 'text',
+    manufacturer: 'text'
+});
+
 module.exports = mongoose.model('Product', productSchema);

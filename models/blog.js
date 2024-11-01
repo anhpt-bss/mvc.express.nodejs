@@ -41,4 +41,11 @@ const blogSchema = new mongoose.Schema({
     },
 });
 
+// Index for global search
+blogSchema.index({
+    title: 'text',
+    summary: 'text',
+    content: 'text'
+});
+
 module.exports = mongoose.model('Blog', blogSchema);

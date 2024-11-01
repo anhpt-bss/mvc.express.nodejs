@@ -33,7 +33,7 @@
             </div>
             <div class="search">
                 <div class="search-container">
-                    <input type="text" id="search-input" placeholder="Tìm kiếm sản phẩm..." autocomplete="off">
+                    <input type="text" id="search-input" placeholder="Tìm kiếm danh mục, sản phẩm hoặc tin tức..." autocomplete="off">
                     <div id="suggestions"></div>
                 </div>
             </div>
@@ -47,8 +47,20 @@
                                 <img class="avatar" src="/assets/images/default-avatar.jpg" alt="avatar" />
                                 <div class="username"><%= currentUser.name %></div>
                                 <div class="email"><%= currentUser.email %></div>
-                                <a href="/account/profile">Hồ sơ</a>
-                                <a class="logout-btn" href="/logout"><svg class="icon icon-log-out"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-log-out"></use></svg>Đăng Xuất</a>
+
+                                <div class="page-link">
+                                    <a href="/account/profile">
+                                        <svg class="icon icon-profile"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-profile"></use></svg>
+                                        Hồ sơ
+                                    </a>
+                
+                                    <a href="/account/purchase">
+                                        <svg class="icon icon-purchase"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-purchase"></use></svg>
+                                        Đơn mua
+                                    </a>
+                                </div>
+
+                                <a class="logout-btn" href="/logout"><svg class="icon icon-log-out"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-log-out"></use></svg>Đăng xuất</a>
                             </div>
                         </div>
                     </div>
@@ -156,7 +168,7 @@
             </a>
         </div>
         <div class="app-bar-element">
-            <a class="app-bar-inner" id="menu_item" href="/user">
+            <a class="app-bar-inner" id="menu_item" href="<%= currentUser ? '/account/profile' : '/signin' %>">
                 <svg class="icon icon-user-circle page-icon" style="fill: #202020;"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-user-circle"></use></svg>
                 <div>Người Dùng</div>
             </a>

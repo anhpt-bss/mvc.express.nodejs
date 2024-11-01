@@ -22,7 +22,12 @@
                     <div class="tag"><a href="/<%= response.product.category.slug %>"><%= response.product.category.name %></a></div>
                 </div>
                 <div class="product-info">
-                    <div class="price"><%= response.product.product_price || 'Giá Liên Hệ' %></div>
+                    <div class="price">
+                        <div class="new-price"><%= response.helper.addCommasToNumber(response.helper.calcPrice(response.product.product_price, response.product.product_discount)) %></div>
+                        <% if(response.product.product_discount > 0) { %>
+                            <del class="old-price"><%= response.helper.addCommasToNumber(response.product.product_price) %></del>
+                        <% } %>
+                    </div>
                 </div>
                 <div class="product-info">
                     <div><%= response.product.product_summary %></div>

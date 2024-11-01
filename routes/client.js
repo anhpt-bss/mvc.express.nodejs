@@ -216,12 +216,12 @@ router.post('/checkout', orderController.placeOrder, (req, res) => {
         // Push notification
         pushNotification(res, 'error', controllerResponse);
 
-        return res.redirect('/account/orders');
+        return res.redirect('/cart');
     } else {
         // Push notification
         pushNotification(res, 'success', controllerResponse);
 
-        return res.redirect('/account/orders');
+        return res.redirect('/account/purchase');
     }
 });
 
@@ -302,9 +302,10 @@ router.get('/account/:page', checkClientTokenForAccess, async (req, res) => {
                         created_time: { $first: '$created_time' },
                     },
                 },
+                { 
+                    $sort: { 'created_time': -1 } 
+                }
             ]);
-
-            console.log(orders);
 
             response.orders = orders;
             response.helper = helper;
@@ -368,13 +369,13 @@ router.get('/', async (req, res) => {
     const products = await Product.find()
         .sort({ created_time: 1 })
         .skip(0)
-        .limit(6)
+        .limit(8)
         .populate('product_gallery')
         .populate('category');
 
     const blogs = await Blog.find().sort({ created_time: 1 }).skip(0).limit(6).populate('category').populate('banner');
 
-    const response = { products, blogs };
+    const response = { helper, products, blogs };
 
     res.render('client', { response }, (error, html) => {
         if (error) {
@@ -499,7 +500,7 @@ router.get('/:slug', async (req, res) => {
         await findBlogsBySubCategories(parentCategory);
     }
 
-    const response = { category, blogs, products };
+    const response = { helper, category, blogs, products };
 
     res.render('client/category', { response }, (error, html) => {
         if (error) {
@@ -525,7 +526,7 @@ router.get('/product/:slug', async (req, res) => {
         return res.status(404).send('Product not found');
     }
 
-    const response = { product };
+    const response = { helper, product };
 
     res.render('client/product', { response }, (error, html) => {
         if (error) {
