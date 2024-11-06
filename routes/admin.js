@@ -5,6 +5,7 @@ const router = express.Router();
 const { DEFAULT_RESPONSE } = require('@services/httpResponse/constants');
 const { pushNotification, helper } = require('@services/helper');
 const { readLogFile, deleteLogFile } = require('@services/logger');
+const ResourceService = require('@services/resource');
 
 const { checkAdminToken, checkAdminTokenForLogin } = require('@middleware/auth');
 const {
@@ -460,7 +461,7 @@ router.get('/resources/create', (req, res) => {
         // Pass the rendered content to the layout
         res.render('admin/layout', {
             body: html,
-            title: 'Thêm Tài nguyên',
+            title: 'Thêm tệp',
             currentUser: req.user,
         });
     });
@@ -503,7 +504,7 @@ router.get('/resources/edit/:id', async (req, res) => {
         // Pass the rendered content to the layout
         res.render('admin/layout', {
             body: html,
-            title: 'Chỉnh sửa Tài nguyên',
+            title: 'Chỉnh sửa tệp',
             currentUser: req.user,
         });
     });
@@ -532,6 +533,62 @@ router.get('/resources/delete/:id', resourceController.deleteResource, (req, res
     pushNotification(res, controllerResponse.error ? 'error' : 'success', controllerResponse);
 
     return res.redirect('/admin/resources');
+});
+
+router.get('/resources/check-uploaded-files', async (req, res) => {
+    const staticFiles = await ResourceService.getStaticFiles();
+    const resourceNotExisted = await ResourceService.checkExistingResource();
+
+    const response = {
+        ...DEFAULT_RESPONSE,
+        fields_config: [
+            {
+                field_name: 'files',
+                field_label: 'Tải lại tệp không tồn tại',
+                field_type: 'file',
+                is_required: false,
+                is_show: true,
+                is_sort: true,
+                is_create: true,
+                is_edit: true,
+            },
+        ],
+        back_route: '/admin/resources',
+        next_route: `/admin/resources/check-uploaded-files`,
+        helper,
+        static_files: staticFiles,
+        resource_not_existed: resourceNotExisted,
+    };
+
+    res.render('admin/checkUploadedFile', { response }, (error, html) => {
+        if (error) {
+            console.log('[---Log---][---admin/resources---]: ', error);
+            return res.status(500).send(error.message);
+        }
+
+        // Pass the rendered content to the layout
+        res.render('admin/layout', {
+            body: html,
+            title: 'Kiểm tra tệp được tải lên',
+            currentUser: req.user,
+        });
+    });
+});
+
+router.post('/resources/check-uploaded-files', resourceController.uploadFiles, async (req, res) => {
+    const controllerResponse = res.locals.response;
+
+    if (controllerResponse.error) {
+        // Push notification
+        pushNotification(res, 'error', controllerResponse);
+
+        return res.redirect(`/admin/resources/check-uploaded-files`);
+    } else {
+        // Push notification
+        pushNotification(res, 'success', controllerResponse);
+
+        return res.redirect('/admin/resources/check-uploaded-files');
+    }
 });
 
 /*-----------------------------------*\

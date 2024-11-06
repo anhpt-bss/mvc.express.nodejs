@@ -525,3 +525,28 @@
         }
     }
 }
+
+/*-----------------------------------*\
+### Report uploaded files ###
+\*-----------------------------------*/
+
+.report-uploaded-file-container {
+    h4 {
+        margin-bottom: 16px;
+    }
+    .existed-files {
+        margin-bottom: 16px;
+    }
+    .not-existed-files {
+        margin-bottom: 16px;
+        .com-table {
+            margin: 0;
+            margin-bottom: 16px;
+        }
+
+        .com-form {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+        }
+    }
+}

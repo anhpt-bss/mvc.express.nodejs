@@ -8,7 +8,6 @@ class ResourceService {
     static uploadFiles(req, res, next) {
         return new Promise(async (resolve, reject) => {
             const { resource_category } = req.body;
-            console.log('resource_category', resource_category);
 
             const uploadedFiles = [];
             for (const file of req.files) {
@@ -17,10 +16,24 @@ class ResourceService {
                     size: file.size,
                     mimetype: file.mimetype,
                 });
+
                 if (existingFile) {
-                    uploadedFiles.push(existingFile);
-                    if (fs.existsSync(file.path)) {
+                    const existingFilePath = path.join(__dirname, `../../${existingFile.path}`);
+
+                    if (fs.existsSync(existingFilePath)) {
+                        // Existed old file: => Delete new file
                         fs.unlinkSync(file.path);
+
+                        uploadedFiles.push(existingFile);
+                    } else {
+                        // Not existed old file: => Update new file path
+                        const newResource = await Resource.findByIdAndUpdate(
+                            existingFile._id,
+                            { path: `${constants.UPLOADS_BASE_PATH}/${file.filename}` },
+                            { new: true },
+                        );
+
+                        uploadedFiles.push(newResource);
                     }
                 } else {
                     const newResource = new Resource({
@@ -51,6 +64,23 @@ class ResourceService {
             throw new Error('File not found');
         }
         throw new Error('Resource not found');
+    }
+
+    static checkExistingResource(req, res, next) {
+        return new Promise(async (resolve, reject) => {
+            const allResource = await Resource.find();
+            const resourceNotExisted = [];
+
+            for (const resource of allResource) {
+                const existingFilePath = path.join(__dirname, `../../${resource.path}`);
+
+                if (!fs.existsSync(existingFilePath)) {
+                    resourceNotExisted.push(resource);
+                }
+            }
+
+            resolve(resourceNotExisted);
+        });
     }
 
     static getStaticFiles() {
