@@ -1,0 +1,72 @@
+<div class="report-uploaded-file-container">
+    <% if (response?.resource_not_existed?.length > 0) { %>
+        <div class="not-existed-files">
+            <h4>Danh sách tệp không tồn tại trong hệ thống</h4>
+    
+            <div class="com-table">
+                <div class="table-scroll-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Danh Mục</th>
+                                <th>Người Tạo</th>
+                                <th>ID</th>
+                                <th>Tên Tệp</th>
+                                <th>Kích Thước (bytes)</th>
+                                <th>Loại Tệp</th>
+                                <th>Đường Dẫn</th>
+                                <th>Thời Gian Tạo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% response?.resource_not_existed?.forEach(item=> { %>
+                                <tr>
+                                    <td>
+                                        <%= item.category %>
+                                    </td>
+                                    <td>
+                                        <%= item.created_by %>
+                                    </td>
+                                    <td>
+                                        <%= item._id %>
+                                    </td>
+                                    <td>
+                                        <%= item.filename %>
+                                    </td>
+                                    <td>
+                                        <%= item.size %>
+                                    </td>
+                                    <td>
+                                        <%= item.mimetype %>
+                                    </td>
+                                    <td>
+                                        <%= item.path %>
+                                    </td>
+                                    <td>
+                                        <%= new Date(item.created_time).toLocaleString('vi-VN') %>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+    
+            <%- include('../components/form', { fields_config: response.fields_config || [], back_route:
+                response.back_route, next_route: response.next_route, default_values: response.default_values || {},
+                options_list: response.options_list || {} }) %>
+        </div>
+    <% } %>
+
+    <div class="existed-files">
+        <h4>Danh sách tệp đang tồn tại</h4>
+
+        <% response?.static_files?.forEach(function(item) { %>
+            <div>
+                <a href="<%= `${server_url}/uploads/${item}` %>" target="_blank">
+                    <%= `${server_url}/uploads/${item}` %>
+                </a>
+            </div>
+            <% }); %>
+    </div>
+</div>
