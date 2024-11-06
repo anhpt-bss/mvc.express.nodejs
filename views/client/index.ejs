@@ -143,6 +143,7 @@
                                                 <a href="blog/<%= blog.slug %>">
                                                     <div class="blog-name"><%= blog.title %></div>
                                                 </a>
+                                                <div class="created-time"><%= response.helper.renderDatetime(blog.created_time) %></div>
                                                 <div class="blog-summary"><%= blog.summary %></div>
                                             </div>
                                         </div>

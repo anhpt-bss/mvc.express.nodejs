@@ -1,5 +1,5 @@
 const express = require('express');
-const { userValidationRules, validate } = require('@middleware/validator');
+const { createUserValidationRules, validate } = require('@middleware/validator');
 const { verifyAPIToken } = require('@middleware/auth');
 
 const router = express.Router();
@@ -13,8 +13,8 @@ router.get('/:id', userController.getUserById);
 router.use(verifyAPIToken);
 
 // Routes privated
-router.post('/create', userValidationRules(), validate, userController.createUser);
-router.put('/:id', userValidationRules(), validate, userController.updateUser);
+router.post('/create', createUserValidationRules(), validate, userController.createUser);
+router.put('/:id', createUserValidationRules(), validate, userController.updateUser);
 router.delete('/:id', userController.deleteUser);
 
 module.exports = router;

@@ -8,6 +8,10 @@
         sort: response.data.sort,
         order: response.data.order,
         totalPages: Math.ceil(response.data.total / response.data.limit),
-        route: response.route
+        route: response.route,
+        allowCreate: response.allow_create,
+        allowEdit: response.allow_edit,
+        allowDelete: response.allow_delete,
+        helper: response.helper
     }) %>
 </div>

@@ -23,7 +23,7 @@ exports.verifyAPIToken = async (req, res, next) => {
 
     try {
         const decoded = verifyToken(accessToken);
-        const user = await User.findById(decoded.id);
+        const user = await User.findById(decoded.id).populate('avatar');
 
         req.user = user;
 
@@ -44,7 +44,7 @@ exports.checkAdminToken = async (req, res, next) => {
 
     try {
         const decoded = verifyToken(accessToken);
-        const user = await User.findById(decoded.id);
+        const user = await User.findById(decoded.id).populate('avatar');
 
         if (!user || !user.is_admin) {
             // Push notification
@@ -100,7 +100,7 @@ exports.checkClientToken = async (req, res, next) => {
 
     try {
         const decoded = verifyToken(accessToken);
-        const user = await User.findById(decoded.id);
+        const user = await User.findById(decoded.id).populate('avatar');
 
         if (!user || user.is_admin) {
             return next();

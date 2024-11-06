@@ -69,9 +69,9 @@ exports.globalSearch = async (req, res, next) => {
 
         // Add search_type field to each item and combine results into a single array
         const combinedResults = [
-            ...categoryResults.map(item => ({ ...item.toObject(), search_type: 'category' })),
-            ...productResults.map(item => ({ ...item.toObject(), search_type: 'product' })),
-            ...blogResults.map(item => ({ ...item.toObject(), search_type: 'blog' })),
+            ...categoryResults.map((item) => ({ ...item.toObject(), search_type: 'category' })),
+            ...productResults.map((item) => ({ ...item.toObject(), search_type: 'product' })),
+            ...blogResults.map((item) => ({ ...item.toObject(), search_type: 'blog' })),
         ];
 
         if (req.headers.accept && req.headers.accept.includes('application/json')) {
@@ -80,7 +80,6 @@ exports.globalSearch = async (req, res, next) => {
             res.locals.response = HttpResponse.successResponse(combinedResults);
             return next();
         }
-
     } catch (error) {
         console.log('[---Log---][---globalSearch---]: ', error);
         if (req.headers.accept && req.headers.accept.includes('application/json')) {

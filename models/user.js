@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const { gender } = require('@models/enum');
 
 const userSchema = new mongoose.Schema({
     avatar: {
@@ -18,7 +19,7 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true,
+        required: false,
     },
     is_admin: {
         type: Boolean,
@@ -34,7 +35,7 @@ const userSchema = new mongoose.Schema({
     },
     gender: {
         type: String,
-        enum: ['male', 'female', 'other'],
+        enum: gender.map((item) => item.value),
         required: false,
     },
     birthday: {

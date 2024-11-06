@@ -1,7 +1,9 @@
 <div class="com-table">
     <div class="table-header">
         <h2></h2>
-        <a class="create-btn" href="<%= route %>/create">Tạo Mới</a>
+        <% if (allowCreate) { %>
+            <a class="create-btn" href="<%= route %>/create">Tạo Mới</a>
+        <% } %>
     </div>
     <div class="table-scroll-container">
         <table>
@@ -9,12 +11,17 @@
                 <tr>
                     <% for (var i = 0; i < tableHeaders.length; i++) { if(tableHeaders[i].is_show) { %>
                         <th style="width: <%= tableHeaders[i].width %>">
-                            <a href="?sort=<%= tableHeaders[i].field_name %>&order=<%= sort === tableHeaders[i].field_name && order === 'asc' ? 'desc' : 'asc' %>&limit=<%= limit %>&page=<%= page %>">
-                                <%= tableHeaders[i].field_label %>
-                                <% if (sort === tableHeaders[i].field_name) { %>
-                                    <span><%= order === 'asc' ? '▲' : '▼' %></span>
-                                <% } %>
-                            </a>
+
+                            <% if (tableHeaders[i].is_sort) { %>
+                                <a href="?sort=<%= tableHeaders[i].field_name %>&order=<%= sort === tableHeaders[i].field_name && order === 'asc' ? 'desc' : 'asc' %>&limit=<%= limit %>&page=<%= page %>">
+                                    <%= tableHeaders[i].field_label %>
+                                    <% if (sort === tableHeaders[i].field_name) { %>
+                                        <span><%= order === 'asc' ? '▲' : '▼' %></span>
+                                    <% } %>
+                                </a>
+                            <% } else { %> 
+                                    <%= tableHeaders[i].field_label %>
+                            <% } %>
                         </th>
                     <% }} %>
                     <th>Hành Động</th>
@@ -27,22 +34,65 @@
                         <% if(tableHeaders[j].field_type === 'checkbox') { %>
                             <td><%= tableData[i][tableHeaders[j].field_name] ? '✔️' : '❌' %></td>
                         <% } else if(tableHeaders[j].field_type === 'file') { %>
-                            <td><%= tableData[i][tableHeaders[j].field_name].filename %></td>
+                            <td>
+                                <% if(tableHeaders[j].field_name === 'avatar') { %>
+                                    <div class="avatar">
+                                        <img src="<%= helper.getAvatar(tableData[i][tableHeaders[j].field_name]?.path) %>" alt="">
+                                    </div>
+                                <% } else { %>
+                                    <%= tableData[i][tableHeaders[j].field_name]?.filename %>
+                                <% } %>
+                            </td>
+                        <% } else if(tableHeaders[j].field_type === 'datetime') { %>
+                            <td><%= helper.formatDateTime(tableData[i][tableHeaders[j].field_name]) %></td>
                         <% } else if(tableHeaders[j].field_name === 'category' || tableHeaders[j].field_name === 'parent_cate') { %>
-                            <% console.log(tableHeaders[j].field_name, tableData[i][tableHeaders[j].field_name]); %>
                             <td><%= tableData[i][tableHeaders[j].field_name] && tableData[i][tableHeaders[j].field_name].name ? tableData[i][tableHeaders[j].field_name].name : tableData[i][tableHeaders[j].field_name] %></td>
+                        <% } else if(tableHeaders[j].field_name === 'order_products') { %>
+                            <td>
+                                <% tableData[i]?.items?.forEach(function(item) { %>
+                                    <div class="order-item">
+                                        <div class="quantity">
+                                            <%= item.quantity %>
+                                        </div>
+                                        <div>
+                                            <div><a href="products/edit/<%= item?.product?._id %>"><%= item?.product.product_name %></a></div>
+                                            <div><%= item.product.product_code %> (Còn <%= item.product.product_quantity %>)</div>
+                                            <div class="price">
+                                                <%= response.helper.addCommasToNumber(response.helper.calcPrice(item.price, item.discount)) %>
+                                                <%= item.discount > 0 ? `(-${item.discount}%)` : '' %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            </td>
+                        <% } else if(tableHeaders[j].field_name === 'order_owner') { %>
+                            <td>
+                                <div><a href="users/edit/<%= tableData[i]?.owner?.user?._id %>"><%= tableData[i]?.owner?.name %></a></div>
+                                <div><%= tableData[i]?.owner?.email %></div>
+                                <div><%= tableData[i]?.owner?.phone_number %></div>
+                                <div><%= tableData[i]?.owner?.address %></div>
+                            </td>
+                        <% } else if(tableHeaders[j].field_name === 'payment_method' || tableHeaders[j].field_name === 'payment_status' || tableHeaders[j].field_name === 'order_status') { %>
+                            <td><%- helper.renderKeyLabel(tableHeaders[j].field_name, tableData[i][tableHeaders[j].field_name]) %></td>
+                        <% } else if(tableHeaders[j].field_name === 'total_price') { %>
+                            <td><%- helper.addCommasToNumber(tableData[i][tableHeaders[j].field_name]) %></td>
                         <% } else { %>
                             <td><%= tableData[i][tableHeaders[j].field_name] %></td>
                         <% } %>
                     <% }} %>
                     <td>
                         <div class="table-action">
-                            <a class="table-action-btn" href="<%= route %>/edit/<%= tableData[i]._id %>">
-                                <svg class="icon icon-edit" style="fill: #428dff;"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-edit"></use></svg>
-                            </a>
-                            <a class="table-action-btn" href="<%= route %>/delete/<%= tableData[i]._id %>">
-                                <svg class="icon icon-bin" style="fill: #f86262;"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-bin"></use></svg>
-                            </a>
+                            <% if (allowEdit) { %>
+                                <a class="table-action-btn" href="<%= route %>/edit/<%= tableData[i]._id %>">
+                                    <svg class="icon icon-edit" style="fill: #428dff;"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-edit"></use></svg>
+                                </a>
+                            <% } %>
+
+                            <% if (allowDelete) { %>
+                                <a class="table-action-btn" href="<%= route %>/delete/<%= tableData[i]._id %>">
+                                    <svg class="icon icon-bin" style="fill: #f86262;"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-bin"></use></svg>
+                                </a>
+                            <% } %>
                         </div>
                     </td>
                 </tr>

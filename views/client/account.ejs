@@ -3,10 +3,10 @@
         <div class="col-lg-3 col-md-3 col-sm-12">
             <div class="sidebar">
                 <div class="user-info">
-                    <img class="avatar" src="/assets/images/default-avatar.jpg" alt="avatar" />
+                    <img class="avatar" src="<%= response?.currentUser?.avatar?.path ? `${server_url}/${response?.currentUser?.avatar?.path}` : '/assets/images/default-avatar.jpg' %>" alt="avatar" />
                     <div>
-                        <div class="username"><%= response.currentUser.name %></div>
-                        <div class="email"><%= response.currentUser.email %></div>
+                        <div class="username"><%= response?.currentUser?.name %></div>
+                        <div class="email"><%= response?.currentUser?.email %></div>
                     </div>
                 </div>
 
@@ -39,6 +39,29 @@
 
                         <form method="POST" action="/account/profile" enctype="multipart/form-data" class="form">
                             <div class="profile-form">
+                                <div class="form-group">
+                                    <label for="name">
+                                        Ảnh đại diện
+                                        <span class="form-required">*</span>
+                                    </label>
+
+                                    <div class="avatar-wrapper">
+                                        <div class="avatar-preview" id="file-preview-avatar">
+                                            <% if (response?.currentUser?.avatar?.path) { %>
+                                                <div class="file-preview-item">
+                                                    <a href="<%= `${server_url}/${response?.currentUser?.avatar?.path}` %>" target="_blank">
+                                                        <img src="<%= `${server_url}/${response?.currentUser?.avatar?.path}` %>" alt="">
+                                                    </a>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                        <label for="avatar">
+                                            <svg class="icon icon-camera"><use xlink:href="/assets/icons/icomoon/symbol-defs.svg#icon-camera"></use></svg>
+                                        </label>
+                                        <input type="file" id="avatar" name="files" class="files-input" data-preview-target="file-preview-avatar">
+                                    </div>
+                                </div>
+                                
                                 <div class="form-group">
                                     <label for="name">
                                         Tên người dùng
@@ -93,7 +116,7 @@
                                 <div class="session order-item">
                                     <div class="order-item-header">
                                         <div class="time"><%= response.helper.formatDateTime(order.created_time) %></div>
-                                        <%- include('../components/orderStatus', { status: order.order_status }) %>
+                                        <%- response.helper.renderKeyLabel('order_status', order.order_status) %>
                                     </div>
 
                                     <% order.items.forEach(function(item) { %>
@@ -151,7 +174,7 @@
                                         <div class="order-info">
                                             <div>
                                                 <span class="title">Phương thức thanh toán:</span>
-                                                <span><%= response.helper.getPaymentMethod(order.payment_method) %> (<span><%= response.helper.getPaymentStatus(order.payment_status) %></span>)</span>
+                                                <span><%= response.helper.getKeyLabel('payment_method', order.payment_method) %> (<span><%= response.helper.getKeyLabel('payment_status', order.payment_status) %></span>)</span>
                                             </div>
                                             <div>
                                                 <span class="title">Thành tiền:</span>
@@ -177,3 +200,5 @@
         </div>   
     </div>
 </div>
+
+<script src="/assets/js/form.js"></script>

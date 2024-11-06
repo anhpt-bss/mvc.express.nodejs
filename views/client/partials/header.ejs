@@ -33,7 +33,7 @@
             </div>
             <div class="search">
                 <div class="search-container">
-                    <input type="text" id="search-input" placeholder="Tìm kiếm danh mục, sản phẩm hoặc tin tức..." autocomplete="off">
+                    <input type="text" id="search-input" placeholder="Bạn tìm gì?" autocomplete="off">
                     <div id="suggestions"></div>
                 </div>
             </div>
@@ -41,10 +41,10 @@
                 <% if (currentUser) { %>
                     <div class="current-user">
                         <div class="dropdown">
-                            <img id="click-dropdown" class="avatar" src="/assets/images/default-avatar.jpg" alt="avatar" />
+                            <img id="click-dropdown" class="avatar" src="<%= currentUser?.avatar?.path ? `${server_url}/${currentUser?.avatar?.path}` : '/assets/images/default-avatar.jpg' %>" alt="avatar" />
                             
                             <div id="dropdown-content" class="dropdown-content user-dropdown-menu">
-                                <img class="avatar" src="/assets/images/default-avatar.jpg" alt="avatar" />
+                                <img class="avatar" src="<%= currentUser?.avatar?.path ? `${server_url}/${currentUser?.avatar?.path}` : '/assets/images/default-avatar.jpg' %>" alt="avatar" />
                                 <div class="username"><%= currentUser.name %></div>
                                 <div class="email"><%= currentUser.email %></div>
 

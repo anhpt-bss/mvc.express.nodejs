@@ -1,5 +1,5 @@
 /*-----------------------------------*\
-  #CUSTOM PROPERTY
+### Common ###
 \*-----------------------------------*/
 
 :root {
@@ -84,7 +84,7 @@
             position: relative;
 
             &:after {
-                content: "";
+                content: '';
                 height: 15px;
                 bottom: 0;
                 position: absolute;
@@ -235,6 +235,7 @@
             box-sizing: border-box;
             border: 1px solid #ccc;
             border-radius: 5px;
+            outline: none;
         }
 
         .radio-group {
@@ -257,9 +258,10 @@
     }
 }
 
-/* 
-*** Header ***
-*/
+/*-----------------------------------*\
+### Header ###
+\*-----------------------------------*/
+
 header {
     position: sticky;
     top: -40px;
@@ -386,9 +388,23 @@ header {
                             padding: 8px 16px;
                             cursor: pointer;
                             border-bottom: 1px solid #f0f0f0;
+                            position: relative;
 
                             &:hover {
                                 background-color: #f0f0f0;
+                            }
+
+                            .search-type {
+                                position: absolute;
+                                top: 4px;
+                                right: 0;
+                                background: var(--main-color);
+                                padding: 1px 4px;
+                                border-radius: 10px 0 0 10px;
+                                font-size: 12px;
+                                color: #ffffff;
+                                font-weight: 400;
+                                line-height: 16px;
                             }
                         }
                     }
@@ -587,14 +603,14 @@ header {
                             }
 
                             &:hover {
-                                >.submenu {
+                                > .submenu {
                                     display: block;
                                     opacity: 1;
                                     visibility: visible;
                                     transform: translateX(0);
                                 }
 
-                                >a {
+                                > a {
                                     color: var(--main-color);
                                     padding-left: 8px;
                                     border-left: 2px solid #3ca0e7;
@@ -622,7 +638,7 @@ header {
                         }
                     }
 
-                    &:hover>.submenu {
+                    &:hover > .submenu {
                         display: block;
                         opacity: 1;
                         visibility: visible;
@@ -789,9 +805,10 @@ header {
     }
 }
 
-/* 
-*** App Bar ***
-*/
+/*-----------------------------------*\
+### App bar ###
+\*-----------------------------------*/
+
 .app-bar {
     display: none;
     align-items: center;
@@ -899,9 +916,10 @@ header {
     }
 }
 
-/* 
-*** Footer ***
-*/
+/*-----------------------------------*\
+### Footer ###
+\*-----------------------------------*/
+
 footer {
     background: #d4d4d4;
 
@@ -973,14 +991,19 @@ footer {
     }
 }
 
-/* 
-*** Page Session ***
-*/
+/*-----------------------------------*\
+### Main layout ###
+\*-----------------------------------*/
+
 .main-container {
     padding: 16px 0;
     min-height: calc(100vh - 396px);
     overflow: hidden;
 }
+
+/*-----------------------------------*\
+### Home ###
+\*-----------------------------------*/
 
 .home-container {
     .top-banner {
@@ -991,6 +1014,10 @@ footer {
     }
 }
 
+/*-----------------------------------*\
+### About ###
+\*-----------------------------------*/
+
 .about-container {
     .core-value-item {
         background: #fff;
@@ -1000,6 +1027,10 @@ footer {
         margin-bottom: 16px;
     }
 }
+
+/*-----------------------------------*\
+### Contact ###
+\*-----------------------------------*/
 
 .contact-container {
     .contact-frame {
@@ -1049,6 +1080,10 @@ footer {
         }
     }
 }
+
+/*-----------------------------------*\
+### Product ###
+\*-----------------------------------*/
 
 .product-container {
     .product-item {
@@ -1100,6 +1135,10 @@ footer {
     }
 }
 
+/*-----------------------------------*\
+### Grid card ###
+\*-----------------------------------*/
+
 .grid-card-item {
     height: 100%;
     padding: 8px 0;
@@ -1115,7 +1154,7 @@ footer {
         border-radius: 8px;
 
         &:hover {
-            box-shadow: 0 4px 10px rgba(0, 0, 0, .25);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
         }
 
         .grid-card-info {
@@ -1129,7 +1168,7 @@ footer {
                     perspective: 600px;
 
                     div {
-                        transition: .8s ease-out;
+                        transition: 0.8s ease-out;
                         will-change: transform;
 
                         &:hover {
@@ -1170,7 +1209,6 @@ footer {
                 }
             }
 
-
             .grid-card-detail {
                 padding: 8px 16px;
 
@@ -1205,6 +1243,14 @@ footer {
                     line-height: 22px;
                     margin-bottom: 8px;
                 }
+
+                .created-time {
+                    font-size: 14px;
+                    color: #999999;
+                    font-weight: 400;
+                    line-height: 22px;
+                    margin-bottom: 8px;
+                }
             }
 
             .discount {
@@ -1212,7 +1258,7 @@ footer {
                 left: 0;
                 top: 20px;
                 text-transform: uppercase;
-                font-size: .75rem;
+                font-size: 0.75rem;
                 font-weight: 700;
                 background: red;
                 color: #fff;
@@ -1270,6 +1316,10 @@ footer {
     }
 }
 
+/*-----------------------------------*\
+### Product detail ###
+\*-----------------------------------*/
+
 .product-detail-container {
     .product-info {
         display: flex;
@@ -1324,7 +1374,7 @@ footer {
 }
 
 /*-----------------------------------*\
-    #TESTIMONIAL
+### Testimonials ###
 \*-----------------------------------*/
 
 .testimonials-cta-service-container {
@@ -1516,7 +1566,7 @@ footer {
 }
 
 /*-----------------------------------*\
-  #SIGNIN & SIGNUP
+### SIGNIN & SIGNUP ###
 \*-----------------------------------*/
 
 .authen-container {
@@ -1658,7 +1708,7 @@ footer {
 }
 
 /*-----------------------------------*\
-  #CART
+### CART ###
 \*-----------------------------------*/
 .cart-container {
     .cart-item {
@@ -1845,8 +1895,9 @@ footer {
 }
 
 /*-----------------------------------*\
-  #ACCOUNT
+### Account profile ###
 \*-----------------------------------*/
+
 .account-container {
     .user-info {
         display: flex;
@@ -1927,6 +1978,58 @@ footer {
                 .logout-btn {
                     width: fit-content;
                     min-width: fit-content;
+                }
+            }
+
+            .avatar-wrapper {
+                width: fit-content;
+                margin-top: 8px;
+                position: relative;
+
+                label {
+                    position: absolute;
+                    width: 32px;
+                    height: 32px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    border-radius: 50%;
+                    bottom: 0;
+                    right: 0;
+                    background-color: #ffffff;
+                    border: 1px solid #c8ced5;
+                    cursor: pointer;
+                    margin-bottom: 0;
+
+                    svg {
+                        width: 16px;
+                        height: 16px;
+                        fill: var(--main-color);
+                    }
+                }
+
+                .files-input {
+                    opacity: 0;
+                    position: absolute;
+                    z-index: -1;
+                }
+
+                .avatar-preview {
+                    .file-preview-item {
+                        width: 100px;
+                        height: 100px;
+                        border-radius: 50%;
+
+                        img {
+                            width: 100%;
+                            height: 100%;
+                            border-radius: 50%;
+                        }
+
+                        .remove-button {
+                            display: none !important;
+                        }
+                    }
                 }
             }
         }

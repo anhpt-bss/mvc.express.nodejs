@@ -2,6 +2,7 @@ const moment = require('moment');
 const User = require('@models/user');
 const { validationResult } = require('express-validator');
 const HttpResponse = require('@services/httpResponse');
+const ResourceService = require('@services/resource');
 
 /**
  * @swagger
@@ -71,12 +72,13 @@ const HttpResponse = require('@services/httpResponse');
  */
 exports.getAllUsers = async (req, res, next) => {
     try {
-        const { page = 1, limit = 10, sort = 'name', order = 'asc' } = req.query;
+        const { page = 1, limit = 10, sort = 'created_time', order = 'desc' } = req.query;
 
         const users = await User.find()
             .sort({ [sort]: order === 'asc' ? 1 : -1 })
             .skip((page - 1) * limit)
-            .limit(parseInt(limit));
+            .limit(parseInt(limit))
+            .populate('avatar');
 
         const total = await User.countDocuments();
 
@@ -228,7 +230,7 @@ exports.createUser = async (req, res, next) => {
  */
 exports.getUserById = async (req, res, next) => {
     try {
-        const user = await User.findById(req.params.id);
+        const user = await User.findById(req.params.id).populate('avatar');
         if (!user) {
             if (req.headers.accept && req.headers.accept.includes('application/json')) {
                 return HttpResponse.badRequest(res, [], req.t('user.user_not_found'));
@@ -324,32 +326,25 @@ exports.updateUser = async (req, res, next) => {
             }
         }
 
-        if (name) {
-            user.name = name;
-        }
-        if (email) {
-            user.email = email;
-        }
-        if (password) {
-            user.password = password;
-        }
-        if (phone_number) {
-            user.phone_number = phone_number;
-        }
-        if (address) {
-            user.address = address;
-        }
-        if (gender) {
-            user.gender = gender;
-        }
-        if (birthday) {
-            user.birthday = moment(birthday).format('YYYY-MM-DD');
+        let avatarFile;
+        if (req.files) {
+            req.body.resource_category = 'User';
+            avatarFile = await ResourceService.uploadFiles(req, res);
+            user.avatar = avatarFile && avatarFile?.length > 0 ? avatarFile[0]._id : user.avatar;
         }
 
+        user.name = name;
+        user.email = email;
+        user.password = password;
+        user.phone_number = phone_number;
+        user.address = address;
+        user.gender = gender;
+        user.birthday = birthday;
         user.is_admin = is_admin ? true : false;
         user.created_by = req.user ? req.user.email : email;
 
-        await user.save();
+        // await user.save();
+        await User.findByIdAndUpdate(user._id, user, { new: true });
 
         if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return HttpResponse.success(res, user);

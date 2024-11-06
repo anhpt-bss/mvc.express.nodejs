@@ -1,4 +1,7 @@
-var moment = require('moment');
+const moment = require('moment');
+const _ = require('lodash');
+const constants = require('@config/constants');
+const { paymentMethod, paymentStatus, orderStatus } = require('@models/enum');
 
 const pushNotification = (res, type, response) => {
     switch (type) {
@@ -104,26 +107,39 @@ const helper = {
         return str;
     },
     getAvatar: function (avatar) {
-        return avatar ? avatar : '/images/default-avatar.jpg';
+        return !_.isEmpty(avatar) ? `${constants.SERVER_URL}/${avatar}` : '/assets/images/default-avatar.jpg';
     },
-    getPaymentMethod: (method) => {
-        if (method === 'cash') {
-            return 'Tiền mặt';
-        } else if (method === 'cards') {
-            return 'Thẻ ngân hàng/Thẻ tín dụng';
-        } else if (method === 'bank_transfer') {
-            return 'Chuyển Khoản ngân hàng';
-        } else {
-            return method;
+    getKeyLabel: (key, value) => {
+        switch (key) {
+            case 'payment_status':
+                return paymentStatus?.find((item) => item?.value === value)?.label || value;
+
+            case 'payment_method':
+                return paymentMethod?.find((item) => item?.value === value)?.label || value;
+
+            case 'order_status':
+                return orderStatus?.find((item) => item?.value === value)?.label || value;
+
+            default:
+                return value;
         }
     },
-    getPaymentStatus: (status) => {
-        if (status === 'unpaid') {
-            return 'Chưa thanh toán';
-        } else if (status === 'paid') {
-            return 'Đã thanh toán';
-        } else {
-            return status;
+    renderKeyLabel: (key, value) => {
+        switch (key) {
+            case 'payment_status':
+                const status = paymentStatus.find((item) => item.value === value);
+                return `<div style="color: ${status ? status.color : ''};">${status ? status.label : value}</div>`;
+
+            case 'payment_method':
+                const method = paymentMethod.find((item) => item.value === value);
+                return `<div style="color: ${method ? method.color : ''};">${method ? method.label : value}</div>`;
+
+            case 'order_status':
+                const order = orderStatus.find((item) => item.value === value);
+                return `<div style="color: ${order ? order.color : ''};">${order ? order.label : value}</div>`;
+
+            default:
+                return value;
         }
     },
 };

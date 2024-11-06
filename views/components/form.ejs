@@ -1,6 +1,6 @@
 <div class="com-form">
     <form method="POST" action="<%= next_route %>" enctype="multipart/form-data" id="main-form">
-        <% fields_config.forEach(function(field) { %>
+        <% fields_config.forEach(function(field) { if((default_values?._id && field?.is_edit) || (!default_values?._id && field?.is_create)) {%>
             <div class="form-group <%= field.field_type %>">
                 <label for="<%= field.field_name %>">
                     <%= field.field_label %>
@@ -49,11 +49,22 @@
                     <div id="<%= field.field_name %>" class="jodit-editor"></div>
                     <input type="hidden" id="<%= field.field_name %>-input" name="<%= field.field_name %>" value="<%= default_values[field.field_name] || '' %>">
                     <div id="config-data" style="display: none;" data-serverurl="<%= server_url %>"></div>
+                <% } else if (field.field_type === 'date') { %>
+                    <input type="date" id="<%= field.field_name %>" name="<%= field.field_name %>" value="<%= default_values[field.field_name] || '' %>" <%= field.is_required ? 'required' : '' %>>
+                <% } else if (field.field_type === 'datetime') { %>
+                    <input type="datetime-local" id="<%= field.field_name %>" name="<%= field.field_name %>" value="<%= default_values[field.field_name]?.toISOString()?.slice(0, 16) || '' %>" <%= field.is_required ? 'required' : '' %>>
+                <% } else if (field.field_type === 'radio') { %>
+                    <div id="radio-group" class="radio-group horizontal">
+                        <% options_list[field.field_name] && options_list[field.field_name].forEach(function(option) { %>
+                            <input type="radio" id="<%= option.value %>" name="<%= field.field_name %>" value="<%= option.value %>" <%= default_values[field.field_name] === option.value ? 'checked' : '' %>>
+                            <label for="<%= option.value %>"><%= option.label %></label>
+                        <% }); %>
+                    </div>
                 <% } else { %>
                     <input type="<%= field.field_type %>" id="<%= field.field_name %>" name="<%= field.field_name %>" value="<%= default_values[field.field_name] || '' %>" <%= field.is_required ? 'required' : '' %>>
                 <% } %>
             </div>
-        <% }); %>
+        <% }}); %>
 
         <div class="form-footer">
             <a class="btn-cancel" href="<%= back_route %>">Hủy</a>

@@ -3,17 +3,19 @@ const logger = require('@config/logger');
 const router = express.Router();
 
 const { DEFAULT_RESPONSE } = require('@services/httpResponse/constants');
-const { pushNotification } = require('@services/helper');
+const { pushNotification, helper } = require('@services/helper');
 const { readLogFile, deleteLogFile } = require('@services/logger');
 
 const { checkAdminToken, checkAdminTokenForLogin } = require('@middleware/auth');
 const {
     loginValidationRules,
-    userValidationRules,
+    createUserValidationRules,
+    updateUserValidationRules,
     blogValidationRules,
     categoryValidationRules,
     productValidationRules,
     resourceValidationRules,
+    orderValidationRules,
 } = require('@middleware/validator');
 
 const authController = require('@controllers/auth');
@@ -22,14 +24,20 @@ const blogController = require('@controllers/blog');
 const categoryController = require('@controllers/category');
 const productController = require('@controllers/product');
 const resourceController = require('@controllers/resource');
+const orderController = require('@controllers/order');
 
 const User = require('@models/user');
 const Blog = require('@models/blog');
 const Category = require('@models/category');
 const Product = require('@models/product');
 const Resource = require('@models/resource');
+const Order = require('@models/order');
+const { paymentMethod, paymentStatus, orderStatus, gender } = require('@models/enum');
 
-// Routes public
+/*-----------------------------------*\
+### Admin authentication ###
+\*-----------------------------------*/
+
 router.get('/auth/login', checkAdminTokenForLogin, (req, res) => {
     res.render('admin/signin', { ...DEFAULT_RESPONSE });
 });
@@ -52,16 +60,24 @@ router.post('/auth/login', loginValidationRules(), authController.login, (req, r
     }
 });
 
-// Verify token
+/*-----------------------------------*\
+### Verify token ###
+\*-----------------------------------*/
+
 router.use(checkAdminToken);
 
-// Routes privated
+/*-----------------------------------*\
+### Dashboard ###
+\*-----------------------------------*/
+
 router.get('/', async (req, res) => {
     const totalBlog = await Blog.countDocuments();
     const totalCategory = await Category.countDocuments();
     const totalProduct = await Product.countDocuments();
+    const totalOrder = await Order.countDocuments();
     const totalResource = await Resource.countDocuments();
     const totalUser = await User.countDocuments();
+    const orderStatusCount = await orderController.getOrderStatusCounts();
 
     const response = {
         current_user: req.user,
@@ -82,6 +98,11 @@ router.get('/', async (req, res) => {
                 href: 'admin/products',
             },
             {
+                name: 'Đơn Hàng',
+                total: totalOrder,
+                href: 'admin/orders',
+            },
+            {
                 name: 'Blog',
                 total: totalBlog,
                 href: 'admin/blogs',
@@ -92,6 +113,8 @@ router.get('/', async (req, res) => {
                 href: 'admin/resources',
             },
         ],
+        order_summary: orderStatusCount,
+        helper,
     };
 
     res.render('admin', { response }, (error, html) => {
@@ -109,14 +132,30 @@ router.get('/', async (req, res) => {
     });
 });
 
-// Users admin route
+/*-----------------------------------*\
+### Users ###
+\*-----------------------------------*/
+
 const userFields = [
+    {
+        field_name: 'avatar',
+        field_label: 'Ảnh đại diện',
+        field_type: 'file',
+        is_required: false,
+        is_show: true,
+        is_sort: true,
+        is_create: false,
+        is_edit: true,
+    },
     {
         field_name: 'name',
         field_label: 'Tên người dùng',
         field_type: 'text',
         is_required: true,
         is_show: true,
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
     },
     {
         field_name: 'email',
@@ -124,6 +163,49 @@ const userFields = [
         field_type: 'email',
         is_required: true,
         is_show: true,
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
+    },
+    {
+        field_name: 'phone_number',
+        field_label: 'Số điện thoại',
+        field_type: 'text',
+        is_required: false,
+        is_show: true,
+        is_sort: true,
+        is_create: false,
+        is_edit: true,
+    },
+    {
+        field_name: 'address',
+        field_label: 'Địa chỉ',
+        field_type: 'text',
+        is_required: false,
+        is_show: true,
+        is_sort: true,
+        is_create: false,
+        is_edit: true,
+    },
+    {
+        field_name: 'gender',
+        field_label: 'Giới tính',
+        field_type: 'radio',
+        is_required: false,
+        is_show: true,
+        is_sort: true,
+        is_create: false,
+        is_edit: true,
+    },
+    {
+        field_name: 'birthday',
+        field_label: 'Ngày sinh',
+        field_type: 'date',
+        is_required: false,
+        is_show: true,
+        is_sort: true,
+        is_create: false,
+        is_edit: true,
     },
     {
         field_name: 'password',
@@ -131,6 +213,9 @@ const userFields = [
         field_type: 'password',
         is_required: true,
         is_show: false,
+        is_sort: false,
+        is_create: true,
+        is_edit: false,
     },
     {
         field_name: 'is_admin',
@@ -138,6 +223,9 @@ const userFields = [
         field_type: 'checkbox',
         is_required: false,
         is_show: true,
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
     },
 ];
 
@@ -148,6 +236,10 @@ router.get('/users', userController.getAllUsers, (req, res) => {
         ...controllerResponse,
         table_headers: userFields,
         route: '/admin/users',
+        allow_create: true,
+        allow_edit: true,
+        allow_delete: true,
+        helper,
     };
 
     res.render('admin/users', { response }, (error, html) => {
@@ -171,6 +263,7 @@ router.get('/users/create', (req, res) => {
         fields_config: userFields,
         back_route: '/admin/users',
         next_route: '/admin/users/create',
+        helper,
     };
 
     res.render('admin/addAndEdit', { response }, (error, html) => {
@@ -188,7 +281,7 @@ router.get('/users/create', (req, res) => {
     });
 });
 
-router.post('/users/create', userValidationRules(), userController.createUser, (req, res) => {
+router.post('/users/create', createUserValidationRules(), userController.createUser, (req, res) => {
     const controllerResponse = res.locals.response;
 
     if (controllerResponse.error) {
@@ -205,7 +298,7 @@ router.post('/users/create', userValidationRules(), userController.createUser, (
 });
 
 router.get('/users/edit/:id', async (req, res) => {
-    const userItem = await User.findById(req.params.id).select('-password').lean();
+    const userItem = await User.findById(req.params.id).select('-password').populate('avatar').lean();
 
     const response = {
         ...DEFAULT_RESPONSE,
@@ -213,6 +306,10 @@ router.get('/users/edit/:id', async (req, res) => {
         back_route: '/admin/users',
         next_route: `/admin/users/edit/${req.params.id}`,
         default_values: userItem,
+        options_list: {
+            gender: gender,
+        },
+        helper,
     };
 
     res.render('admin/addAndEdit', { response }, (error, html) => {
@@ -230,7 +327,7 @@ router.get('/users/edit/:id', async (req, res) => {
     });
 });
 
-router.post('/users/edit/:id', userValidationRules(), userController.updateUser, async (req, res) => {
+router.post('/users/edit/:id', updateUserValidationRules(), userController.updateUser, async (req, res) => {
     const controllerResponse = res.locals.response;
 
     if (controllerResponse.error) {
@@ -255,7 +352,10 @@ router.get('/users/delete/:id', userController.deleteUser, (req, res) => {
     return res.redirect('/admin/users');
 });
 
-// Resource admin routes
+/*-----------------------------------*\
+### Resource ###
+\*-----------------------------------*/
+
 const resourceFields = [
     {
         field_name: 'filename',
@@ -263,6 +363,9 @@ const resourceFields = [
         field_type: 'text',
         is_required: true,
         is_show: true,
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
         width: '20%',
     },
     {
@@ -271,6 +374,9 @@ const resourceFields = [
         field_type: 'number',
         is_required: true,
         is_show: true,
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
         width: '10%',
     },
     {
@@ -279,6 +385,9 @@ const resourceFields = [
         field_type: 'text',
         is_required: true,
         is_show: true,
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
         width: '10%',
     },
     {
@@ -287,6 +396,9 @@ const resourceFields = [
         field_type: 'text',
         is_required: false,
         is_show: true,
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
         width: '10%',
     },
     {
@@ -295,6 +407,9 @@ const resourceFields = [
         field_type: 'text',
         is_required: true,
         is_show: true,
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
         width: '40%',
     },
 ];
@@ -306,6 +421,10 @@ router.get('/resources', resourceController.getAllResources, (req, res) => {
         ...controllerResponse,
         table_headers: resourceFields,
         route: '/admin/resources',
+        allow_create: true,
+        allow_edit: true,
+        allow_delete: true,
+        helper,
     };
 
     res.render('admin/resources', { response }, (error, html) => {
@@ -329,6 +448,7 @@ router.get('/resources/create', (req, res) => {
         fields_config: resourceFields,
         back_route: '/admin/resources',
         next_route: '/admin/resources/create',
+        helper,
     };
 
     res.render('admin/addAndEdit', { response }, (error, html) => {
@@ -371,6 +491,7 @@ router.get('/resources/edit/:id', async (req, res) => {
         back_route: '/admin/resources',
         next_route: `/admin/resources/edit/${req.params.id}`,
         default_values: resourceItem,
+        helper,
     };
 
     res.render('admin/addAndEdit', { response }, (error, html) => {
@@ -413,7 +534,10 @@ router.get('/resources/delete/:id', resourceController.deleteResource, (req, res
     return res.redirect('/admin/resources');
 });
 
-// Logout admin route
+/*-----------------------------------*\
+### Logout ###
+\*-----------------------------------*/
+
 router.get('/auth/logout', authController.logout, (req, res) => {
     const controllerResponse = res.locals.response;
 
@@ -432,7 +556,10 @@ router.get('/auth/logout', authController.logout, (req, res) => {
     }
 });
 
-// Endpoint to get log file contents
+/*-----------------------------------*\
+### Logs ###
+\*-----------------------------------*/
+
 router.get('/logs', (req, res) => {
     readLogFile((error, data) => {
         if (error) {
@@ -467,7 +594,10 @@ router.get('/logs/delete', (req, res) => {
     });
 });
 
-// Blogs admin route
+/*-----------------------------------*\
+### Blog ###
+\*-----------------------------------*/
+
 const blogFields = [
     {
         field_name: 'title',
@@ -475,6 +605,9 @@ const blogFields = [
         field_type: 'text',
         is_required: true,
         is_show: true,
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
     },
     {
         field_name: 'summary',
@@ -482,6 +615,9 @@ const blogFields = [
         field_type: 'text',
         is_required: true,
         is_show: true,
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
         width: '40%',
     },
     {
@@ -490,6 +626,9 @@ const blogFields = [
         field_type: 'file',
         is_required: false,
         is_show: true,
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
         width: '20%',
     },
     {
@@ -498,6 +637,9 @@ const blogFields = [
         field_type: 'editor',
         is_required: true,
         is_show: false,
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
     },
     {
         field_name: 'category',
@@ -505,7 +647,9 @@ const blogFields = [
         field_type: 'select',
         is_required: false,
         is_show: true,
-        options: [],
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
     },
 ];
 
@@ -516,6 +660,10 @@ router.get('/blogs', blogController.getAllBlogs, (req, res) => {
         ...controllerResponse,
         table_headers: blogFields,
         route: '/admin/blogs',
+        allow_create: true,
+        allow_edit: true,
+        allow_delete: true,
+        helper,
     };
 
     res.render('admin/blogs', { response }, (error, html) => {
@@ -548,6 +696,7 @@ router.get('/blogs/create', async (req, res) => {
                 value: item._id,
             })),
         },
+        helper,
     };
 
     res.render('admin/addAndEdit', { response }, (error, html) => {
@@ -598,6 +747,7 @@ router.get('/blogs/edit/:id', async (req, res) => {
                 value: item._id,
             })),
         },
+        helper,
     };
 
     res.render('admin/addAndEdit', { response }, (error, html) => {
@@ -640,7 +790,10 @@ router.get('/blogs/delete/:id', blogController.deleteBlog, (req, res) => {
     return res.redirect('/admin/blogs');
 });
 
-// Category admin routes
+/*-----------------------------------*\
+### Category ###
+\*-----------------------------------*/
+
 const categoryFields = [
     {
         field_name: 'position',
@@ -648,6 +801,9 @@ const categoryFields = [
         field_type: 'number',
         is_required: true,
         is_show: true,
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
         width: '10%',
     },
     {
@@ -655,6 +811,9 @@ const categoryFields = [
         field_label: 'Tên',
         field_type: 'text',
         is_required: true,
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
         is_show: true,
     },
     {
@@ -662,6 +821,9 @@ const categoryFields = [
         field_label: 'Mô tả',
         field_type: 'editor',
         is_required: false,
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
         is_show: false,
     },
     {
@@ -670,7 +832,9 @@ const categoryFields = [
         field_type: 'select',
         is_required: false,
         is_show: true,
-        options: [],
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
     },
 ];
 
@@ -681,6 +845,10 @@ router.get('/categories', categoryController.getAllCategories, (req, res) => {
         ...controllerResponse,
         table_headers: categoryFields,
         route: '/admin/categories',
+        allow_create: true,
+        allow_edit: true,
+        allow_delete: true,
+        helper,
     };
 
     res.render('admin/categories', { response }, (error, html) => {
@@ -712,6 +880,7 @@ router.get('/categories/create', async (req, res) => {
                 value: item._id,
             })),
         },
+        helper,
     };
 
     res.render('admin/addAndEdit', { response }, (error, html) => {
@@ -757,6 +926,7 @@ router.get('/categories/edit/:id', async (req, res) => {
                 value: item._id,
             })),
         },
+        helper,
     };
 
     res.render('admin/addAndEdit', { response }, (error, html) => {
@@ -793,7 +963,10 @@ router.get('/categories/delete/:id', categoryController.deleteCategory, (req, re
     return res.redirect('/admin/categories');
 });
 
-// Product fields configuration
+/*-----------------------------------*\
+### Products ###
+\*-----------------------------------*/
+
 const productFields = [
     {
         field_name: 'product_code',
@@ -801,6 +974,9 @@ const productFields = [
         field_type: 'text',
         is_required: true,
         is_show: true,
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
         width: '10%',
     },
     {
@@ -809,6 +985,9 @@ const productFields = [
         field_type: 'text',
         is_required: true,
         is_show: true,
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
         width: '30%',
     },
     {
@@ -817,6 +996,9 @@ const productFields = [
         field_type: 'text',
         is_required: true,
         is_show: true,
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
         width: '40%',
     },
     {
@@ -825,7 +1007,9 @@ const productFields = [
         field_type: 'select',
         is_required: true,
         is_show: true,
-        options: [],
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
         width: '10%',
     },
     {
@@ -834,6 +1018,9 @@ const productFields = [
         field_type: 'number',
         is_required: false,
         is_show: false,
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
     },
     {
         field_name: 'product_discount',
@@ -841,6 +1028,9 @@ const productFields = [
         field_type: 'number',
         is_required: false,
         is_show: false,
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
     },
     {
         field_name: 'product_quantity',
@@ -848,6 +1038,9 @@ const productFields = [
         field_type: 'number',
         is_required: false,
         is_show: false,
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
     },
     {
         field_name: 'shipping_fee',
@@ -855,6 +1048,9 @@ const productFields = [
         field_type: 'number',
         is_required: false,
         is_show: false,
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
     },
     {
         field_name: 'manufacturer',
@@ -862,6 +1058,9 @@ const productFields = [
         field_type: 'text',
         is_required: false,
         is_show: false,
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
     },
     {
         field_name: 'product_gallery',
@@ -869,6 +1068,9 @@ const productFields = [
         field_type: 'files',
         is_required: false,
         is_show: false,
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
     },
     {
         field_name: 'product_specifications',
@@ -876,6 +1078,9 @@ const productFields = [
         field_type: 'editor',
         is_required: false,
         is_show: false,
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
     },
     {
         field_name: 'product_description',
@@ -883,6 +1088,9 @@ const productFields = [
         field_type: 'editor',
         is_required: false,
         is_show: false,
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
     },
 ];
 
@@ -894,6 +1102,10 @@ router.get('/products', productController.getAllProducts, (req, res) => {
         ...controllerResponse,
         table_headers: productFields,
         route: '/admin/products',
+        allow_create: true,
+        allow_edit: true,
+        allow_delete: true,
+        helper,
     };
 
     res.render('admin/products', { response }, (error, html) => {
@@ -925,6 +1137,7 @@ router.get('/products/create', async (req, res) => {
                 value: item._id,
             })),
         },
+        helper,
     };
 
     res.render('admin/addAndEdit', { response }, (error, html) => {
@@ -976,6 +1189,7 @@ router.get('/products/edit/:id', async (req, res) => {
                 value: item._id,
             })),
         },
+        helper,
     };
 
     res.render('admin/addAndEdit', { response }, (error, html) => {
@@ -1021,3 +1235,205 @@ router.get('/products/delete/:id', productController.deleteProduct, (req, res) =
 });
 
 module.exports = router;
+
+/*-----------------------------------*\
+### Orders ###
+\*-----------------------------------*/
+
+const orderFields = [
+    {
+        field_name: 'order_products',
+        field_label: 'Sản phẩm',
+        field_type: 'text',
+        is_required: false,
+        is_show: true,
+        is_sort: false,
+        is_create: false,
+        is_edit: false,
+        width: '25%',
+    },
+    {
+        field_name: 'order_owner',
+        field_label: 'Người đặt',
+        field_type: 'text',
+        is_required: false,
+        is_show: true,
+        is_sort: false,
+        is_create: false,
+        is_edit: false,
+        width: '15%',
+    },
+    {
+        field_name: 'payment_method',
+        field_label: 'Phương thức thanh toán',
+        field_type: 'select',
+        is_required: true,
+        is_show: true,
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
+        width: '10%',
+    },
+    {
+        field_name: 'payment_status',
+        field_label: 'Trạng thái thanh toán',
+        field_type: 'select',
+        is_required: true,
+        is_show: true,
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
+        width: '10%',
+    },
+    {
+        field_name: 'total_price',
+        field_label: 'Tổng tiền',
+        field_type: 'number',
+        is_required: true,
+        is_show: true,
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
+        width: '10%',
+    },
+    {
+        field_name: 'order_status',
+        field_label: 'Trạng thái đơn',
+        field_type: 'select',
+        is_required: true,
+        is_show: true,
+        is_sort: true,
+        is_create: true,
+        is_edit: true,
+        width: '10%',
+    },
+    {
+        field_name: 'created_time',
+        field_label: 'Thời gian tạo',
+        field_type: 'datetime',
+        is_required: true,
+        is_show: true,
+        is_sort: true,
+        is_create: false,
+        is_edit: false,
+        width: '10%',
+    },
+];
+
+router.get('/orders', orderController.getAllOrders, (req, res) => {
+    const controllerResponse = res.locals.response;
+
+    const response = {
+        ...controllerResponse,
+        table_headers: orderFields,
+        route: '/admin/orders',
+        allow_create: false,
+        allow_edit: true,
+        allow_delete: true,
+        helper,
+    };
+
+    res.render('admin/orders', { response }, (error, html) => {
+        if (error) {
+            console.log('[---Log---][---admin/orders---]: ', error);
+            return res.status(500).send(error.message);
+        }
+
+        res.render('admin/layout', {
+            body: html,
+            title: 'Đơn Hàng',
+            currentUser: req.user,
+        });
+    });
+});
+
+router.get('/orders/create', async (req, res) => {
+    const response = {
+        ...DEFAULT_RESPONSE,
+        fields_config: orderFields,
+        back_route: '/admin/orders',
+        next_route: '/admin/orders/create',
+        options_list: {
+            payment_method: paymentMethod,
+            payment_status: paymentStatus,
+            order_status: orderStatus,
+        },
+        helper,
+    };
+
+    res.render('admin/addAndEdit', { response }, (error, html) => {
+        if (error) {
+            console.log('[---Log---][---admin/orders---]: ', error);
+            return res.status(500).send(error.message);
+        }
+
+        res.render('admin/layout', {
+            body: html,
+            title: 'Đơn Hàng',
+            currentUser: req.user,
+        });
+    });
+});
+
+router.post('/orders/create', orderValidationRules(), orderController.createOrder, (req, res) => {
+    const controllerResponse = res.locals.response;
+
+    if (controllerResponse.error) {
+        pushNotification(res, 'error', controllerResponse);
+        return res.redirect('/admin/orders/create');
+    } else {
+        pushNotification(res, 'success', controllerResponse);
+        return res.redirect('/admin/orders');
+    }
+});
+
+router.get('/orders/edit/:id', async (req, res) => {
+    const orderItem = await Order.findById(req.params.id).lean();
+
+    const response = {
+        ...DEFAULT_RESPONSE,
+        fields_config: orderFields,
+        back_route: '/admin/orders',
+        next_route: `/admin/orders/edit/${req.params.id}`,
+        default_values: orderItem,
+        options_list: {
+            payment_method: paymentMethod,
+            payment_status: paymentStatus,
+            order_status: orderStatus,
+        },
+        helper,
+    };
+
+    res.render('admin/addAndEdit', { response }, (error, html) => {
+        if (error) {
+            console.log('[---Log---][---admin/orders---]: ', error);
+            return res.status(500).send(error.message);
+        }
+
+        res.render('admin/layout', {
+            body: html,
+            title: 'Đơn Hàng',
+            currentUser: req.user,
+        });
+    });
+});
+
+router.post('/orders/edit/:id', orderValidationRules(), orderController.updateOrder, async (req, res) => {
+    const controllerResponse = res.locals.response;
+
+    if (controllerResponse.error) {
+        pushNotification(res, 'error', controllerResponse);
+        return res.redirect(`/admin/orders/edit/${req.params.id}`);
+    } else {
+        pushNotification(res, 'success', controllerResponse);
+        return res.redirect('/admin/orders');
+    }
+});
+
+router.get('/orders/delete/:id', orderController.deleteOrder, (req, res) => {
+    const controllerResponse = res.locals.response;
+
+    pushNotification(res, controllerResponse.error ? 'error' : 'success', controllerResponse);
+
+    return res.redirect('/admin/orders');
+});
