@@ -2,11 +2,10 @@ const express = require('express');
 
 const router = express.Router();
 
-const HttpResponse = require('@services/httpResponse');
 const { pushNotification, helper } = require('@services/helper');
 
 const { checkClientToken, checkClientTokenForLogin, checkClientTokenForAccess } = require('@middleware/auth');
-const { loginValidationRules, userValidationRules, profileValidationRules } = require('@middleware/validator');
+const { loginValidationRules, createUserValidationRules, updateUserValidationRules } = require('@middleware/validator');
 
 const authController = require('@controllers/auth');
 const userController = require('@controllers/user');
@@ -74,7 +73,7 @@ router.get('/signup', checkClientTokenForLogin, async (req, res) => {
     });
 });
 
-router.post('/signup', userValidationRules(), userController.createUser, (req, res) => {
+router.post('/signup', createUserValidationRules(), userController.createUser, (req, res) => {
     const controllerResponse = res.locals.response;
 
     if (controllerResponse.error) {
@@ -235,7 +234,7 @@ router.get('/account/:page', checkClientTokenForAccess, async (req, res) => {
 
     switch (page) {
         case 'profile':
-            const user = await User.findById(req.user._id);
+            const user = await User.findById(req.user._id).populate('avatar');
 
             response.currentUser = user;
             response.title = 'Hồ Sơ';
@@ -302,9 +301,9 @@ router.get('/account/:page', checkClientTokenForAccess, async (req, res) => {
                         created_time: { $first: '$created_time' },
                     },
                 },
-                { 
-                    $sort: { 'created_time': -1 } 
-                }
+                {
+                    $sort: { created_time: -1 },
+                },
             ]);
 
             response.orders = orders;
@@ -348,7 +347,7 @@ router.get('/logout', authController.logout, (req, res) => {
     }
 });
 
-router.post('/account/profile', profileValidationRules(), userController.updateUser, (req, res) => {
+router.post('/account/profile', updateUserValidationRules(), userController.updateUser, (req, res) => {
     const controllerResponse = res.locals.response;
 
     if (controllerResponse.error) {
@@ -367,13 +366,13 @@ router.post('/account/profile', profileValidationRules(), userController.updateU
 // Home
 router.get('/', async (req, res) => {
     const products = await Product.find()
-        .sort({ created_time: 1 })
+        .sort({ created_time: -1 })
         .skip(0)
         .limit(8)
         .populate('product_gallery')
         .populate('category');
 
-    const blogs = await Blog.find().sort({ created_time: 1 }).skip(0).limit(6).populate('category').populate('banner');
+    const blogs = await Blog.find().sort({ created_time: -1 }).skip(0).limit(6).populate('category').populate('banner');
 
     const response = { helper, products, blogs };
 

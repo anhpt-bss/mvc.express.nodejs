@@ -82,5 +82,11 @@
         "manufacturer_valid": "Nhà sản xuất không hợp lệ.",
         "banner_valid": "Banner phải là một ID hợp lệ.",
         "category_valid": "Danh mục phải là một ID hợp lệ."
+    },
+    "order": {
+        "total_price": "Tổng giá phải là một số dương",
+        "payment_method": "Phương thức thanh toán không hợp lệ",
+        "payment_status": "Trạng thái thanh toán không hợp lệ",
+        "order_status": "Trạng thái đơn hàng không hợp lệ"
     }
 }

@@ -128,7 +128,7 @@ const ResourceService = require('@services/resource');
  */
 exports.getAllProducts = async (req, res, next) => {
     try {
-        const { page = 1, limit = 10, sort = 'created_time', order = 'asc' } = req.query;
+        const { page = 1, limit = 10, sort = 'created_time', order = 'desc' } = req.query;
 
         const products = await Product.find()
             .sort({ [sort]: order === 'asc' ? 1 : -1 })

@@ -1,5 +1,6 @@
 const { body, validationResult } = require('express-validator');
 const HttpResponse = require('@services/httpResponse');
+const { paymentMethod, paymentStatus, orderStatus } = require('@models/enum');
 
 exports.validate = (req, res, next) => {
     const errors = validationResult(req);
@@ -20,7 +21,7 @@ exports.validate = (req, res, next) => {
     }
 };
 
-exports.userValidationRules = () => {
+exports.createUserValidationRules = () => {
     return [
         body('name').notEmpty().withMessage('validation.name_required'),
         body('email').isEmail().withMessage('validation.valid_email'),
@@ -36,7 +37,7 @@ exports.userValidationRules = () => {
     ];
 };
 
-exports.profileValidationRules = () => {
+exports.updateUserValidationRules = () => {
     return [
         body('name').notEmpty().withMessage('validation.name_required'),
         body('email').isEmail().withMessage('validation.valid_email'),
@@ -109,5 +110,23 @@ exports.productValidationRules = () => {
         body('product_description').optional(),
         body('manufacturer').optional(),
         body('category').isMongoId().withMessage('product.category_valid'),
+    ];
+};
+
+exports.orderValidationRules = (req) => {
+    return [
+        body('total_price').isFloat({ min: 0 }).withMessage('order.total_price'),
+
+        body('payment_method')
+            .isIn(paymentMethod.map((item) => item.value))
+            .withMessage('order.payment_method'),
+
+        body('payment_status')
+            .isIn(paymentStatus.map((item) => item.value))
+            .withMessage('order.payment_status'),
+
+        body('order_status')
+            .isIn(orderStatus.map((item) => item.value))
+            .withMessage('order.order_status'),
     ];
 };

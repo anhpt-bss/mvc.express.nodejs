@@ -1,32 +1,30 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel | <%= title %></title>
-  <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="/assets/icons/favicon.ico" />
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Admin Panel | <%= title %></title>
+        <!-- Favicon -->
+        <link rel="icon" type="image/x-icon" href="/assets/icons/favicon.ico" />
 
-  <!-- Core CSS -->
-  <link rel="stylesheet" href="/assets/css/core.css" />
-  <link rel="stylesheet" href="/assets/css/components.css" />
-  <link rel="stylesheet" href="/assets/css/admin-style.css" />
-</head>
-<body>
-    <div class="admin-layout">
-        <%- include('partials/sidebar') %>
-        <div class="admin-content">
-            <%- include('partials/header') %>
-            <main class="admin-main">
-                <%- body %>
-            </main>
-            <%- include('partials/footer') %>
+        <!-- Core CSS -->
+        <link rel="stylesheet" href="/assets/css/core.css" />
+        <link rel="stylesheet" href="/assets/css/components.css" />
+        <link rel="stylesheet" href="/assets/css/admin-style.css" />
+    </head>
+    <body>
+        <div class="admin-layout">
+            <%- include('partials/sidebar') %>
+            <div class="admin-content">
+                <%- include('partials/header') %>
+                <main class="admin-main"><%- body %></main>
+                <%- include('partials/footer') %>
+            </div>
+
+            <!-- Toast -->
+            <%- include('../components/toast') %>
+            <!-- / Toast -->
         </div>
-
-        <!-- Toast -->
-        <%- include('../components/toast') %>
-        <!-- / Toast -->
-    </div>
-    <script src="/assets/js/layout.js"></script>
-</body>
+        <script src="/assets/js/layout.js"></script>
+    </body>
 </html>

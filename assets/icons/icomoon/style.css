@@ -15,6 +15,10 @@ Single-colored icons can be modified like so:
 }
 ========================================== */
 
+.icon-camera {
+  width: 1.0712890625em;
+}
+
 .icon-profile {
   width: 0.857421875em;
 }

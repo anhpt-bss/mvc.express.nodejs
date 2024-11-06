@@ -39,7 +39,7 @@ const categorySchema = new mongoose.Schema({
 // Index for global search
 categorySchema.index({
     name: 'text',
-    description: 'text'
+    description: 'text',
 });
 
 module.exports = mongoose.model('Category', categorySchema);

@@ -78,13 +78,13 @@ const Product = require('@models/product');
  */
 exports.getAllResources = async (req, res, next) => {
     try {
-        const { page = 1, limit = 10, sort = 'filename', order = 'asc' } = req.query;
+        const { page = 1, limit = 10, sort = 'created_time', order = 'desc' } = req.query;
 
         const resources = await Resource.find()
             .sort({ [sort]: order === 'asc' ? 1 : -1 })
             .skip((page - 1) * limit)
             .limit(parseInt(limit));
-        console.log(resources);
+
         const total = await Resource.countDocuments();
 
         const response = {

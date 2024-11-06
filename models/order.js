@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { paymentMethod, paymentStatus, orderStatus } = require('@models/enum');
 
 const orderSchema = new mongoose.Schema({
     items: [
@@ -16,78 +17,26 @@ const orderSchema = new mongoose.Schema({
         phone_number: String,
         address: String,
     },
-    total_price: Number,
+    total_price: {
+        type: Number,
+        default: 0,
+    },
     payment_method: {
         type: String,
-        enum: ['cash', 'cards', 'bank_transfer'],
-        required: true,
+        enum: paymentMethod.map((item) => item.value),
         default: 'cash',
     },
     payment_status: {
         type: String,
-        enum: ['unpaid', 'paid'],
+        enum: paymentStatus.map((item) => item.value),
         default: 'unpaid',
     },
     order_status: {
         type: String,
-        enum: [
-            'awaiting_confirmation',
-            'processing',
-            'processed',
-            'waiting_for_pickup',
-            'picked_up',
-            'in_transit',
-            'delivered',
-            'returning',
-            'returned',
-            'cancelled',
-        ],
+        enum: orderStatus.map((item) => item.value),
         default: 'awaiting_confirmation',
     },
     created_time: { type: Date, default: Date.now },
 });
-
-const status = [
-    {
-        label: 'Chờ xác nhận',
-        value: 'awaiting_confirmation',
-    },
-    {
-        label: 'Đang xử lý',
-        value: 'processing',
-    },
-    {
-        label: 'Đã xử lý',
-        value: 'processed',
-    },
-    {
-        label: 'Chờ lấy hàng',
-        value: 'waiting_for_pickup',
-    },
-    {
-        label: 'Đã lấy hàng',
-        value: 'picked_up',
-    },
-    {
-        label: 'Đang giao hàng',
-        value: 'in_transit',
-    },
-    {
-        label: 'Đã giao hàng',
-        value: 'delivered',
-    },
-    {
-        label: 'Đang trả hàng',
-        value: 'returning',
-    },
-    {
-        label: 'Đã trả hàng',
-        value: 'returned',
-    },
-    {
-        label: 'Đã hủy',
-        value: 'cancelled',
-    },
-];
 
 module.exports = mongoose.model('Order', orderSchema);

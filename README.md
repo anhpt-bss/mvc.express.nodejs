@@ -186,7 +186,7 @@ Using express-validator to validate incoming requests:
 ```bash
 const { body, validationResult } = require('express-validator')
 
-exports.userValidationRules = () => {
+exports.createUserValidationRules = () => {
 return [
 body('name').isString().isLength({ min: 3 }),
 body('email').isEmail(),

@@ -83,5 +83,11 @@
         "manufacturer_valid": "Manufacturer is not valid.",
         "banner_valid": "Banner must be a valid ID.",
         "category_valid": "Category must be a valid ID."
+    },
+    "order": {
+        "total_price": "Total price must be a positive number",
+        "payment_method": "Invalid payment method",
+        "payment_status": "Invalid payment status",
+        "order_status": "Invalid order status"
     }
 }

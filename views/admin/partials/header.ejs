@@ -4,7 +4,7 @@
     <div class="nav-right">
         <div class="user-info">
             <span class="username"><%= currentUser.name %> | <%= currentUser.email %></span>
-            <img src="/assets/images/default-avatar.jpg" alt="Avatar" class="avatar">
+            <img src="<%= currentUser?.avatar?.path ? `${server_url}/${currentUser?.avatar?.path}` : '/assets/images/default-avatar.jpg' %>" alt="Avatar" class="avatar">
         </div>
     </div>
 </nav>
