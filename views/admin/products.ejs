@@ -1,5 +1,6 @@
 <div>
     <%- include('../components/table', {
+        response: response,
         tableData: response.data.data_list || [],
         tableHeaders: response.table_headers || [],
         total: response.data.total,

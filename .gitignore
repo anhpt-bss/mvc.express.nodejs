@@ -1,6 +1,6 @@
 /logs
 /node_modules
-/uploads
+# /uploads
 .env
 .env.development
 .env.production

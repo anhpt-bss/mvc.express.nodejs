@@ -86,11 +86,12 @@ class ResourceService {
     static getStaticFiles() {
         return new Promise((resolve, reject) => {
             const uploadDir = path.join(__dirname, `../../${constants.UPLOADS_BASE_PATH}`);
-            fs.readdir(uploadDir, (err, files) => {
-                if (err) {
-                    return reject(err);
+            fs.readdir(uploadDir, (error, files) => {
+                if (error) {
+                    console.log('[---Log---][---getStaticFiles---]: ', error);
+                    return resolve([]);
                 }
-                resolve(files);
+                return resolve(files);
             });
         });
     }

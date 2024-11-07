@@ -47,6 +47,6 @@ const upload = () =>
                 cb(new Error('Invalid file type'));
             }
         },
-    }).array('files', 10); // Maximum 10 files
+    }).array('files'); // .array('files', 10); // Maximum 10 files
 
 module.exports = { storage, upload };
