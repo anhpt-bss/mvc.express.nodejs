@@ -1,8 +1,8 @@
 <div class="com-table">
     <div class="table-header">
         <h2></h2>
-        <% if (checkResourceRoute) { %>
-            <a class="check-btn" href="<%= checkResourceRoute %>">Kiểm tra tệp tải lên</a>
+        <% if (response?.checkResourceRoute) { %>
+            <a class="check-btn" href="<%= response?.checkResourceRoute %>">Kiểm tra tệp tải lên</a>
         <% } %>
 
         <% if (allowCreate) { %>
