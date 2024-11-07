@@ -425,6 +425,7 @@ router.get('/resources', resourceController.getAllResources, (req, res) => {
         allow_create: true,
         allow_edit: true,
         allow_delete: true,
+        checkResourceRoute: '/admin/resources/check-uploaded-files',
         helper,
     };
 
@@ -544,8 +545,8 @@ router.get('/resources/check-uploaded-files', async (req, res) => {
         fields_config: [
             {
                 field_name: 'files',
-                field_label: 'Tải lại tệp không tồn tại',
-                field_type: 'file',
+                field_label: 'Tải lại các tệp không tồn tại',
+                field_type: 'files',
                 is_required: false,
                 is_show: true,
                 is_sort: true,

@@ -1,5 +1,6 @@
 <div>
     <%- include('../components/table', {
+        response: response,
         tableData: response.data.data_list || [],
         tableHeaders: response.table_headers || [],
         total: response.data.total,
@@ -9,6 +10,7 @@
         order: response.data.order,
         totalPages: Math.ceil(response.data.total / response.data.limit),
         route: response.route,
+        checkResourceRoute: response.checkResourceRoute,
         allowCreate: response.allow_create,
         allowEdit: response.allow_edit,
         allowDelete: response.allow_delete,

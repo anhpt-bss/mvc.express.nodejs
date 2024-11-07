@@ -1,6 +1,10 @@
 <div class="com-table">
     <div class="table-header">
         <h2></h2>
+        <% if (checkResourceRoute) { %>
+            <a class="check-btn" href="<%= checkResourceRoute %>">Kiểm tra tệp tải lên</a>
+        <% } %>
+
         <% if (allowCreate) { %>
             <a class="create-btn" href="<%= route %>/create">Tạo Mới</a>
         <% } %>
