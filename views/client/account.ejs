@@ -67,7 +67,7 @@
                                         Tên người dùng
                                         <span class="form-required">*</span>
                                     </label>
-                                    <input id="name" name="name" required value="<%= response.currentUser.name %>"></input>
+                                    <input id="name" name="name" required value="<%= response?.currentUser?.name %>"></input>
                                 </div>
 
                                 <div class="form-group">
@@ -75,34 +75,34 @@
                                         Địa chỉ email
                                         <span class="form-required">*</span>
                                     </label>
-                                    <input id="email" name="email" required value="<%= response.currentUser.email %>"></input>
+                                    <input id="email" name="email" required value="<%= response?.currentUser?.email %>"></input>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="phone_number">Số điện thoại</label>
-                                    <input id="phone_number" name="phone_number" value="<%= response.currentUser.phone_number %>"></input>
+                                    <input id="phone_number" name="phone_number" value="<%= response?.currentUser?.phone_number %>"></input>
                                 </div>
                                 
                                 <div class="form-group">
                                     <label for="address">Địa chỉ</label>
-                                    <textarea id="address" name="address"><%= response.currentUser.address %></textarea>
+                                    <textarea id="address" name="address"><%= response?.currentUser?.address %></textarea>
                                 </div>
                                 
                                 <div class="form-group">
                                     <label for="radio-group">Giới tính</label>
                                     <div id="radio-group" class="radio-group horizontal">
-                                        <input type="radio" id="male" name="gender" value="male" <%= response.currentUser.gender === 'male' ? 'checked' : '' %>>
+                                        <input type="radio" id="male" name="gender" value="male" <%= response?.currentUser?.gender === 'male' ? 'checked' : '' %>>
                                         <label for="male">Nam</label>
-                                        <input type="radio" id="female" name="gender" value="female" <%= response.currentUser.gender === 'female' ? 'checked' : '' %>>
+                                        <input type="radio" id="female" name="gender" value="female" <%= response?.currentUser?.gender === 'female' ? 'checked' : '' %>>
                                         <label for="female">Nữ</label>
-                                        <input type="radio" id="other" name="gender" value="other" <%= response.currentUser.gender === 'other' ? 'checked' : '' %>>
+                                        <input type="radio" id="other" name="gender" value="other" <%= response?.currentUser?.gender === 'other' ? 'checked' : '' %>>
                                         <label for="other">Khác</label>
                                     </div>
                                 </div>                                
 
                                 <div class="form-group">
                                     <label for="birthday">Ngày sinh</label>
-                                    <input type="date" id="birthday" name="birthday" value="<%= response.currentUser.birthday %>">
+                                    <input type="date" id="birthday" name="birthday" value="<%= response?.currentUser?.birthday %>">
                                 </div>
 
                                 <button type="submit" class="background-button">Lưu</button>

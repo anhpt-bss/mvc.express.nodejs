@@ -35,6 +35,35 @@
                 <div class="product-info">
                     <div class="html"><%- response.product.product_specifications %></div>
                 </div>
+
+                <div class="product-actions">
+                    <div class="calc-price">
+                        <div class="new-price"><%= response.helper.addCommasToNumber(response.helper.calcPrice(response.product.product_price, response.product.product_discount)) %></div>
+                        <% if(response.product.product_discount > 0) { %>
+                            <del class="old-price"><%= response.helper.addCommasToNumber(response.product.product_price) %></del>
+                            <div class="sale-label">-<%= response.product.product_discount %>%</div>
+                        <% } %>
+                    </div>
+
+                    <div class="select-quantity">
+                        <label>Số lượng</label>
+                        <button id="decrement_btn">-</button>
+                        <input type="number" id="quantity_input" name="quantity" min="1" value="1" disabled />
+                        <button id="increment_btn">+</button>
+                    </div>
+                    
+                    <div class="group-buttons">
+                        <div class="top-btns">
+                            <button class="add-to-cart-btn" id="add_to_cart_btn" data-product="<%= response?.product?._id %>">Thêm vào giỏ</button>
+                            <button class="buy-now-btn" id="buy_now_btn" data-product="<%= response?.product?._id %>">Mua ngay</button>
+                        </div>
+                        <a class="call-btn" href="tel:0123456789">
+                            <p>Gọi tư vấn</p>
+                            <small>(Miễn phí vận chuyển TPHCM với đơn hàng trên 5.000.000đ)</small>
+                        </a>
+                    </div>
+                    
+                </div>
             </div>
         </div>
     </div>
@@ -50,3 +79,6 @@
         </div>
     </div>
 </div>
+
+<!-- Add to cart -->
+<script src="/assets/js/cart.js"></script>
