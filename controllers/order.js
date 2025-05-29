@@ -396,7 +396,7 @@ exports.placeOrder = async (req, res, next) => {
         }
 
         const { name, email, phone_number, address, note, payment_method } = req.body;
-
+        
         // Save user info
         const user = await User.findById(req.user._id);
 
