@@ -6,6 +6,7 @@ const resourceRoutes = require('@routes/resource');
 const blogRoutes = require('@routes/blog');
 const cartRoutes = require('@routes/cart');
 const serviceRoutes = require('@routes/service');
+const dynamicRoutes = require('@routes/dynamic');
 
 // Defined routes
 router.use('/auth', authRoutes);
@@ -19,5 +20,7 @@ router.use('/blog', blogRoutes);
 router.use('/cart', cartRoutes);
 
 router.use('/service', serviceRoutes);
+
+router.use('/dynamic', dynamicRoutes);
 
 module.exports = router;

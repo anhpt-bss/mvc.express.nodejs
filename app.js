@@ -22,6 +22,7 @@ const notificationMiddleware = require('@middleware/notification');
 const { upload } = require('@config/multer');
 const HttpResponse = require('@services/httpResponse');
 const Category = require('@models/category');
+const { loadAllDynamicModels } = require('@models/dynamicModel');
 
 // MongoDB
 connectDB();
@@ -151,6 +152,9 @@ app.use(upload());
 
 // Swagger
 swaggerSetup(app);
+
+// Load all dynamic models on startup
+loadAllDynamicModels();
 
 // Routes
 app.use('/api', apiRouter);
